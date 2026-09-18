@@ -1,0 +1,65 @@
+// ── Staff layout: sidebar (left) + right column ───────────────
+.shell-staff {
+  display: flex;
+  min-height: 100vh;
+}
+
+// ── Right column: navbar (sticky) + content ───────────────────
+.shell-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  min-width: 0; // prevent flex overflow
+}
+
+// ── Page content ──────────────────────────────────────────────
+.shell-content {
+  flex: 1;
+  // padding: var(--sp-l);
+  background: var(--surface-base);
+  overflow-x: hidden;
+
+  &--no-sidebar {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--sp-m);
+  }
+}
+
+// ── Non-staff: navbar is fixed, content needs top offset ──────
+// (navbar stays position: fixed for employee layout)
+app-notification-toast + .shell-content--no-sidebar,
+.shell-content--no-sidebar {
+  margin-top: 56px;
+}
+
+@media (max-width: 768px) {
+  .shell-content {
+    padding: var(--sp-m);
+  }
+  .shell-content--no-sidebar {
+    padding: var(--sp-s);
+  }
+}
+
+// ── Impresión (window.print → PDF) ────────────────────────────────────────
+// Las páginas imprimibles (p.ej. la vista .pdf-print de /schedule) viven DENTRO
+// de estos contenedores del shell. En pantalla tienen min-height:100vh y
+// overflow (scroll), lo que al imprimir RECORTA todo lo que exceda la altura de
+// una "pantalla": la tabla larga llena ese alto y la sección que va después
+// (las Ausencias del PDF) quedaba fuera del área recortada y NO se imprimía.
+// Al imprimir los liberamos: sin altura fija ni overflow, para que el contenido
+// fluya libremente y pagine completo.
+@media print {
+  .shell-staff,
+  .shell-right,
+  .shell-content {
+    display: block;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+}

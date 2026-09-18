@@ -1,0 +1,8 @@
+[
+  {"model": "workers.worker", "pk": 1, "fields": {"name": "Ana Garcia", "role": 1, "active": true}},
+  {"model": "workers.worker", "pk": 2, "fields": {"name": "Nilla Esteban", "role": 1, "active": true}},
+  {"model": "workers.worker", "pk": 3, "fields": {"name": "Carlos Lopez", "role": 2, "active": true}},
+  {"model": "workers.worker", "pk": 4, "fields": {"name": "Cintia Perez", "role": 2, "active": true}},
+  {"model": "workers.worker", "pk": 5, "fields": {"name": "David Ruiz", "role": 3, "active": true}},
+  {"model": "workers.worker", "pk": 6, "fields": {"name": "Elena Martinez", "role": 4, "active": true}}
+]

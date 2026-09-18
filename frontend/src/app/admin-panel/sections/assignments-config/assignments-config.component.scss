@@ -1,0 +1,142 @@
+.section-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.drop-overlay {
+  position: absolute; inset: 0; z-index: 10;
+  background: rgba(109, 40, 217, 0.08);
+  border: 3px dashed #6d28d9; border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; color: #6d28d9; font-weight: 500;
+  mat-icon { font-size: 48px; width: 48px; height: 48px; }
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  h2 { margin: 0 0 4px; font-weight: 600; }
+  .subtitle { margin: 0; color: #64748b; font-size: 0.9rem; max-width: 650px; }
+}
+
+.header-actions {
+  display: flex; gap: 8px; flex-shrink: 0;
+}
+
+.loading-container {
+  display: flex; justify-content: center; padding: 40px;
+}
+
+.empty-state {
+  text-align: center; padding: 48px 24px; color: #94a3b8;
+  mat-icon { font-size: 48px; width: 48px; height: 48px; margin-bottom: 12px; }
+  p { font-size: 0.95rem; }
+}
+
+.full-width { width: 100%; }
+.rules-table { margin-bottom: 8px; }
+
+.rule-info {
+  display: flex; flex-direction: column; gap: 2px;
+  // El SemiBold del nombre lo aporta la base zb-data-table (1ª celda).
+  .rule-name { color: var(--text-primary); }
+  // Texto secundario coherente: 12px (caption), Text/secondary, normal (sin cursiva/hardcode).
+  .rule-desc { font-weight: var(--fw-regular); font-size: var(--fs-12); color: var(--text-secondary); }
+  .rule-config { font-weight: var(--fw-regular); font-size: var(--fs-12); color: var(--text-secondary); font-style: normal; }
+}
+
+// Badges = 12px caption, SemiBold, MAYÚS, ls Overline, radius pill, tokens alert.
+.engine-badge {
+  background: var(--figma-alert-info-surface); color: var(--figma-alert-info-text); padding: 2px 10px;
+  border-radius: 9999px; font-size: var(--fs-12); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 0.12px;
+}
+
+.pattern-badge {
+  background: var(--figma-alert-info-surface); color: var(--figma-alert-info-text); padding: 2px 10px;
+  border-radius: 9999px; font-size: var(--fs-12); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 0.12px;
+}
+
+.actions-cell { white-space: nowrap; }
+
+.add-row {
+  display: flex; gap: 12px; margin-top: 16px; align-items: center;
+  .add-btn { color: #6d28d9; border-color: #6d28d9; }
+  .chat-btn { color: #059669; border-color: #059669; }
+  .importing-hint { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #64748b; }
+}
+
+.form-card {
+  margin-top: 20px;
+  &.edit-card { border-left: 4px solid #6d28d9; }
+}
+
+.form-row {
+  display: flex; gap: 16px; margin-bottom: 8px; align-items: flex-start;
+  .flex-2 { flex: 2; }
+  .full-width-field { flex: 1; width: 100%; }
+  .priority-field { width: 120px; }
+}
+
+.engine-divider { margin: 20px 0 16px; }
+.engine-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.95rem; font-weight: 600; color: #475569; margin-bottom: 12px;
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+}
+
+.config-section { padding-left: 8px; }
+
+.hint-text { font-size: 0.82rem; color: #94a3b8; margin: 0 0 12px; }
+
+.freq-field { width: 140px; }
+
+.sub-divider { margin: 16px 0 12px; }
+
+.engine-opt { font-size: 0.88rem; }
+
+
+.spacer { flex: 1; }
+
+/* Chat panel */
+.chat-panel {
+  margin-top: 24px; border: 1px solid #d1d5db; border-radius: 12px;
+  overflow: hidden; background: #f9fafb;
+}
+.chat-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: #059669; color: white;
+  h4 { margin: 0; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+}
+.chat-messages {
+  max-height: 320px; overflow-y: auto; padding: 16px; display: flex;
+  flex-direction: column; gap: 12px;
+}
+.chat-msg {
+  display: flex;
+  &.user { justify-content: flex-end; }
+  &.assistant { justify-content: flex-start; }
+}
+.msg-bubble {
+  max-width: 75%; padding: 10px 14px; border-radius: 12px;
+  font-size: 0.9rem; line-height: 1.45; white-space: pre-wrap;
+
+  .user & { background: #dbeafe; color: #1e293b; border-bottom-right-radius: 4px; }
+  .assistant & { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+}
+.chat-proposal {
+  margin-top: 8px; padding: 10px 12px; background: #f0fdf4;
+  border: 1px solid #86efac; border-radius: 8px;
+  pre { margin: 0 0 8px; font-size: 0.8rem; overflow-x: auto; white-space: pre-wrap; }
+  button { font-size: 0.8rem; }
+}
+.chat-input-row {
+  display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid #e2e8f0; background: white;
+}
+.chat-input-field { flex: 1; }
+.chat-btn {
+  &.send-btn { background: #059669; color: white; }
+}

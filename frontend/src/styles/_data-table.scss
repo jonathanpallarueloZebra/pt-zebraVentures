@@ -1,0 +1,134 @@
+// ============================================================
+// Reusable data-table look (Figma "entidades" spec).
+// Apply to a <table mat-table> via class="zb-data-table" inside
+// a <div class="zb-table-card"> (rounded container + outline + shadow).
+// Neutralizes the Material yellow surface tint with neutral tokens.
+// ============================================================
+
+// ── Rounded card container ────────────────────────────────────
+// Usa los tokens --figma-datatable-* de stylesJPfigma (misma card que Figma
+// 2120:13605 / 2374:17894): Surface/raised, radius 8, borde Border/low, Shadow/sm.
+.zb-table-card {
+  background: var(--figma-datatable-bg);
+  border-radius: var(--figma-datatable-radius);
+  outline: var(--figma-datatable-border-width) solid var(--figma-datatable-border);
+  outline-offset: -1px;
+  box-shadow: var(--figma-datatable-shadow);
+  overflow: hidden;
+}
+
+// Horizontal scroll wrapper (keeps the card corners rounded)
+.zb-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// Paginator docked at the bottom of the card
+// Separador Border/base #d6d8dc (Figma data-table), no border-low
+.zb-table-card__pager {
+  display: block;
+  border-top: var(--figma-datatable-pagination-border-width) solid var(--figma-datatable-pagination-border);
+}
+
+// ── Table ─────────────────────────────────────────────────────
+.zb-data-table.mat-mdc-table {
+  width: 100%;
+  background: var(--surface-raised);
+  font-family: var(--ff-body);
+
+  // Disable the brand-yellow hover tint; use a neutral one
+  --mat-table-row-item-hover-state-layer-color: var(--text-primary);
+  --mat-table-row-item-hover-state-layer-opacity: 0.04;
+
+  // ── Header ──────────────────────────────────────────────────
+  // Todos los valores desde los tokens --figma-datatable-* de stylesJPfigma
+  // (Figma data-table, nodo 2120:13605 / 2374:17894 / 2112:3796). Altura 32,
+  // Overline 12 SemiBold MAYÚS ls .12, Surface/base, Text/secondary.
+  .mat-mdc-header-row {
+    background: var(--figma-datatable-header-bg);
+    min-height: var(--figma-datatable-header-height);
+  }
+
+  .mat-mdc-header-cell {
+    height: var(--figma-datatable-header-height);
+    // pl 16 (spacing/M) · pr 8 (spacing/S) · py 8 (box/inner/padding/S)
+    padding: var(--figma-datatable-header-padding-y)
+             var(--figma-datatable-header-padding-r)
+             var(--figma-datatable-header-padding-y)
+             var(--figma-datatable-header-padding-l);
+    background: var(--figma-datatable-header-bg);
+    color: var(--figma-datatable-header-text);
+    font-size: var(--figma-datatable-header-font-size);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--figma-datatable-header-letter-spacing);
+    line-height: var(--figma-datatable-header-line-height);
+    border-bottom: var(--figma-datatable-border-width) solid var(--figma-datatable-border);
+    border-right: var(--figma-datatable-border-width) solid var(--figma-datatable-border);
+
+    &:last-of-type { border-right: none; }
+  }
+
+  // ── Body ────────────────────────────────────────────────────
+  // Celda 52, py/px 16, Table text 14 lh 1.11, Text/primary, borde Border/low.
+  .mat-mdc-cell {
+    height: var(--figma-datatable-cell-height);
+    padding: var(--figma-datatable-cell-padding-y) var(--figma-datatable-cell-padding-x);
+    background: var(--figma-datatable-bg);
+    color: var(--figma-datatable-cell-text);
+    font-size: var(--figma-datatable-cell-font-size);
+    line-height: var(--figma-datatable-cell-line-height);
+    border-bottom: var(--figma-datatable-border-width) solid var(--figma-datatable-border);
+    border-right: var(--figma-datatable-border-width) solid var(--figma-datatable-border);
+
+    &:last-of-type { border-right: none; }
+  }
+
+  // Zebra striping (alt = odd data rows, set via [class.zb-row--alt])
+  .zb-row--alt .mat-mdc-cell { background: var(--figma-datatable-row-bg-even); }
+
+  // Primera columna (nombre) SIEMPRE en SemiBold, sea cual sea su nombre de
+  // columna (name / nombre / cd_<key> en entities). Se emborda la primera
+  // CELDA DE DATOS de cada fila → coherente en TODAS las tablas sin overrides
+  // por vista. (La cabecera ya es SemiBold de por sí.)
+  .mat-mdc-cell:first-of-type { font-weight: var(--fw-semibold); }
+
+  // Status column: center its toggle
+  .cdk-column-active { text-align: center; }
+  .cdk-column-active zb-toggle { display: inline-flex; vertical-align: middle; }
+
+  // Actions column: columna 92px fija (Figma data-table ACCIONES).
+  .cdk-column-actions {
+    text-align: center;
+    white-space: nowrap;
+    width: var(--figma-datatable-col-actions-width);   // 92px fija
+  }
+
+  // Botón de acción (editar) = mismo SVG e idénticos tokens que la tabla
+  // de Ausencias (.abs-action). edit 20x20 · padding 4px · radius 9999.
+  .zb-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--figma-datatable-action-btn-padding);   // 4px
+    border: none;
+    border-radius: var(--figma-datatable-action-btn-radius); // 9999
+    background: transparent;
+    cursor: pointer;
+    transition: background 120ms ease;
+
+    &:hover { background: var(--figma-datatable-action-btn-bg-hover); }
+  }
+  .zb-action__icon {
+    width: var(--figma-datatable-action-icon-size);   // 20px
+    height: var(--figma-datatable-action-icon-size);  // 20px
+    display: block;
+    color: var(--figma-datatable-action-icon-color);  // #026aa2 (Icon/link)
+  }
+
+  // Row being edited — subtle accent highlight (wins over zebra)
+  .editing-row .mat-mdc-cell { background: var(--accent-low); }
+
+  // Last row: drop bottom border (card outline closes it)
+  .mat-mdc-row:last-of-type .mat-mdc-cell { border-bottom: none; }
+}

@@ -1,0 +1,62 @@
+<div class="dp-root">
+
+  <!-- ── Month navigation ─────────────────────────────────── -->
+  <div class="dp-month-nav">
+    <button class="dp-nav-btn" (click)="prevMonth()" aria-label="Mes anterior">
+      <span class="material-icons">chevron_left</span>
+    </button>
+    <span class="dp-month-label">{{ monthLabel }}</span>
+    <button class="dp-nav-btn" (click)="nextMonth()" aria-label="Mes siguiente">
+      <span class="material-icons">chevron_right</span>
+    </button>
+  </div>
+
+  <!-- ── Range date inputs ────────────────────────────────── -->
+  <div class="dp-range-row">
+    <div class="dp-range-input" [class.dp-range-input--focus]="!_end">
+      {{ startDisplay || 'dd/mm/aaaa' }}
+    </div>
+    <span class="dp-range-sep">–</span>
+    <div class="dp-range-input" [class.dp-range-input--focus]="_start && !_end">
+      {{ endDisplay || 'dd/mm/aaaa' }}
+    </div>
+  </div>
+
+  <!-- ── Calendar grid ────────────────────────────────────── -->
+  <div class="dp-grid">
+    <div class="dp-dow-row">
+      @for (d of DOW_LBLS; track d) {
+        <span class="dp-dow">{{ d }}</span>
+      }
+    </div>
+
+    @for (week of weeks; track $index) {
+      <div class="dp-week">
+        @for (day of week; track day.date) {
+          <button
+            class="cal-day"
+            [class.cal-day--outside]="!day.inMonth"
+            [class.cal-day--in-range]="isInRange(day.date)"
+            [class.cal-day--range-start]="isRangeStart(day.date)"
+            [class.cal-day--range-end]="isRangeEnd(day.date)"
+            [class.cal-day--selected]="isSelected(day.date)"
+            [class.cal-day--today]="isToday(day.date) && !isSelected(day.date)"
+            (click)="selectDay(day)"
+            (mouseenter)="hoverDay(day.date)"
+            (mouseleave)="clearHover()"
+          >
+            <span class="cal-day__num">{{ day.day }}</span>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- ── Footer ───────────────────────────────────────────── -->
+  <div class="dp-divider"></div>
+  <div class="dp-footer">
+    <button class="dp-btn dp-btn--outline" (click)="onCancel()">Cancelar</button>
+    <button class="dp-btn dp-btn--primary" (click)="onApply()" [disabled]="!canApply()">Aplicar</button>
+  </div>
+
+</div>

@@ -1,0 +1,38 @@
+<button
+  [type]="type"
+  [disabled]="disabled || loading"
+  [attr.aria-label]="ariaLabel"
+  class="btn-inner"
+>
+  <!-- Los iconos del set de Figma se pintan como SVG exacto (zb-icon); el
+       resto siguen con la fuente material-icons, que el diseño no cubre. -->
+  @if (variant === 'icon-only') {
+    @if (isFigmaIcon(icon)) {
+      <zb-icon class="btn-icon" [name]="icon" size="16"></zb-icon>
+    } @else {
+      <span class="btn-icon material-icons" aria-hidden="true">{{ icon }}</span>
+    }
+  } @else {
+    @if (loading) {
+      <span class="btn-spinner" aria-hidden="true"></span>
+    } @else if (iconLeft) {
+      @if (isFigmaIcon(iconLeft)) {
+        <zb-icon class="btn-icon btn-icon--left" [name]="iconLeft" size="16"></zb-icon>
+      } @else {
+        <span class="btn-icon btn-icon--left material-icons" aria-hidden="true">{{ iconLeft }}</span>
+      }
+    }
+
+    <span class="btn-label">
+      <ng-content />
+    </span>
+
+    @if (!loading && iconRight) {
+      @if (isFigmaIcon(iconRight)) {
+        <zb-icon class="btn-icon btn-icon--right" [name]="iconRight" size="16"></zb-icon>
+      } @else {
+        <span class="btn-icon btn-icon--right material-icons" aria-hidden="true">{{ iconRight }}</span>
+      }
+    }
+  }
+</button>

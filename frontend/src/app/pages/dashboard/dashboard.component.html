@@ -1,0 +1,225 @@
+<zb-page-header
+  title="Inicio"
+  [showSidebarToggle]="true"
+  [sidebarCollapsed]="false">
+</zb-page-header>
+
+<div class="page-container">
+  @if (loading() && !profileReady()) {
+    <!-- ── Skeleton ── -->
+    <div class="dash">
+      <div class="dash-alerts">
+        @for (_ of [0,1,2]; track $index) {
+          <zb-skeleton height="54px" radius="8px"></zb-skeleton>
+        }
+      </div>
+      <div class="dash-row">
+        @for (_ of [0,1]; track $index) {
+          <div class="dash-col">
+            <zb-skeleton width="140px" height="20px"></zb-skeleton>
+            <zb-skeleton height="52px" radius="8px"></zb-skeleton>
+            <zb-skeleton height="52px" radius="8px"></zb-skeleton>
+          </div>
+        }
+      </div>
+      <div class="dash-row">
+        @for (_ of [0,1]; track $index) {
+          <div class="dash-col">
+            <zb-skeleton width="120px" height="20px"></zb-skeleton>
+            <div class="dash-stats">
+              <zb-skeleton width="200px" height="99px" radius="8px"></zb-skeleton>
+              <zb-skeleton width="200px" height="99px" radius="8px"></zb-skeleton>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="dash">
+
+      <!-- ═══════════ Fila 1 — Urgente a resolver (Figma 2422:16488) ═══════════ -->
+      @if (urgentAlerts().length > 0) {
+        <div class="dash-alerts">
+          @for (a of urgentAlerts(); track a.text) {
+            <!-- Componente Alert del sistema (Figma 2422:16490): variante por
+                 severidad → surface/border/text/icon vía tokens --figma-alert-*.
+                 Iconos = SVG exactos de Figma inline (fill=currentColor). -->
+            <div class="figma-alert" [class]="'figma-alert--' + a.type">
+              <div class="figma-alert__content">
+                <!-- Icono de severidad 16px — SVG exacto de Figma (2112:3538/2141/3530) -->
+                <span class="figma-alert__icon dash-icon dash-icon--16">
+                  @switch (a.type) {
+                    @case ('error') {
+                      <svg viewBox="0 0 13.3333 13.3333" fill="none" aria-hidden="true">
+                        <path d="M6.66667 0C2.98667 0 0 2.98667 0 6.66667C0 10.3467 2.98667 13.3333 6.66667 13.3333C10.3467 13.3333 13.3333 10.3467 13.3333 6.66667C13.3333 2.98667 10.3467 0 6.66667 0ZM6.66667 7.33333C6.3 7.33333 6 7.03333 6 6.66667V4C6 3.63333 6.3 3.33333 6.66667 3.33333C7.03333 3.33333 7.33333 3.63333 7.33333 4V6.66667C7.33333 7.03333 7.03333 7.33333 6.66667 7.33333ZM7.33333 10H6V8.66667H7.33333V10Z" fill="currentColor"/>
+                      </svg>
+                    }
+                    @case ('warning') {
+                      <svg viewBox="0 0 12.7085 11.3383" fill="none" aria-hidden="true">
+                        <path d="M1.33425 11.3383H11.3742C12.4009 11.3383 13.0409 10.225 12.5276 9.33833L7.50758 0.665C6.99425 -0.221667 5.71425 -0.221667 5.20091 0.665L0.180914 9.33833C-0.332419 10.225 0.307581 11.3383 1.33425 11.3383ZM6.35425 6.67167C5.98758 6.67167 5.68758 6.37167 5.68758 6.005V4.67167C5.68758 4.305 5.98758 4.005 6.35425 4.005C6.72091 4.005 7.02091 4.305 7.02091 4.67167V6.005C7.02091 6.37167 6.72091 6.67167 6.35425 6.67167ZM7.02091 9.33833H5.68758V8.005H7.02091V9.33833Z" fill="currentColor"/>
+                      </svg>
+                    }
+                    @default {
+                      <svg viewBox="0 0 13.3333 13.3333" fill="none" aria-hidden="true">
+                        <path d="M6.66667 0C2.98667 0 0 2.98667 0 6.66667C0 10.3467 2.98667 13.3333 6.66667 13.3333C10.3467 13.3333 13.3333 10.3467 13.3333 6.66667C13.3333 2.98667 10.3467 0 6.66667 0ZM6.66667 10C6.3 10 6 9.7 6 9.33333V6.66667C6 6.3 6.3 6 6.66667 6C7.03333 6 7.33333 6.3 7.33333 6.66667V9.33333C7.33333 9.7 7.03333 10 6.66667 10ZM7.33333 4.66667H6V3.33333H7.33333V4.66667Z" fill="currentColor"/>
+                      </svg>
+                    }
+                  }
+                </span>
+                <div class="figma-alert__text">
+                  <span class="figma-alert__title">{{ a.text }}</span>
+                  <button type="button" class="figma-alert__link dash-alert-link" (click)="goToPlan(a.week, a.scope)">
+                    <span class="dash-alert-link-text">{{ a.actionLabel }}</span>
+                    <!-- arrow_forward 14px exacto de Figma (2423:17967) -->
+                    <span class="figma-alert__link-icon dash-icon dash-icon--14">
+                      <svg viewBox="0 0 9.33333 9.33333" fill="none" aria-hidden="true">
+                        <path d="M4.66667 0L3.84417 0.8225L7.09917 4.08333H0V5.25H7.09917L3.84417 8.51083L4.66667 9.33333L9.33333 4.66667L4.66667 0Z" fill="currentColor"/>
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═══════════ Fila 2 — secondary (Figma 2467:21128) ═══════════ -->
+      <div class="dash-row">
+
+        <!-- Columna A — Planificador -->
+        <section class="dash-col">
+          <header class="dash-section-title">
+            <!-- calendar_month 20px (Figma 2467:21136) -->
+            <span class="dash-icon dash-icon--20 dash-icon--muted">
+              <svg viewBox="0 0 15 16.6667" fill="none" aria-hidden="true">
+                <path d="M11.6667 0C11.2083 0 10.8333 0.375 10.8333 0.833333V1.66667H4.16667V0.833333C4.16667 0.375 3.79167 0 3.33333 0C2.875 0 2.5 0.375 2.5 0.833333V1.66667H1.66667C0.741667 1.66667 0.00833333 2.41667 0.00833333 3.33333L0 15C0 15.9167 0.741667 16.6667 1.66667 16.6667H13.3333C14.25 16.6667 15 15.9167 15 15V3.33333C15 2.41667 14.25 1.66667 13.3333 1.66667H12.5V0.833333C12.5 0.375 12.125 0 11.6667 0ZM13.3333 15H1.66667V6.66667H13.3333V15ZM6.66667 9.16667C6.66667 8.70833 7.04167 8.33333 7.5 8.33333C7.95833 8.33333 8.33333 8.70833 8.33333 9.16667C8.33333 9.625 7.95833 10 7.5 10C7.04167 10 6.66667 9.625 6.66667 9.16667ZM3.33333 9.16667C3.33333 8.70833 3.70833 8.33333 4.16667 8.33333C4.625 8.33333 5 8.70833 5 9.16667C5 9.625 4.625 10 4.16667 10C3.70833 10 3.33333 9.625 3.33333 9.16667ZM10 9.16667C10 8.70833 10.375 8.33333 10.8333 8.33333C11.2917 8.33333 11.6667 8.70833 11.6667 9.16667C11.6667 9.625 11.2917 10 10.8333 10C10.375 10 10 9.625 10 9.16667ZM6.66667 12.5C6.66667 12.0417 7.04167 11.6667 7.5 11.6667C7.95833 11.6667 8.33333 12.0417 8.33333 12.5C8.33333 12.9583 7.95833 13.3333 7.5 13.3333C7.04167 13.3333 6.66667 12.9583 6.66667 12.5ZM3.33333 12.5C3.33333 12.0417 3.70833 11.6667 4.16667 11.6667C4.625 11.6667 5 12.0417 5 12.5C5 12.9583 4.625 13.3333 4.16667 13.3333C3.70833 13.3333 3.33333 12.9583 3.33333 12.5ZM10 12.5C10 12.0417 10.375 11.6667 10.8333 11.6667C11.2917 11.6667 11.6667 12.0417 11.6667 12.5C11.6667 12.9583 11.2917 13.3333 10.8333 13.3333C10.375 13.3333 10 12.9583 10 12.5Z" fill="currentColor"/>
+              </svg>
+            </span>
+            <h2>Planificador</h2>
+          </header>
+          <div class="dash-list">
+            @for (p of planShortcuts(); track p.week) {
+              <button type="button" class="dash-card dash-plan-row" (click)="goToPlan(p.week)">
+                <!-- calendar_month 16px (Figma 2435:23236) -->
+                <span class="dash-icon dash-icon--16 dash-plan-icon">
+                  <svg viewBox="0 0 12 13.3333" fill="none" aria-hidden="true">
+                    <path d="M9.33333 0C8.96667 0 8.66667 0.3 8.66667 0.666667V1.33333H3.33333V0.666667C3.33333 0.3 3.03333 0 2.66667 0C2.3 0 2 0.3 2 0.666667V1.33333H1.33333C0.593333 1.33333 0.00666666 1.93333 0.00666666 2.66667L0 12C0 12.7333 0.593333 13.3333 1.33333 13.3333H10.6667C11.4 13.3333 12 12.7333 12 12V2.66667C12 1.93333 11.4 1.33333 10.6667 1.33333H10V0.666667C10 0.3 9.7 0 9.33333 0ZM10.6667 12H1.33333V5.33333H10.6667V12ZM5.33333 7.33333C5.33333 6.96667 5.63333 6.66667 6 6.66667C6.36667 6.66667 6.66667 6.96667 6.66667 7.33333C6.66667 7.7 6.36667 8 6 8C5.63333 8 5.33333 7.7 5.33333 7.33333ZM2.66667 7.33333C2.66667 6.96667 2.96667 6.66667 3.33333 6.66667C3.7 6.66667 4 6.96667 4 7.33333C4 7.7 3.7 8 3.33333 8C2.96667 8 2.66667 7.7 2.66667 7.33333ZM8 7.33333C8 6.96667 8.3 6.66667 8.66667 6.66667C9.03333 6.66667 9.33333 6.96667 9.33333 7.33333C9.33333 7.7 9.03333 8 8.66667 8C8.3 8 8 7.7 8 7.33333ZM5.33333 10C5.33333 9.63333 5.63333 9.33333 6 9.33333C6.36667 9.33333 6.66667 9.63333 6.66667 10C6.66667 10.3667 6.36667 10.6667 6 10.6667C5.63333 10.6667 5.33333 10.3667 5.33333 10ZM2.66667 10C2.66667 9.63333 2.96667 9.33333 3.33333 9.33333C3.7 9.33333 4 9.63333 4 10C4 10.3667 3.7 10.6667 3.33333 10.6667C2.96667 10.6667 2.66667 10.3667 2.66667 10ZM8 10C8 9.63333 8.3 9.33333 8.66667 9.33333C9.03333 9.33333 9.33333 9.63333 9.33333 10C9.33333 10.3667 9.03333 10.6667 8.66667 10.6667C8.3 10.6667 8 10.3667 8 10Z" fill="currentColor"/>
+                  </svg>
+                </span>
+                <span class="dash-plan-range">{{ p.range }}</span>
+                <span class="dash-plan-label">{{ p.label }}</span>
+                <!-- Estado real: cuántos ámbitos (tiendas) faltan por planificar. -->
+                @if (p.total > 0) {
+                  <span class="dash-plan-status"
+                        [class.dash-plan-status--done]="p.pending === 0"
+                        [title]="p.pendingNames?.length ? 'Faltan: ' + p.pendingNames?.join(', ') : ''">
+                    {{ p.pending === 0 ? 'Planificada' : p.pending + '/' + p.total + ' pendientes' }}
+                  </span>
+                }
+                <!-- arrow_forward 16px -->
+                <span class="dash-icon dash-icon--16 dash-plan-arrow">
+                  <svg viewBox="0 0 9.33333 9.33333" fill="none" aria-hidden="true">
+                    <path d="M4.66667 0L3.84417 0.8225L7.09917 4.08333H0V5.25H7.09917L3.84417 8.51083L4.66667 9.33333L9.33333 4.66667L4.66667 0Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+        </section>
+
+        <!-- Columna B — Horas extra -->
+        <section class="dash-col">
+          <header class="dash-section-title">
+            <!-- schedule 20px (Figma 2466:21081) -->
+            <span class="dash-icon dash-icon--20 dash-icon--muted">
+              <svg viewBox="0 0 16.6667 16.6667" fill="none" aria-hidden="true">
+                <path d="M8.325 0C3.725 0 0 3.73333 0 8.33333C0 12.9333 3.725 16.6667 8.325 16.6667C12.9333 16.6667 16.6667 12.9333 16.6667 8.33333C16.6667 3.73333 12.9333 0 8.325 0ZM8.33333 15C4.65 15 1.66667 12.0167 1.66667 8.33333C1.66667 4.65 4.65 1.66667 8.33333 1.66667C12.0167 1.66667 15 4.65 15 8.33333C15 12.0167 12.0167 15 8.33333 15ZM8.15 4.16667H8.1C7.76667 4.16667 7.5 4.43333 7.5 4.76667V8.7C7.5 8.99167 7.65 9.26667 7.90833 9.41667L11.3667 11.4917C11.65 11.6583 12.0167 11.575 12.1833 11.2917C12.3583 11.0083 12.2667 10.6333 11.975 10.4667L8.75 8.55V4.76667C8.75 4.43333 8.48333 4.16667 8.15 4.16667Z" fill="currentColor"/>
+              </svg>
+            </span>
+            <h2>Horas extra</h2>
+          </header>
+          <div class="dash-card dash-overtime">
+            <div class="dash-card-title">
+              <span class="dash-card-title-label">Esta Semana</span>
+              <span class="dash-card-title-range">{{ overtimeRange() }}</span>
+            </div>
+            @if (overtimeRows().length > 0) {
+              <!-- Scroll interno: con muchos empleados la card crecía sin
+                   límite y empujaba fuera de pantalla el resto del dashboard. -->
+              <div class="dash-overtime-list">
+              @for (o of overtimeRows(); track o.worker_id) {
+                <div class="dash-overtime-row">
+                  <span class="dash-overtime-hours"><strong>{{ o.worked }}</strong><span class="dash-overtime-contract">/{{ o.contract }}h</span></span>
+                  <span class="dash-overtime-name">{{ o.name }}</span>
+                  <!-- La flecha de Figma (2424:18356) no se pinta: la fila no
+                       navega a ningún sitio, así que una flecha sugería una
+                       acción que no existe. -->
+
+                </div>
+              }
+              </div>
+            } @else {
+              <p class="dash-empty">Sin horas extra registradas esta semana.</p>
+            }
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════ Fila 3 — tertiary (Figma 2464:44138) ═══════════ -->
+      <div class="dash-row">
+
+        <!-- Columna A — Ausencias -->
+        <section class="dash-col">
+          <header class="dash-section-title">
+            <!-- event_busy 20px (Figma 2466:21065) -->
+            <span class="dash-icon dash-icon--20 dash-icon--muted">
+              <svg viewBox="0 0 15 16.6667" fill="none" aria-hidden="true">
+                <path d="M5.7 12.8917L7.29167 11.3L8.88333 12.8917C9.125 13.1333 9.525 13.1333 9.76667 12.8917C10.0083 12.65 10.0083 12.25 9.76667 12.0083L8.175 10.4167L9.76667 8.825C10.0083 8.58333 10.0083 8.18333 9.76667 7.94167C9.525 7.7 9.125 7.7 8.88333 7.94167L7.29167 9.53333L5.7 7.94167C5.45833 7.7 5.05833 7.7 4.81667 7.94167C4.575 8.18333 4.575 8.58333 4.81667 8.825L6.40833 10.4167L4.81667 12.0083C4.575 12.25 4.575 12.65 4.81667 12.8917C5.05833 13.1333 5.45833 13.1333 5.7 12.8917ZM13.3333 1.66667H12.5V0.833333C12.5 0.375 12.125 0 11.6667 0C11.2083 0 10.8333 0.375 10.8333 0.833333V1.66667H4.16667V0.833333C4.16667 0.375 3.79167 0 3.33333 0C2.875 0 2.5 0.375 2.5 0.833333V1.66667H1.66667C0.741667 1.66667 0.00833333 2.41667 0.00833333 3.33333L0 15C0 15.9167 0.741667 16.6667 1.66667 16.6667H13.3333C14.25 16.6667 15 15.9167 15 15V3.33333C15 2.41667 14.25 1.66667 13.3333 1.66667ZM12.5 15H2.5C2.04167 15 1.66667 14.625 1.66667 14.1667V5.83333H13.3333V14.1667C13.3333 14.625 12.9583 15 12.5 15Z" fill="currentColor"/>
+              </svg>
+            </span>
+            <h2>Ausencias</h2>
+          </header>
+          <div class="dash-stats">
+            @for (s of absenceStats(); track s.label) {
+              <div class="dash-card dash-stat">
+                <span class="dash-stat-value">{{ s.value }}</span>
+                <div class="dash-card-title">
+                  <span class="dash-card-title-label">{{ s.label }}</span>
+                  <span class="dash-card-title-range">{{ s.range }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Columna B — Empleados ETT -->
+        @if (ettStats().length > 0) {
+          <section class="dash-col">
+            <header class="dash-section-title">
+              <!-- person 20px (Figma 2466:21095) -->
+              <span class="dash-icon dash-icon--20 dash-icon--muted">
+                <svg viewBox="0 0 13.3333 13.3333" fill="none" aria-hidden="true">
+                  <path d="M6.66667 6.66667C8.50833 6.66667 10 5.175 10 3.33333C10 1.49167 8.50833 0 6.66667 0C4.825 0 3.33333 1.49167 3.33333 3.33333C3.33333 5.175 4.825 6.66667 6.66667 6.66667ZM6.66667 8.33333C4.44167 8.33333 0 9.45 0 11.6667V12.5C0 12.9583 0.375 13.3333 0.833333 13.3333H12.5C12.9583 13.3333 13.3333 12.9583 13.3333 12.5V11.6667C13.3333 9.45 8.89167 8.33333 6.66667 8.33333Z" fill="currentColor"/>
+                </svg>
+              </span>
+              <h2>Empleados ETT</h2>
+            </header>
+            <div class="dash-stats">
+              @for (s of ettStats(); track s.label) {
+                <div class="dash-card dash-stat dash-stat--wide">
+                  <span class="dash-stat-value">{{ s.value }}</span>
+                  <div class="dash-card-title">
+                    <span class="dash-card-title-label">{{ s.label }}</span>
+                    <span class="dash-card-title-range">{{ s.range }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        }
+      </div>
+
+    </div>
+  }
+</div>

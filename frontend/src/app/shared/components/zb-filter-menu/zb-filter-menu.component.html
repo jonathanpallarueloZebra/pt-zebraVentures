@@ -1,0 +1,48 @@
+<div class="zb-filter-menu">
+  <button
+    class="zb-filter-menu__trigger"
+    type="button"
+    [class.zb-filter-menu__trigger--open]="isOpen"
+    [class.zb-filter-menu__trigger--active]="activeCount > 0"
+    (click)="toggle()"
+    [attr.aria-expanded]="isOpen"
+    aria-haspopup="true"
+  >
+    <zb-icon class="zb-filter-menu__icon" name="filter_list" size="16"></zb-icon>
+    <span class="zb-filter-menu__label">{{ label }}</span>
+    @if (activeCount > 0) {
+      <span class="zb-filter-menu__badge">{{ activeCount }}</span>
+    }
+    <zb-icon class="zb-filter-menu__chevron" name="expand_more" size="16"></zb-icon>
+  </button>
+
+  @if (isOpen) {
+    <div class="zb-filter-menu__panel" role="menu">
+      @if (menuTitle) {
+        <div class="zb-filter-menu__panel-title">{{ menuTitle }}</div>
+      }
+
+      <div class="zb-filter-menu__list">
+        @for (f of filters; track f.key) {
+          <zb-select
+            class="zb-filter-menu__select"
+            [label]="f.label"
+            [placeholder]="f.label + ': todos'"
+            [options]="f.options"
+            [ngModel]="valueOf(f.key)"
+            (ngModelChange)="onFilterChange(f.key, $event)"
+          ></zb-select>
+        } @empty {
+          <div class="zb-filter-menu__empty">No hay filtros disponibles</div>
+        }
+      </div>
+
+      @if (activeCount > 0) {
+        <button class="zb-filter-menu__reset" type="button" (click)="onReset()">
+          <span class="material-icons" aria-hidden="true">restart_alt</span>
+          Limpiar filtros
+        </button>
+      }
+    </div>
+  }
+</div>

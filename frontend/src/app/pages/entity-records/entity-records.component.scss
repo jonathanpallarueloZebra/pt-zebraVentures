@@ -1,0 +1,268 @@
+// ── Action buttons row (below header, right-aligned) ─────────
+.page-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 12px var(--sp-l);
+}
+
+// ── Empty state — centrado en el espacio restante del viewport ──
+// Solo se usa cuando no hay tabla, no afecta al layout con contenido
+.empty-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 200px);
+}
+
+// (los filtros del toolbar — zb-select.toolbar-filter — se estilan en styles.scss)
+
+.header-left { display: flex; align-items: center; gap: var(--sp-m); }
+.header-icon { font-size: 32px; width: 32px; height: 32px; color: #64748b; }
+.page-subtitle { color: #6b7280; margin: 0; font-size: var(--fs-13); }
+
+.loading-container { display: flex; justify-content: center; padding: var(--sp-2xl); }
+.full-width { width: 100%; }
+
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--br-l);
+  padding: var(--sp-l);
+  margin-bottom: var(--sp-l);
+  box-shadow: var(--shadow-s);
+}
+
+.edit-card { border-left: 4px solid #6366f1; margin-top: var(--sp-m); }
+.form-card-title { font-weight: var(--fw-semibold); font-size: var(--fs-15); margin-bottom: var(--sp-m); }
+.form-actions { display: flex; justify-content: flex-end; gap: var(--sp-s); margin-top: var(--sp-m); }
+
+.records-table {
+  margin-bottom: 0;
+}
+
+// El resaltado de fila en edición lo define .zb-data-table (var --accent-low,
+// theme-aware). No lo pisamos con un color hardcodeado.
+
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  color: #94a3b8;
+  mat-icon { font-size: 48px; width: 48px; height: 48px; margin-bottom: 12px; display: block; }
+  p { margin: 0; }
+}
+
+// ── Toolbar + paginator (zb-* design system) ────────────────
+.records-toolbar {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--sp-m);
+}
+.records-paginator {
+  display: block;
+  margin-top: var(--sp-s);
+}
+
+.shift-parent-field {
+  margin-bottom: var(--sp-s);
+}
+
+// Label común de los campos propios del turno (Días operativos + Vigencia).
+// Estilo "Overline" del formulario de Figma (nodo 2557:13628): 12px, Semi
+// Bold, MAYÚSCULAS, letter-spacing 0.12, color input/label (secundario).
+// Así todos los labels del panel de Turnos son visualmente iguales.
+%form-field-label {
+  display: block;
+  font-family: var(--ff-display, Inter);
+  font-size: var(--fs-12, 12px);   // fontSize/caption
+  line-height: 1.2;
+  font-weight: var(--fw-semibold, 600);
+  letter-spacing: 0.12px;
+  text-transform: uppercase;
+  color: var(--text-secondary);    // input/label/default de Figma (≈ text/secondary)
+  margin-bottom: 6px;              // Input/label gap de Figma
+}
+
+.shift-days-field {
+  // Misma lógica: flex column con gap (label ↔ checkboxes). La separación con
+  // el bloque siguiente la da el gap del contenedor del sidepanel.
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-s);
+  .days-label { @extend %form-field-label; margin-bottom: 0; }
+  .days-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-s) var(--sp-m);
+  }
+}
+
+// Campos de vigencia — patrón Input/text de Figma: label Overline + caja
+// input con borde, radius 4, padding 8, sombra Shadow/xs.
+.shift-validity-field {
+  // MISMA lógica que el sidepanel de ausencias (.abs-form): flex column con
+  // gap 16px (spacing/M) → separa de forma uniforme el título, el checkbox y la
+  // fila de fechas. Nada de márgenes sueltos.
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-m);
+
+  .days-label { @extend %form-field-label; margin-bottom: 0; }
+
+  .validity-hint {
+    margin: 0;
+    font-size: var(--fs-12);
+    line-height: 1.4;
+    color: var(--texto-secundario, rgba(6, 15, 25, 0.66));
+    text-transform: none;      // la nota NO va en mayúsculas
+    letter-spacing: normal;
+  }
+
+  .validity-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-m);
+  }
+
+  .validity-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;              // Input/label gap de Figma
+    flex: 1 1 0;
+    min-width: 160px;
+
+    &__label {
+      @extend %form-field-label;
+      margin-bottom: 0;    // el gap del flex ya separa label ↔ input
+    }
+
+    // Caja del input date = patrón Input/text de Figma. UN SOLO borde:
+    // appearance:none quita la caja nativa del control date (que causaba
+    // el "doble borde"); el borde y la sombra los pone este estilo.
+    // Patrón Input/text de stylesJPfigma (nodo 2112:2447). Usa los
+    // tokens --figma-input-* (no los genéricos --input-*): resuelven
+    // SIEMPRE a los valores exactos del Figma, igual que zb-select.
+    &__input {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      box-sizing: border-box;
+      padding: var(--figma-input-padding);          // box/inner/padding/s = 8
+      background: var(--figma-input-surface);
+      border: var(--figma-input-border-width) solid var(--figma-input-border);
+      border-radius: var(--figma-input-radius);      // br-forms = 4
+      box-shadow: var(--figma-input-shadow);         // Shadow/xs
+      font-family: var(--ff-display, Inter);
+      font-size: var(--figma-input-value-font-size); // body/2 = 14
+      line-height: var(--figma-input-value-line-height); // 1.11
+      color: var(--figma-input-text);                // input/text/default
+      transition: border-color var(--transition-fast);
+
+      // Foco = solo borde azul 1px (como absences, sin anillo).
+      &:focus {
+        outline: none;
+        border-color: var(--figma-input-border-active);
+      }
+      // El icono de calendario nativo, alineado y tintado.
+      &::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; }
+
+      // Deshabilitado (indefinida) = gris, igual que "Fecha de fin" en ausencias.
+      &:disabled {
+        background: var(--figma-input-surface-disabled);
+        color: var(--figma-input-text-disabled);
+        cursor: not-allowed;
+      }
+    }
+
+    // Label atenuado cuando el campo está deshabilitado.
+    &--disabled .validity-item__label { color: var(--figma-input-text-disabled); }
+  }
+}
+
+// ── Celda "Vigencia" de la tabla de turnos ──────────────────────────────
+// Chip de estado (vigente/caducado/programado/normal) + rango de fechas.
+// Chip de estado = tokens Figma de alert (--figma-alert-*), igual que los
+// badges de restrictions/user-list. Padding/radius/tipografía de chip Figma
+// (--figma-chip-*). Variante dark con --figma-alert-dark-*.
+.validity-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--figma-chip-padding-y) var(--figma-chip-padding-x-sm);
+  border-radius: var(--figma-chip-radius);          // radius/btn 9999
+  font-size: var(--figma-chip-font-size-sm);         // 12px (caption)
+  font-weight: var(--fw-semibold, 600);
+  line-height: var(--figma-chip-line-height-sm);
+  white-space: nowrap;
+
+  &--active {                            // Vigente → success
+    background: var(--figma-alert-success-surface);
+    color: var(--figma-alert-success-text);
+    border: var(--figma-datatable-border-width) solid var(--figma-alert-success-border);
+  }
+  &--expired {                           // Caducado → error
+    background: var(--figma-alert-error-surface);
+    color: var(--figma-alert-error-text);
+    border: var(--figma-datatable-border-width) solid var(--figma-alert-error-border);
+  }
+  &--future {                            // Programado (aún no vigente) → info
+    background: var(--figma-alert-info-surface);
+    color: var(--figma-alert-info-text);
+    border: var(--figma-datatable-border-width) solid var(--figma-alert-info-border);
+  }
+  &--normal {                            // Turno normal → neutro (Surface/subtle)
+    background: var(--figma-datatable-header-bg);
+    color: var(--figma-datatable-header-text);
+    border: var(--figma-datatable-border-width) solid var(--figma-datatable-border);
+  }
+}
+
+// Dark theme del chip de estado (superficie invertida, como Alert dark de Figma).
+:host-context(.dark-theme) .validity-badge {
+  &--active {
+    background: var(--figma-alert-dark-success-surface);
+    color: var(--figma-alert-dark-success-text);
+    border-color: var(--figma-alert-dark-success-border);
+  }
+  &--expired {
+    background: var(--figma-alert-dark-error-surface);
+    color: var(--figma-alert-dark-error-text);
+    border-color: var(--figma-alert-dark-error-border);
+  }
+  &--future {
+    background: var(--figma-alert-dark-info-surface);
+    color: var(--figma-alert-dark-info-text);
+    border-color: var(--figma-alert-dark-info-border);
+  }
+}
+
+.validity-range {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--figma-datatable-header-font-size);  // 12px (caption)
+  color: var(--figma-datatable-header-text);            // Text/secondary
+  white-space: nowrap;
+}
+
+/* Checkbox "Indefinida" del formulario de turnos (vigencia) */
+.shift-indefinite {
+  // Un poco más de aire por debajo del checkbox "Indefinida" antes de la fila
+  // de fechas (se suma al gap del contenedor).
+  margin-bottom: var(--sp-s, 8px);
+}
+
+/* Icono en celda de un campo de tipo `icon` (tabla de registros). Mismo tamaño
+   (20px, --figma-datatable-action-icon-size) para el SVG de sección (<img>) y
+   el icono Material (<mat-icon>). */
+.record-cell-icon {
+  width: var(--figma-datatable-action-icon-size);   // 20px
+  height: var(--figma-datatable-action-icon-size);  // 20px
+  object-fit: contain;
+  vertical-align: middle;
+}
+/* Variante Material: mismo tamaño y color de texto de celda (Text/primary). */
+.record-cell-icon--material {
+  font-size: var(--figma-datatable-action-icon-size);   // 20px
+  line-height: var(--figma-datatable-action-icon-size);
+  color: var(--figma-datatable-cell-text);              // Text/primary
+}

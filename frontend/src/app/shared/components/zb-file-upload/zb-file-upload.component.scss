@@ -1,0 +1,226 @@
+// Accent blue for progress / done state
+:host { --fu-accent: var(--c-blue-500, #0086C9); }
+
+// ── Scrim ────────────────────────────────────────────────────
+.fu-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 16px;
+}
+
+// ── Card ─────────────────────────────────────────────────────
+.fu-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--fondo-card);
+  border-radius: 8px;
+  box-shadow: 0 8px 8px -4px rgba(10,13,18,0.03), 0 20px 24px -4px rgba(10,13,18,0.08);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+// ── Body ─────────────────────────────────────────────────────
+.fu-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fu-title {
+  font-size: var(--fs-16);
+  font-weight: var(--fw-semibold);
+  color: var(--texto-principal);
+  margin: 0 0 4px;
+}
+
+// ── Dropzone ─────────────────────────────────────────────────
+.fu-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  background: var(--fondo-card);
+  outline: 1px solid var(--borde-general);
+  outline-offset: -1px;
+  cursor: pointer;
+  transition: background var(--transition-fast), outline-color var(--transition-fast);
+
+  &:hover { background: var(--c-grey-50); outline-color: var(--fu-accent); }
+  &--dragging { background: var(--c-blue-50, #eff6ff); outline-color: var(--fu-accent); }
+}
+
+.fu-drop-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--c-grey-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  mat-icon { font-size: 24px; width: 24px; height: 24px; color: var(--texto-secundario); }
+}
+
+.fu-drop-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.fu-drop-row {
+  display: flex;
+  gap: 4px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.fu-drop-link    { font-size: var(--fs-14); font-weight: var(--fw-semibold); color: var(--c-blue-700); }
+.fu-drop-secondary,
+.fu-drop-hint    { font-size: var(--fs-14); color: var(--texto-secundario); }
+.fu-input-hidden { display: none; }
+
+// ── File list ────────────────────────────────────────────────
+.fu-file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fu-file-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--fondo-card);
+  outline: 1px solid var(--borde-general);
+  outline-offset: -1px;
+  transition: outline-color var(--transition-fast);
+
+  &--done { outline-color: var(--fu-accent); }
+}
+
+.fu-file-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fu-file-meta { display: flex; flex-direction: column; }
+.fu-file-name { font-size: var(--fs-14); font-weight: var(--fw-semibold); color: var(--texto-principal); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fu-file-size { font-size: var(--fs-14); color: var(--texto-secundario); }
+
+.fu-file-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fu-progress-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 8px;
+  background: var(--c-grey-100);
+  overflow: hidden;
+}
+
+.fu-progress-fill {
+  height: 100%;
+  border-radius: 8px;
+  background: var(--fu-accent);
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.fu-progress-pct {
+  font-size: var(--fs-14);
+  color: var(--texto-principal);
+  min-width: 38px;
+  text-align: right;
+}
+
+.fu-file-action {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.fu-done-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: var(--fu-accent);
+}
+
+.fu-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  margin: -8px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--texto-secundario);
+  transition: background var(--transition-fast);
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+  &:hover { background: var(--c-grey-100); }
+}
+
+// ── Footer ───────────────────────────────────────────────────
+.fu-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-m);
+  // Si los botones no caben en una linea (p.ej. con una accion extra
+  // proyectada en footer-left) bajan de linea en vez de salirse de la tarjeta.
+  flex-wrap: wrap;
+
+  // Los botones nunca se comprimen por debajo de su texto, pero tampoco
+  // fuerzan el ancho de la tarjeta: es el wrap el que resuelve.
+  > * { flex: 0 0 auto; }
+}
+
+// Ranura opcional del footer. Con margin-right:auto empuja los dos botones a la
+// derecha y ella se queda a la izquierda; vacia no ocupa nada, asi que el
+// space-between de siempre sigue funcionando en el resto de pantallas.
+.fu-footer__extra {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-s);
+  margin-right: auto;
+
+  &:empty {
+    display: none;
+    // Sin esto, un :empty con margin-right:auto seguiria empujando.
+    margin-right: 0;
+  }
+}
+
+// ── Dark mode overrides ───────────────────────────────────────
+:host-context(.dark-theme) {
+  .fu-dropzone:hover { background: var(--c-grey-800); }
+  .fu-dropzone--dragging { background: rgba(0, 134, 201, 0.08); }
+  .fu-drop-icon { background: var(--c-grey-700); }
+  .fu-progress-track { background: var(--c-grey-700); }
+  .fu-delete-btn:hover { background: var(--c-grey-700); }
+}

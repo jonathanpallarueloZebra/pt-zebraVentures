@@ -1,0 +1,289 @@
+// ── Root ──────────────────────────────────────────────────────
+.lab-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #0f1117;
+  color: #e4e4e7;
+  font-family: var(--ff-body);
+}
+
+// ── Header ────────────────────────────────────────────────────
+.lab-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 52px;
+  background: #0a0b0f;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.lab-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lab-header__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--p-brand-300);
+  color: var(--p-neutral-900);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-14);
+  border-radius: var(--r-default);
+}
+
+.lab-header__title {
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-14);
+  color: #ffffff;
+  letter-spacing: 0.2px;
+}
+
+.lab-header__version {
+  font-size: var(--fs-12);
+  color: rgba(255,255,255,0.3);
+  font-family: monospace;
+}
+
+.lab-theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-medium);
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--r-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  .material-icons {
+    font-size: 16px;
+  }
+
+  &:hover {
+    color: #ffffff;
+    background: rgba(255,255,255,0.10);
+  }
+}
+
+// ── Canvas ────────────────────────────────────────────────────
+.lab-canvas {
+  flex: 1;
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+// ── Section ───────────────────────────────────────────────────
+.lab-section {
+  background: #16181f;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  &--placeholder {
+    opacity: 0.4;
+    padding: 24px 32px;
+    gap: 0;
+  }
+}
+
+.lab-section__title {
+  font-family: var(--ff-display);
+  font-size: var(--fs-18);
+  font-weight: var(--fw-bold);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  line-height: 1;
+}
+
+.lab-section__desc {
+  font-size: var(--fs-13);
+  color: rgba(255,255,255,0.4);
+  margin: -16px 0 0;
+  line-height: 1.5;
+
+  code {
+    font-family: monospace;
+    font-size: var(--fs-12);
+    background: rgba(255,255,255,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--p-brand-300);
+  }
+}
+
+// ── Group ─────────────────────────────────────────────────────
+.lab-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lab-group__label {
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: rgba(255,255,255,0.3);
+  margin: 0;
+}
+
+// ── Row (outer card) ──────────────────────────────────────────
+.lab-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 32px;
+  padding: 24px;
+  background: var(--surface-base);
+  border-radius: var(--r-default);
+  border: 1px solid rgba(255,255,255,0.04);
+
+  &--on-dark {
+    background: var(--p-neutral-800);
+  }
+
+  // Full-width with no padding — used for components that own their own padding
+  &--flush {
+    padding: 0;
+    overflow: hidden;
+
+    zb-page-header {
+      width: 100%;
+    }
+  }
+}
+
+// ── Col (one sub-group within a row) ──────────────────────────
+.lab-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+// ── Inner row (buttons side by side) ──────────────────────────
+.lab-row-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+
+  &--wrap {
+    flex-wrap: wrap;
+    gap: 10px 12px;
+  }
+}
+
+// ── Sub-label ─────────────────────────────────────────────────
+.lab-sub {
+  font-size: 10px;
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: rgba(0,0,0,0.35);
+  font-family: monospace;
+
+  &--light {
+    color: rgba(255,255,255,0.35);
+  }
+}
+
+// ── Item ──────────────────────────────────────────────────────
+.lab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.lab-item__tag {
+  font-size: 10px;
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: rgba(0,0,0,0.35);
+  font-family: monospace;
+
+  &--light {
+    color: rgba(255,255,255,0.35);
+  }
+}
+
+// ── Dark inline pad (for icon-only on dark demo) ─────────────
+.lab-row-inner--dark-pad {
+  background: var(--p-neutral-800);
+  padding: 10px 12px;
+  border-radius: var(--r-default);
+}
+
+// ── Input column layout ───────────────────────────────────────
+// Stack inputs vertically, max 480px wide to match form UX
+.lab-input-col {
+  flex-direction: column;
+  gap: 20px;
+  max-width: 480px;
+
+  .lab-item {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  zb-input {
+    width: 100%;
+  }
+}
+
+// ── Checkbox / Radio / Toggle column ─────────────────────────
+// Stacks items vertically, each item has the control + tag below
+.lab-ctrl-col {
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── Alert column layout ───────────────────────────────────────
+// Used inside lab-row to stack alerts vertically at full width
+.lab-alert-col {
+  flex-direction: column;
+  gap: 12px;
+
+  zb-alert {
+    width: 100%;
+  }
+}
+
+// ── Badge ─────────────────────────────────────────────────────
+.lab-badge {
+  font-size: var(--fs-11, 0.6875rem);
+  font-weight: var(--fw-medium);
+  text-transform: none;
+  letter-spacing: 0;
+  padding: 2px 8px;
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.35);
+  border-radius: var(--r-full);
+  border: 1px solid rgba(255,255,255,0.08);
+  vertical-align: middle;
+}

@@ -1,0 +1,245 @@
+// ════════════════════════════════════════════════════════════
+// Modal / Dialog — estilos de stylesJPfigma (--figma-modal-*),
+// nodos Figma 2464:44452 (warning) / 2591:2403 (danger) / 2464:44453.
+// ════════════════════════════════════════════════════════════
+
+// ── Scrim / overlay (color modal-overlay + background blur) ───
+.dlg-scrim {
+  position: fixed;
+  inset: 0;
+  background: var(--figma-modal-overlay);
+  backdrop-filter: blur(var(--figma-modal-blur));
+  -webkit-backdrop-filter: blur(var(--figma-modal-blur));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: var(--figma-modal-scrim-padding);
+}
+
+// ── Card ─────────────────────────────────────────────────────
+.dlg-card {
+  width: 100%;
+  max-width: var(--figma-modal-max-width);
+  // Nunca más alto que la ventana: con listas largas (avisos de planificación
+  // con 14 líneas) el diálogo crecía fuera de pantalla y los botones quedaban
+  // inalcanzables. El que hace scroll es el cuerpo, no el diálogo entero, para
+  // que título y botones sigan siempre visibles.
+  max-height: calc(100vh - 2 * var(--sp-l, 24px));
+  background: var(--figma-modal-surface);
+  border-radius: var(--figma-modal-radius);
+  box-shadow: var(--figma-modal-shadow);          // Shadow/xl
+  padding: var(--figma-modal-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--figma-modal-gap);
+}
+
+// ── Body ─────────────────────────────────────────────────────
+.dlg-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--figma-modal-body-gap);
+  min-height: 0;        // sin esto, flex no deja encoger y el scroll no aparece
+  overflow-y: auto;
+}
+
+.dlg-card--centered .dlg-body {
+  align-items: center;
+}
+
+// ── Icon ─────────────────────────────────────────────────────
+.dlg-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--figma-modal-icon-size);
+  height: var(--figma-modal-icon-size);
+}
+
+.dlg-icon {
+  font-size: var(--figma-modal-icon-size);
+  width: var(--figma-modal-icon-size);
+  height: var(--figma-modal-icon-size);
+}
+
+.dlg-icon-wrap--danger  .dlg-icon { color: var(--figma-modal-icon-danger); }
+.dlg-icon-wrap--warning .dlg-icon { color: var(--figma-modal-icon-warning); }
+
+// ── Text ─────────────────────────────────────────────────────
+.dlg-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--figma-modal-text-gap);
+  align-self: stretch;
+}
+
+.dlg-card--centered .dlg-text { text-align: center; }
+
+// ── Listados dentro del mensaje (avisos de planificación) ─────
+// El mensaje se pinta con [innerHTML] y Angular ELIMINA los atributos `style`
+// al sanear, así que el formato tiene que venir de clases de verdad. Centrar
+// una lista la hace ilegible: estos bloques se alinean a la izquierda aunque
+// el diálogo esté centrado.
+.dlg-message ::ng-deep .dlg-group {
+  text-align: left;
+  margin-bottom: var(--sp-m);
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.dlg-message ::ng-deep .dlg-group__title {
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+
+// (.dlg-group__count se retiró: los títulos de bloque ya no llevan el número
+//  entre paréntesis — el recuento total sale en el título del diálogo.)
+
+.dlg-message ::ng-deep .dlg-group__note {
+  font-size: var(--figma-modal-list-label-font-size);
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-xs);
+}
+
+// Fila de dos columnas: etiqueta a la izquierda, valor a la derecha.
+.dlg-message ::ng-deep .dlg-row {
+  display: flex;
+  gap: var(--sp-s);
+  justify-content: space-between;
+  align-items: baseline;
+  padding: var(--figma-modal-list-row-padding-y) 0;
+  font-size: var(--figma-modal-list-font-size);
+  border-bottom: 1px solid var(--border-low);
+
+  &:last-child { border-bottom: none; }
+}
+
+.dlg-message ::ng-deep .dlg-row__key {
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+
+.dlg-message ::ng-deep .dlg-row__val {
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+// Sub-bloque dentro de un grupo: agrupa por CAUSA en vez de repetir la misma
+// etiqueta en cada fila (p.ej. "sin ese turno" cinco veces seguidas).
+.dlg-message ::ng-deep .dlg-sub {
+  margin-top: var(--sp-s);
+
+  &:first-of-type { margin-top: var(--sp-xs); }
+}
+
+.dlg-message ::ng-deep .dlg-sub__title {
+  font-size: var(--figma-modal-list-label-font-size);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dlg-message ::ng-deep .dlg-sub__note {
+  font-size: var(--figma-modal-list-label-font-size);
+  color: var(--text-secondary);
+  margin-bottom: var(--figma-modal-list-item-gap);
+}
+
+// Ficha vertical: cabecera (día · turno · sección) + detalle debajo. Para
+// textos largos que en una fila de dos columnas se partirían en pedazos.
+.dlg-message ::ng-deep .dlg-item {
+  padding: var(--sp-s) 0;
+  border-bottom: 1px solid var(--border-low);
+
+  &:last-child { border-bottom: none; }
+}
+
+.dlg-message ::ng-deep .dlg-item__head {
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+
+.dlg-message ::ng-deep .dlg-item__body {
+  font-size: var(--figma-modal-list-font-size);
+  color: var(--text-secondary);
+  margin-top: var(--figma-modal-list-item-gap);
+}
+
+// Etiqueta de causa junto al nombre de la sección ("sin ese turno" /
+// "sin personal"), para no partir la lista en dos bloques separados.
+.dlg-message ::ng-deep .dlg-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: var(--r-full, 9999px);
+  font-size: var(--figma-modal-list-label-font-size);
+  font-weight: var(--fw-regular);
+  background: var(--surface-subtle);
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+// (La variante --hard se retiró: la causa ya no se etiqueta por fila, se agrupa
+//  en sub-bloques con su propio título — ver .dlg-sub.)
+
+// Línea de motivo: "Ausente: Aznarez, Elcacho". El motivo destaca sobre los
+// nombres para poder escanear la causa sin leerlo todo.
+.dlg-message ::ng-deep .dlg-reason {
+  font-size: var(--figma-modal-list-font-size);
+  color: var(--text-secondary);
+  padding: 2px 0 2px var(--sp-s);
+}
+
+.dlg-message ::ng-deep .dlg-reason__why {
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+
+// Párrafo suelto (explicación de causa, sugerencia).
+.dlg-message ::ng-deep .dlg-note {
+  text-align: left;
+  font-size: var(--figma-modal-list-font-size);
+  color: var(--text-secondary);
+  margin-top: var(--sp-s);
+}
+
+.dlg-message ::ng-deep .dlg-note strong { color: var(--text-primary); }
+
+.dlg-title {                                    // Heading/5
+  font-size: var(--figma-modal-title-font-size);
+  font-weight: var(--fw-semibold);
+  color: var(--figma-modal-title-color);
+  margin: 0;
+  line-height: var(--figma-modal-title-line-height);
+}
+
+.dlg-message {                                  // Body/1
+  font-size: var(--figma-modal-message-font-size);
+  font-weight: var(--fw-regular);
+  color: var(--figma-modal-message-color);
+  margin: 0;
+  line-height: var(--figma-modal-message-line-height);
+}
+
+// ── Footer ───────────────────────────────────────────────────
+.dlg-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: var(--figma-modal-footer-gap);
+  flex-shrink: 0;   // con el cuerpo scrollable, los botones no deben encogerse
+
+  // Cada botón ocupa la mitad del ancho disponible y NUNCA desborda la modal,
+  // sea cual sea el texto (antes con etiquetas largas —"Descartar cambios"—
+  // los botones se salían por los lados). min-width:0 permite que el botón se
+  // encoja por debajo del ancho intrínseco de su texto.
+  ::ng-deep > zb-button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  ::ng-deep > zb-button .btn-inner {
+    width: 100%;
+  }
+}

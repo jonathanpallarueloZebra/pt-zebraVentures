@@ -1,0 +1,194 @@
+// ════════════════════════════════════════════════════════════
+// Vista Ausencias — Figma 2374:15916 (frame) + tabla 2374:17894 +
+// formulario 2377:18654.
+//
+// La TABLA, el TOOLBAR y la PAGINACIÓN usan las clases/componentes del
+// sistema (zb-data-table + zb-table-card, zb-table-toolbar, zb-paginator),
+// igual que entity-records/employees — NO se duplican estilos aquí.
+// Este archivo solo aporta lo específico de Ausencias:
+//   · iconos orden/filtro de las cabeceras (.abs-hcell)
+//   · estado vacío (.abs-empty)
+//   · formulario del sidepanel (.abs-field) con icono de calendario
+// ════════════════════════════════════════════════════════════
+
+// Layout de página: contenedor y fila de acciones son las clases GLOBALES
+// (.page-container / .page-actions en styles.scss), idénticas a /entities/*.
+// Toolbar del sistema con la MISMA clase y valor que entity-records.
+.records-toolbar {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--sp-m);
+}
+
+// Buscador por empleado: mismos valores que .employees-search para que el
+// campo se vea igual en las dos pantallas (alto de la barra y texto a 14px,
+// que el input nativo trae a 16 y cantaba al lado del resto del toolbar).
+.abs-search {
+  ::ng-deep .search-shell { padding: 5px 15px; }
+  ::ng-deep .search-native { font-size: var(--fs-14); }
+}
+
+
+// ── Cabecera con orden + filtro (Figma 2374:17894) ─────────────
+// El <th> lo estiliza .zb-data-table (altura 32, fondo, tipografía Overline).
+// Aquí solo repartimos: label+orden pegados a la izquierda, filtro a la dcha.
+.abs-data-table {
+  // Contenido del <th> a lo ancho para separar label/orden ↔ filtro.
+  .mat-mdc-header-cell { position: relative; }
+
+  .abs-hcell {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--figma-datatable-header-text-gap, 4px);
+  }
+  .abs-hcell__label { white-space: nowrap; }
+
+  .abs-hcell__sort,
+  .abs-hcell__filter {
+    color: var(--figma-datatable-header-icon);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    ::ng-deep svg { width: 100%; height: 100%; display: block; }
+  }
+  .abs-hcell__sort {
+    font-size: var(--figma-datatable-header-sort-icon-size, 16px);
+    width: var(--figma-datatable-header-sort-icon-size, 16px);
+    height: var(--figma-datatable-header-sort-icon-size, 16px);
+  }
+  // El filtro (embudo) alineado al borde derecho de la celda.
+  .abs-hcell__filter {
+    position: absolute;
+    right: var(--figma-datatable-header-padding-r, 8px);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--figma-datatable-header-filter-icon-size, 16px);
+    width: var(--figma-datatable-header-filter-icon-size, 16px);
+    height: var(--figma-datatable-header-filter-icon-size, 16px);
+  }
+
+  // El SemiBold del nombre (1ª columna) lo aporta la base zb-data-table.
+
+  // Reserva sitio para el embudo a la derecha del label.
+  .cdk-column-nombre.mat-mdc-header-cell,
+  .cdk-column-tipo.mat-mdc-header-cell,
+  .cdk-column-duracion.mat-mdc-header-cell { padding-right: 32px; }
+}
+
+// Estado vacío dentro de la card.
+.abs-empty {
+  padding: var(--sp-xl, 32px);
+  text-align: center;
+  font-size: var(--figma-datatable-cell-font-size, 14px);
+  color: var(--figma-datatable-header-text);
+}
+
+// ── Formulario del sidepanel (Figma 2377:18654) ────────────────
+// gap 24px (spacing/L) = mismo espaciado que dynamic-fields (turnos/empleados).
+.abs-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-l, 24px);
+
+  // el select abierto se eleva sobre los inputs nativos de fecha
+  ::ng-deep zb-select { position: relative; z-index: 1; }
+  ::ng-deep zb-select:has(.sel-trigger--open) { z-index: 1000; }
+  ::ng-deep .sel-panel { z-index: 1000; }
+  &:has(.sel-trigger--open) .abs-form__row,
+  &:has(.sel-trigger--open) .abs-field { position: relative; z-index: 0; }
+}
+.abs-form__row {
+  display: flex;
+  gap: var(--sp-m, 16px);
+  flex-wrap: wrap;
+}
+.abs-form__row .abs-field { flex: 1; min-width: 160px; }
+
+// Label + input de fecha/textarea = MISMO patrón que entity-records
+// (.validity-item / .shift-*): tokens --figma-input-*, borde en el propio
+// input (appearance:none evita el doble borde del date nativo), foco azul 1px.
+.abs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;                       // Input/label gap de Figma (= entity-records)
+}
+.abs-field__label {
+  display: block;
+  font-family: var(--ff-display, Inter);
+  font-size: var(--fs-12, 12px);  // fontSize/caption
+  line-height: 1.2;
+  font-weight: var(--fw-semibold, 600);
+  letter-spacing: 0.12px;
+  text-transform: uppercase;
+  color: var(--text-secondary);   // Input/label/default
+}
+.abs-field__req { color: var(--figma-input-border-error); }
+.abs-field__input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--figma-input-padding);           // box/inner/padding/s = 8
+  background: var(--figma-input-surface);
+  border: var(--figma-input-border-width) solid var(--figma-input-border);
+  border-radius: var(--figma-input-radius);       // br-forms = 4
+  box-shadow: var(--figma-input-shadow);          // Shadow/xs
+  font-family: var(--ff-display, Inter);
+  font-size: var(--figma-input-value-font-size);  // body/2 = 14
+  line-height: var(--figma-input-value-line-height); // 1.11
+  color: var(--figma-input-text);
+  transition: border-color var(--transition-fast);
+
+  &:focus { outline: none; border-color: var(--figma-input-border-active); }
+  &::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; }
+  &:disabled { background: var(--figma-input-surface-disabled); color: var(--figma-input-text-disabled); }
+}
+.abs-field__input--area { resize: vertical; }
+
+.abs-hint {
+  margin: 0;
+  font-size: var(--fs-12, 12px);
+  line-height: 1.4;
+  color: var(--figma-input-label-color);
+}
+
+// Resultado de la importacion: aviso + detalle por fila de las que fallaron.
+.abs-import-alert { display: block; margin-bottom: var(--sp-s); }
+
+.abs-import-errores {
+  margin: 0 0 var(--sp-m);
+  padding-left: 20px;
+  // Con un fichero de 260 filas la lista puede ser larga: se acota y hace
+  // scroll en vez de empujar la tabla fuera de la pantalla.
+  max-height: 180px;
+  overflow-y: auto;
+  font-size: var(--fs-14);
+  color: var(--figma-emptystate-title-color, var(--p-alpha-black-600));
+
+  li { margin-bottom: 2px; }
+}
+
+// Revision previa del Excel, dentro del modal de importacion.
+.abs-revision {
+  &:empty { display: none; }
+
+  &__cargando {
+    margin: 0;
+    font-size: var(--fs-14);
+    color: var(--figma-emptystate-title-color, var(--p-alpha-black-600));
+  }
+
+  &__fallos {
+    margin: var(--sp-s) 0 0;
+    padding-left: 20px;
+    // El fichero puede traer muchas filas mal: se acota con scroll para que el
+    // modal no crezca hasta salirse de la pantalla.
+    max-height: 140px;
+    overflow-y: auto;
+    font-size: var(--fs-14);
+    color: var(--figma-emptystate-title-color, var(--p-alpha-black-600));
+
+    li { margin-bottom: 2px; }
+  }
+}

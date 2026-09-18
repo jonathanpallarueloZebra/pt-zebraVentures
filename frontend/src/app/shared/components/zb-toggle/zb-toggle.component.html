@@ -1,0 +1,18 @@
+<label class="tgl-root" [class.tgl-root--disabled]="isDisabled">
+  <span class="tgl-track" [class.tgl-track--on]="checked" [class.tgl-track--disabled]="isDisabled">
+    <input
+      class="tgl-native"
+      type="checkbox"
+      role="switch"
+      [checked]="checked"
+      [disabled]="isDisabled"
+      [attr.aria-checked]="checked"
+      (change)="handleChange($event)"
+      (blur)="handleBlur()"
+    />
+    <span class="tgl-knob"></span>
+  </span>
+  @if (label) {
+    <span class="tgl-label">{{ label }}</span>
+  }
+</label>

@@ -1,0 +1,4492 @@
+// ============================================================
+// FIGMA COMPONENTS — Planificador de turnos
+// Fuente: https://www.figma.com/design/wJ9Hm81QhKUmctgaUEKdE1/Planificador-de-turnos
+//
+// Capa SEMÁNTICA + clases de componente. Los tamaños/tipografía
+// vienen de las primitivas propias de Figma en _figma-primitives.scss
+// (--p-btn-*); los colores referencian directamente la paleta ya
+// existente en cabrero-client/src/styles/_primitives.scss (--p-*),
+// sin duplicarla. Cada variable semántica indica su uso (texto/
+// superficie/borde de cada variante y estado de botón).
+// ============================================================
+
+:root {
+  // ── Botón: talla small (nodo 2434:18087 / 2090:172) ───────────
+  --figma-btn-height-sm:     var(--p-btn-height-small);
+  --figma-btn-padding-sm:    var(--p-btn-padding-small);
+  --figma-btn-font-size-sm:  var(--p-btn-font-size-small);
+
+  // ── Botón: talla medium (nodo 2090:172) ───────────────────────
+  --figma-btn-height-md:     var(--p-btn-height-medium);
+  --figma-btn-padding-md:    var(--p-btn-padding-medium);
+  --figma-btn-font-size-md:  var(--p-btn-font-size-medium);
+
+  // ── Botón: talla big (nodo 2090:172) ──────────────────────────
+  --figma-btn-height-lg:     var(--p-btn-height-big);
+  --figma-btn-padding-lg:    var(--p-btn-padding-big);
+  --figma-btn-font-size-lg:  var(--p-btn-font-size-big);
+
+  // ── Botón: forma y tipografía comunes ──────────────────────────
+  --figma-btn-radius:       var(--p-btn-radius);
+  --figma-btn-gap:          var(--p-btn-spacing-xs);
+  --figma-btn-line-height:  var(--p-btn-line-height-big);
+  --figma-btn-font-family:  var(--p-btn-font-family);
+  --figma-btn-font-weight:  var(--p-btn-font-weight-medium);
+
+  // ── Botón: variante outline (neutra) ───────────────────────────
+  --figma-btn-outline-border:       var(--p-neutral-800);   // Border/highest
+  --figma-btn-outline-text:         var(--p-alpha-black-800); // Button/text/primary
+
+  // ── Botón: variante primary (filled) ──────────────────────────
+  --figma-btn-primary-bg:           var(--p-brand-300);       // Button/surface/primary/default
+  --figma-btn-primary-bg-hover:     var(--p-brand-400);       // Button/surface/primary/hover
+  --figma-btn-primary-bg-active:    var(--p-brand-500);       // Button/surface/primary/active
+  --figma-btn-primary-text:         var(--p-alpha-black-800); // Button/text/on-brand
+
+  // ── Botón: variante secondary (outline + hover tintado) ───────
+  --figma-btn-secondary-bg-hover:   var(--p-accent-alpha-low);  // Button/surface/surface/secondary/hover
+  --figma-btn-secondary-bg-active:  var(--p-accent-alpha-high); // Button/surface/surface/secondary/active
+  --figma-btn-secondary-border:     var(--p-neutral-800);     // Border/highest
+  --figma-btn-secondary-text:       var(--p-alpha-black-800); // Button/text/primary
+
+  // ── Botón: variante danger (filled) ───────────────────────────
+  --figma-btn-danger-bg:            var(--p-red-700); // Button/surface/danger/filled/default
+  --figma-btn-danger-bg-hover:      var(--p-red-800); // Button/surface/danger/filled/hover
+  --figma-btn-danger-bg-active:     var(--p-red-900); // Button/surface/danger/filled/active
+  --figma-btn-danger-text:          var(--p-neutral-50); // Button/text/on-dark
+
+  // ── Botón: variante danger-outlined ────────────────────────────
+  --figma-btn-danger-outlined-border:     var(--p-red-800); // Button/border/danger/outlined
+  --figma-btn-danger-outlined-text:       var(--p-red-800); // Button/text/danger
+  --figma-btn-danger-outlined-bg-hover:   var(--p-red-50);  // Button/surface/danger/outlined/hover
+  --figma-btn-danger-outlined-bg-active:  var(--p-red-100); // Button/surface/danger/outlined/active
+
+  // ── Botón: estado disabled ─────────────────────────────────────
+  --figma-btn-disabled-bg:   var(--p-neutral-100);     // Button/surface/disabled
+  --figma-btn-disabled-text: var(--p-alpha-black-400); // Button/text/disabled
+
+  // ════════════════════════════════════════════════════════════
+  // Botón texto / text link — Nodo Figma: 2088:3639
+  // "Button text & text link" (ABRIR SITIO, small/medium/big,
+  // con y sin fondo tintado). Ver captura: 3 columnas de tamaño,
+  // 2 filas de estado (normal / tintado = hover-active).
+  // ════════════════════════════════════════════════════════════
+
+  // ── Botón texto: talla small ──────────────────────────────────
+  --figma-btn-text-padding-y-sm:      var(--p-btn-text-padding-y-small);
+  --figma-btn-text-font-size-sm:      var(--p-btn-font-size-small);
+  --figma-btn-text-line-height-sm:    var(--p-btn-text-line-height-small);
+  --figma-btn-text-letter-spacing-sm: var(--p-btn-text-letter-spacing-small);
+  --figma-btn-text-icon-size-sm:      var(--p-btn-text-icon-size-small);
+
+  // ── Botón texto: talla medium ──────────────────────────────────
+  --figma-btn-text-padding-y-md:      var(--p-btn-text-padding-y-medium);
+  --figma-btn-text-font-size-md:      var(--p-btn-font-size-medium);
+  --figma-btn-text-line-height-md:    var(--p-btn-text-line-height-medium);
+  --figma-btn-text-letter-spacing-md: var(--p-btn-text-letter-spacing-medium);
+  --figma-btn-text-icon-size-md:      var(--p-btn-text-icon-size-medium);
+
+  // ── Botón texto: talla big ──────────────────────────────────────
+  --figma-btn-text-padding-y-lg:      var(--p-btn-text-padding-y-big);
+  --figma-btn-text-font-size-lg:      var(--p-btn-font-size-big);
+  --figma-btn-text-line-height-lg:    var(--p-btn-text-line-height-big);
+  --figma-btn-text-letter-spacing-lg: var(--p-btn-text-letter-spacing-big);
+  --figma-btn-text-icon-size-lg:      var(--p-btn-text-icon-size-big);
+
+  // ── Botón texto: forma y espaciado comunes ─────────────────────
+  --figma-btn-text-padding-x: var(--p-btn-spacing-s); // spacing/S = 8px, las 3 tallas
+  --figma-btn-text-gap:       var(--p-btn-spacing-s); // gap entre texto e icono = 8px
+  --figma-btn-text-radius:    var(--p-btn-radius);    // radius/btn = 9999px
+
+  // ── Botón texto: color (única variante — "Secondary" en Figma) ─
+  --figma-btn-text-color:        var(--p-blue-light-700); // Text/link
+  --figma-btn-text-bg-tinted:    var(--p-accent-alpha-low); // Accent/alpha/low, estado con fondo
+
+  // ════════════════════════════════════════════════════════════
+  // Table — Action bar / filtros — Nodo Figma: 2378:23347
+  // (Mostrar/Columnas/Filtros + chips de estado + Importar Excel/
+  // Descargar Excel/+ Nuevo). Los 3 botones de la derecha ya se
+  // resuelven con --figma-btn-outline / --figma-btn-primary (talla
+  // small) definidos arriba — solo se añade aquí lo propio de la
+  // barra: el input-dropdown y el chip de filtro.
+  // ════════════════════════════════════════════════════════════
+
+  // ── Table: layout general de la barra ──────────────────────────
+  --figma-table-bar-radius: var(--p-table-bar-radius);
+  --figma-table-bar-gap:    var(--p-table-bar-gap);
+  --figma-table-actions-gap: var(--p-table-actions-gap);
+  --figma-table-config-gap:  var(--p-table-config-gap);
+
+  // ── Table: input-dropdown (Mostrar, Columnas, Filtros) ─────────
+  --figma-table-input-bg:          var(--p-neutral-0);     // Input/surface/default
+  --figma-table-input-border:      var(--p-neutral-300);   // Input/border/default
+  --figma-table-input-text:        var(--p-alpha-black-800); // Input/text/default
+  --figma-table-input-icon:        var(--p-alpha-black-600); // Input/icon/default, Icon/neutral-high
+  --figma-table-input-shadow:      0 1px 2px rgba(10, 13, 18, 0.05); // Shadow/xs
+
+  --figma-table-input-padding-x: var(--p-table-input-padding-x);
+  --figma-table-input-padding-y: var(--p-table-input-padding-y);
+  --figma-table-input-gap:       var(--p-table-input-gap);
+  --figma-table-input-radius:    var(--p-table-input-radius);
+  --figma-table-input-font-size: var(--p-table-input-font-size);
+  --figma-table-input-icon-size: var(--p-table-input-icon-size);
+  --figma-table-input-line-height: var(--p-table-input-line-height);
+
+  // ── Table: label "Mostrar" (texto plano junto al input) ────────
+  --figma-table-label-text:        var(--p-alpha-black-800); // Text/primary
+  --figma-table-label-font-size:   var(--p-table-label-font-size);
+  --figma-table-label-line-height: var(--p-table-label-line-height);
+
+  // ── Table: chip de filtro (Todas/Pendientes/Aprobadas/Rechazadas) ─
+  --figma-table-chip-bg:              var(--p-neutral-0);   // Surface/raised
+  --figma-table-chip-text:            var(--p-alpha-black-800); // Text/primary
+  --figma-table-chip-border-default:  var(--p-neutral-300); // Border/high
+  --figma-table-chip-border-selected: var(--p-blue-light-600); // Border/accent
+
+  --figma-table-chip-height:    var(--p-table-chip-height);
+  --figma-table-chip-padding-x: var(--p-table-chip-padding-x);
+  --figma-table-chip-padding-y: var(--p-table-chip-padding-y);
+  --figma-table-chip-gap:       var(--p-table-chip-gap);
+  --figma-table-chip-radius:    var(--p-table-chip-radius);
+  --figma-table-chip-border-width-default:  var(--p-table-chip-border-width-default);
+  --figma-table-chip-border-width-selected: var(--p-table-chip-border-width-selected);
+
+  // ════════════════════════════════════════════════════════════
+  // Table/Pagination — Nodo Figma: 2120:13001
+  // (← Anterior | 1 2 3 … 8 9 10 | Siguiente →)
+  // ════════════════════════════════════════════════════════════
+
+  --figma-pagination-border:      var(--p-neutral-200); // Border/base
+  --figma-pagination-text:        var(--p-alpha-black-800); // Text/primary (página activa)
+  --figma-pagination-text-muted:  var(--p-alpha-black-600); // Text/secondary (páginas inactivas, "...")
+  --figma-pagination-nav-disabled-icon: var(--p-alpha-black-300); // Icon/disabled (flecha "Anterior", 1ª página)
+  --figma-pagination-nav-disabled-text: var(--p-alpha-black-400); // Button/text/disabled
+  --figma-pagination-active-bg:   var(--p-accent-alpha-low); // Accent/alpha/low, página activa
+
+  --figma-pagination-padding-x: var(--p-pagination-padding-x);
+  --figma-pagination-padding-y: var(--p-pagination-padding-y);
+  --figma-pagination-number-size:   var(--p-pagination-number-size);
+  --figma-pagination-number-radius: var(--p-pagination-number-radius);
+  --figma-pagination-number-gap:    var(--p-pagination-number-gap);
+  --figma-pagination-nav-gap:       var(--p-pagination-nav-gap);
+  --figma-pagination-icon-size:     var(--p-pagination-icon-size);
+  --figma-pagination-font-size:     var(--p-pagination-font-size);
+  --figma-pagination-line-height:   var(--p-pagination-line-height);
+
+  // ════════════════════════════════════════════════════════════
+  // Table/ausencias — tabla de DATOS — Nodo Figma: 2374:17894
+  // Cabecera (label + orden ↓ + filtro embudo) · filas zebra ·
+  // columna ACCIONES (botón icon-only lápiz). Los tamaños vienen de
+  // --p-datatable-* ; los colores referencian la paleta de
+  // _primitives.scss. La barra superior (Mostrar/Columnas) y la
+  // paginación tienen sus propias secciones (Action bar / Pagination).
+  // ════════════════════════════════════════════════════════════
+  --figma-datatable-radius:       var(--p-datatable-radius);
+  --figma-datatable-border-width: var(--p-datatable-border-width);
+  --figma-datatable-bg:      var(--p-neutral-0);   // Surface/raised (contenedor y fila impar)
+  --figma-datatable-border:  var(--p-neutral-100); // Border/low #f1f2f3 (borde exterior + divisores)
+  --figma-datatable-shadow:
+    0 1px 3px rgba(10, 13, 18, 0.1),
+    0 1px 2px rgba(10, 13, 18, 0.06); // Shadow/sm del contenedor
+
+  // Cabecera
+  --figma-datatable-header-height:    var(--p-datatable-header-height);
+  --figma-datatable-header-padding-l: var(--p-datatable-header-padding-l);
+  --figma-datatable-header-padding-r: var(--p-datatable-header-padding-r);
+  --figma-datatable-header-padding-y: var(--p-datatable-header-padding-y);
+  --figma-datatable-header-text-gap:  var(--p-datatable-header-text-gap);
+  --figma-datatable-header-font-size: var(--p-datatable-header-font-size);
+  --figma-datatable-header-line-height:   var(--p-datatable-header-line-height);
+  --figma-datatable-header-letter-spacing: var(--p-datatable-header-letter-spacing);
+  --figma-datatable-header-sort-icon-size:   var(--p-datatable-header-sort-icon-size);
+  --figma-datatable-header-filter-icon-size: var(--p-datatable-header-filter-icon-size);
+  --figma-datatable-header-actions-gap: var(--p-datatable-header-actions-gap);
+  --figma-datatable-header-bg:   var(--p-neutral-50);      // Surface/base #fafafa
+  --figma-datatable-header-text: var(--p-alpha-black-600); // Text/secondary
+  --figma-datatable-header-icon: var(--p-alpha-black-600); // Icon/neutral-high (orden/filtro)
+
+  // Celda de datos
+  --figma-datatable-cell-height:      var(--p-datatable-cell-height);
+  --figma-datatable-cell-padding-x:   var(--p-datatable-cell-padding-x);
+  --figma-datatable-cell-padding-y:   var(--p-datatable-cell-padding-y);
+  --figma-datatable-cell-font-size:   var(--p-datatable-cell-font-size);
+  --figma-datatable-cell-line-height: var(--p-datatable-cell-line-height);
+  --figma-datatable-cell-text:    var(--p-alpha-black-800); // Text/primary
+  --figma-datatable-row-bg-even:  var(--p-neutral-50);      // Surface/base #fafafa (zebra par)
+
+  // Celda ACCIONES + botón icon-only
+  --figma-datatable-actions-padding-y:  var(--p-datatable-actions-padding-y);
+  --figma-datatable-actions-gap:        var(--p-datatable-actions-gap);
+  --figma-datatable-action-btn-padding: var(--p-datatable-action-btn-padding);
+  --figma-datatable-action-btn-radius:  var(--p-datatable-action-btn-radius);
+  --figma-datatable-action-icon-size:   var(--p-datatable-action-icon-size);
+  --figma-datatable-action-icon-color:  var(--p-blue-light-700); // #026aa2 (edit)
+  --figma-datatable-action-btn-bg-hover: var(--p-accent-alpha-low); // hover del icon button
+
+  // Anchos de columna
+  --figma-datatable-col-actions-width: var(--p-datatable-col-actions-width);
+
+  // Paginación embebida (separador superior)
+  --figma-datatable-pagination-border-width: var(--p-datatable-pagination-border-width);
+  --figma-datatable-pagination-border: var(--p-neutral-200); // Border/base #d6d8dc
+
+  // ════════════════════════════════════════════════════════════
+  // Modal / Dialog — Nodos Figma 2464:44452 (warning) / 2591:2403
+  // (danger) / 2464:44453 (overlay). Modal centrada: overlay con blur +
+  // card (icono estado + título Heading/5 + mensaje Body/1 + 2 botones big).
+  // ════════════════════════════════════════════════════════════
+  // Forma / medidas
+  --figma-modal-radius:       var(--p-modal-radius);
+  --figma-modal-padding:      var(--p-modal-padding);
+  --figma-modal-gap:          var(--p-modal-gap);
+  --figma-modal-body-gap:     var(--p-modal-body-gap);
+  --figma-modal-text-gap:     var(--p-modal-text-gap);
+  --figma-modal-footer-gap:   var(--p-modal-footer-gap);
+  --figma-modal-max-width:    var(--p-modal-max-width);
+  --figma-modal-icon-size:    var(--p-modal-icon-size);
+  --figma-modal-scrim-padding: var(--p-modal-scrim-padding);
+  --figma-modal-blur:         var(--p-modal-blur);
+  // Superficie / overlay / sombra
+  --figma-modal-surface:  var(--p-neutral-0);        // Surface/raised #ffffff
+  --figma-modal-overlay:  var(--p-alpha-black-600);  // color/modal-overlay/surface #060f19a8
+  /* Shadow/xl (doble drop shadow) */
+  --figma-modal-shadow:
+    0 8px 8px -4px rgba(10, 13, 18, 0.03),
+    0 20px 24px -4px rgba(10, 13, 18, 0.08);
+  // Tipografía
+  --figma-modal-title-font-size:     var(--p-modal-title-font-size);   // Heading/5 16
+  --figma-modal-title-line-height:   var(--p-modal-title-line-height); // 1.2
+  --figma-modal-title-color:         var(--p-alpha-black-800);         // Text/primary
+  --figma-modal-message-font-size:   var(--p-modal-message-font-size); // Body/1 16
+  --figma-modal-message-line-height: var(--p-modal-message-line-height); // 1.4
+  --figma-modal-message-color:       var(--p-alpha-black-600);         // Text/secondary
+  // Icono de estado por modo
+  // Listados dentro del cuerpo (avisos de planificación). Los colores NO se
+  // fijan aquí: van por --text-primary/--text-secondary/--border-low, que son
+  // los tokens de tema (Text/primary = alpha-black-800 en claro,
+  // alpha-white-100 en oscuro). Cablear el alpha-black rompería el modo oscuro.
+  --figma-modal-list-font-size:       var(--p-modal-list-font-size);       // Body/2 14
+  --figma-modal-list-label-font-size: var(--p-modal-list-label-font-size); // Caption 12
+  --figma-modal-list-row-padding-y:   var(--p-modal-list-row-padding-y);
+  --figma-modal-list-item-gap:        var(--p-modal-list-item-gap);
+
+  --figma-modal-icon-warning: var(--p-orange-700); // Warning/icon #a14f0c
+  --figma-modal-icon-danger:  var(--p-red-700);    // Error/icon #b42318
+
+  // ════════════════════════════════════════════════════════════
+  // PDF planificación — Nodos Figma 2445:23224 (plan) / 2464:42412
+  // (ausencias). Tabla impresa: cabecera Surface/base, celdas blancas,
+  // bordes Border/base, día en TEXTO PLANO (sin círculo).
+  // ════════════════════════════════════════════════════════════
+  // Forma / medidas
+  --figma-pdf-border-width:   var(--p-pdf-border-width);
+  --figma-pdf-radius:         var(--p-pdf-radius);
+  --figma-pdf-cell-padding-x: var(--p-pdf-cell-padding-x);
+  --figma-pdf-cell-padding-y: var(--p-pdf-cell-padding-y);
+  --figma-pdf-header-height:  var(--p-pdf-header-height);
+  --figma-pdf-row-height:     var(--p-pdf-row-height);
+  --figma-pdf-header-font-size: var(--p-pdf-header-font-size);
+  --figma-pdf-cell-font-size:   var(--p-pdf-cell-font-size);
+  --figma-pdf-header-letter-spacing: var(--p-pdf-header-letter-spacing);
+  --figma-pdf-clock-icon-size:  var(--p-pdf-clock-icon-size);
+  --figma-pdf-daynum-gap:       var(--p-pdf-daynum-gap);
+  --figma-pdf-doc-title-font-size: var(--p-pdf-doc-title-font-size);
+  --figma-pdf-doc-range-font-size: var(--p-pdf-doc-range-font-size);
+  --figma-pdf-doc-page-font-size:  var(--p-pdf-doc-page-font-size);
+  --figma-pdf-doc-title-gap:  var(--p-pdf-doc-title-gap);
+  --figma-pdf-doc-padding-b:  var(--p-pdf-doc-padding-b);
+  --figma-pdf-band-padding-x: var(--p-pdf-band-padding-x);
+  --figma-pdf-band-padding-y: var(--p-pdf-band-padding-y);
+  --figma-pdf-section-title-font-size: var(--p-pdf-section-title-font-size);
+  // Colores
+  --figma-pdf-border:       var(--p-neutral-200);     // Border/base #d6d8dc
+  --figma-pdf-header-bg:    var(--p-neutral-50);       // Surface/base #fafafa
+  --figma-pdf-cell-bg:      var(--p-neutral-0);        // Table/cell/surface #ffffff
+  --figma-pdf-band-bg:      var(--p-neutral-100);      // Surface/subtle #f1f2f3
+  --figma-pdf-text-primary:   var(--p-alpha-black-800); // Text/primary
+  --figma-pdf-text-secondary: var(--p-alpha-black-600); // Text/secondary
+  --figma-pdf-clock-icon:   var(--p-alpha-black-600);  // reloj (Icon secundario)
+
+  // ════════════════════════════════════════════════════════════
+  // Alert — Nodo Figma: 2112:2223 (light theme) / 2182:28743 (dark theme)
+  // 4 tipos (Warning/Info/Success/Error) × 2 temas.
+  // Estructura común a los 4 tipos: icono + Título + Descripción +
+  // botón cerrar opcional + link opcional.
+  // ════════════════════════════════════════════════════════════
+
+  // ── Alert: forma y tipografía comunes (independientes del tipo) ─
+  --figma-alert-radius:        var(--p-alert-radius);
+  --figma-alert-padding-outer: var(--p-alert-default-padding-outer);
+  --figma-alert-padding-inner: var(--p-alert-default-padding-inner);
+  --figma-alert-gap-outer:     var(--p-alert-default-gap-outer);
+  --figma-alert-gap-inner:     var(--p-alert-default-gap-inner);
+  --figma-alert-title-font-size:   var(--p-alert-default-title-font-size);
+  --figma-alert-title-line-height: var(--p-alert-default-title-line-height);
+  --figma-alert-desc-font-size:    var(--p-alert-default-desc-font-size);
+  --figma-alert-desc-line-height:  var(--p-alert-default-desc-line-height);
+  --figma-alert-icon-size:       var(--p-alert-icon-size);
+  --figma-alert-close-size:      var(--p-alert-close-size);
+  --figma-alert-close-icon-size: var(--p-alert-close-icon-size);
+  --figma-alert-link-icon-size:  var(--p-alert-link-icon-size);
+  --figma-alert-link-gap:        var(--p-alert-link-gap);
+
+  // ── Alert: tipo Warning (light) ──────────────────────────────────
+  --figma-alert-warning-surface: var(--p-orange-50);  // Warning/surface
+  --figma-alert-warning-border:  var(--p-orange-200); // Warning/border
+  --figma-alert-warning-text:    var(--p-orange-900); // Warning/text
+  --figma-alert-warning-icon:    var(--p-orange-700); // Warning/icon
+
+  // ── Alert: tipo Info (light) ──────────────────────────────────────
+  --figma-alert-info-surface: var(--p-blue-light-50);  // Info/surface
+  --figma-alert-info-border:  var(--p-blue-light-200); // Info/border
+  --figma-alert-info-text:    var(--p-blue-light-900); // Info/text
+  --figma-alert-info-icon:    var(--p-blue-light-700); // Info/icon
+
+  // ── Alert: tipo Success (light) ───────────────────────────────────
+  --figma-alert-success-surface: var(--p-green-50);  // Success/surface
+  --figma-alert-success-border:  var(--p-green-200); // Success/border
+  --figma-alert-success-text:    var(--p-green-900); // Success/text
+  --figma-alert-success-icon:    var(--p-green-700); // Success/icon
+
+  // ── Alert: tipo Error (light) ──────────────────────────────────────
+  --figma-alert-error-surface:    var(--p-red-50);  // Error/surface
+  --figma-alert-error-border:     var(--p-red-200); // Error/border/low
+  --figma-alert-error-text:       var(--p-red-900); // Error/text
+  --figma-alert-error-icon:       var(--p-red-700); // Error/icon
+
+  // ── Alert: dark theme — nodo 2182:28743 (superficie invertida:
+  //    fondo = color fuerte, texto/icono = tinte claro) ─────────────
+  --figma-alert-dark-warning-surface: var(--p-orange-900); // Warning/surface (dark)
+  --figma-alert-dark-warning-border:  var(--p-orange-700); // Warning/border (dark)
+  --figma-alert-dark-warning-text:    var(--p-orange-50);  // Warning/text (dark)
+  --figma-alert-dark-warning-icon:    var(--p-orange-300); // Warning/icon (dark)
+
+  --figma-alert-dark-info-surface: var(--p-blue-light-900); // Info/surface (dark)
+  --figma-alert-dark-info-border:  var(--p-blue-light-700); // Info/border (dark)
+  --figma-alert-dark-info-text:    var(--p-blue-light-50);  // Info/text (dark)
+  --figma-alert-dark-info-icon:    var(--p-blue-light-300); // Info/icon (dark)
+
+  --figma-alert-dark-success-surface: var(--p-green-900); // Success/surface (dark)
+  --figma-alert-dark-success-border:  var(--p-green-700); // Success/border (dark)
+  --figma-alert-dark-success-text:    var(--p-green-50);  // Success/text (dark)
+  --figma-alert-dark-success-icon:    var(--p-green-300); // Success/icon (dark)
+
+  --figma-alert-dark-error-surface: var(--p-red-900); // Error/surface (dark)
+  --figma-alert-dark-error-border:  var(--p-red-700); // Error/border/low (dark)
+  --figma-alert-dark-error-text:    var(--p-red-50);  // Error/text (dark)
+  --figma-alert-dark-error-icon:    var(--p-red-300); // Error/icon (dark)
+
+  // ════════════════════════════════════════════════════════════
+  // Input/text — Nodo Figma: 2112:2447
+  // Estados: filled / placeholder / Active / focused / Error / disabled.
+  // Estructura: Label (arriba) + caja Input (icono opcional a la
+  // derecha) + hint opcional debajo.
+  // ════════════════════════════════════════════════════════════
+
+  // ── Input: forma y tipografía comunes a todos los estados ──────
+  --figma-input-width:      var(--p-input-width);
+  --figma-input-padding:    var(--p-input-padding);
+  --figma-input-gap:        var(--p-input-gap);
+  --figma-input-label-gap:  var(--p-input-label-gap);
+  --figma-input-radius:     var(--p-input-radius);
+  --figma-input-border-width:        var(--p-input-border-width);
+  --figma-input-border-width-active: var(--p-input-border-width-active);
+  --figma-input-icon-size:  var(--p-input-icon-size);
+  --figma-input-shadow:     var(--p-input-shadow);
+  --figma-input-focus-ring: var(--p-input-focus-ring);
+
+  --figma-input-label-font-size:      var(--p-input-label-font-size);
+  --figma-input-label-line-height:    var(--p-input-label-line-height);
+  --figma-input-label-letter-spacing: var(--p-input-label-letter-spacing);
+  --figma-input-value-font-size:      var(--p-input-value-font-size);
+  --figma-input-value-line-height:    var(--p-input-value-line-height);
+  --figma-input-hint-font-size:       var(--p-input-hint-font-size);
+  --figma-input-hint-line-height:     var(--p-input-hint-line-height);
+
+  // ── Input: color por estado ─────────────────────────────────────
+  // default (compartido por filled/placeholder/focused)
+  --figma-input-label-color:   var(--p-alpha-black-600); // Input/label/default
+  --figma-input-surface:       var(--p-neutral-0);       // Input/surface/default
+  --figma-input-border:        var(--p-neutral-300);     // Input/border/default
+  --figma-input-text:          var(--p-alpha-black-800); // Input/text/default
+  --figma-input-placeholder:   var(--p-alpha-black-600); // Input/text/placeholder
+
+  // active/focus (borde azul, 2px en Active / 1px + focus-ring en focused)
+  --figma-input-border-active:  var(--p-blue-light-600); // Input/border/active
+
+  // error
+  --figma-input-label-color-error: var(--p-red-900); // Input/label/error
+  --figma-input-border-error:      var(--p-red-700); // Input/border/error
+  --figma-input-text-error:        var(--p-red-900); // Input/text/error
+
+  // disabled
+  --figma-input-surface-disabled: var(--p-neutral-100);   // Input/surface/disabled
+  --figma-input-text-disabled:    var(--p-alpha-black-400); // Input/text/disabled
+
+  // ════════════════════════════════════════════════════════════
+  // Input/area (textarea) — Nodo Figma: 2394:15821
+  // Comparte toda la semántica de color/tipografía de Input/text
+  // (--figma-input-*); solo añade la altura fija propia y el gap
+  // del estado Error (que aquí usa items-start, no items-center).
+  // ════════════════════════════════════════════════════════════
+  --figma-input-area-height:        var(--p-input-area-height);
+  --figma-input-area-content-min-h: var(--p-input-area-content-min-h);
+  --figma-input-area-error-gap:     var(--p-input-area-error-gap);
+
+  // ════════════════════════════════════════════════════════════
+  // Input/calendar — Nodo Figma: 2112:2406
+  // Comparte toda la semántica de color/tipografía de Input/text
+  // (--figma-input-*, incl. --figma-input-border-error/-active ya
+  // definidos arriba); añade el color de icono por estado, que aquí
+  // SIEMPRE está visible (no solo en error como el icono opcional
+  // de Input/text).
+  // ════════════════════════════════════════════════════════════
+  --figma-input-calendar-width: var(--p-input-calendar-width);
+  --figma-input-calendar-icon-size:      var(--p-input-calendar-icon-size);
+  --figma-input-calendar-help-icon-size: var(--p-input-calendar-help-icon-size);
+
+  --figma-input-calendar-icon-color:          var(--p-alpha-black-600); // Input/icon/default
+  --figma-input-calendar-icon-color-error:    var(--p-red-700);         // Input/icon/error
+  --figma-input-calendar-icon-color-disabled: var(--p-alpha-black-300); // Input/icon/disabled
+
+  // ════════════════════════════════════════════════════════════
+  // Input/dropdown — Nodo Figma: 2112:3686
+  // 2 tallas (default/compact); estados: filled/placeholder/active/
+  // focused/disabled (default) — filled/placeholder/active (compact,
+  // sin focused ni disabled documentados en Figma).
+  // Reutiliza colores de --figma-input-* (border/text/placeholder/
+  // disabled/active/focus-ring/shadow ya definidos arriba).
+  // ════════════════════════════════════════════════════════════
+  --figma-dropdown-width: var(--p-dropdown-width);
+  --figma-dropdown-radius: var(--p-dropdown-radius);
+  --figma-dropdown-label-gap: var(--p-dropdown-label-gap);
+  --figma-dropdown-hint-font-size:   var(--p-dropdown-hint-font-size);
+  --figma-dropdown-hint-line-height: var(--p-dropdown-hint-line-height);
+
+  --figma-dropdown-padding-x-sm: var(--p-dropdown-padding-x-default);
+  --figma-dropdown-padding-y-sm: var(--p-dropdown-padding-y-default);
+  --figma-dropdown-gap-sm:       var(--p-dropdown-gap-default);
+  --figma-dropdown-font-size-sm:   var(--p-dropdown-font-size-default);
+  --figma-dropdown-line-height-sm: var(--p-dropdown-line-height-default);
+  --figma-dropdown-icon-left-size-sm:    var(--p-dropdown-icon-left-size-default);
+  --figma-dropdown-icon-chevron-size-sm: var(--p-dropdown-icon-chevron-size-default);
+  --figma-dropdown-icon-help-size-sm:    var(--p-dropdown-icon-help-size-default);
+
+  --figma-dropdown-padding-x-compact: var(--p-dropdown-padding-x-compact);
+  --figma-dropdown-padding-y-compact: var(--p-dropdown-padding-y-compact);
+  --figma-dropdown-gap-compact:       var(--p-dropdown-gap-compact);
+  --figma-dropdown-font-size-compact:   var(--p-dropdown-font-size-compact);
+  --figma-dropdown-line-height-compact: var(--p-dropdown-line-height-compact);
+  --figma-dropdown-icon-left-size-compact:    var(--p-dropdown-icon-left-size-compact);
+  --figma-dropdown-icon-chevron-size-compact: var(--p-dropdown-icon-chevron-size-compact);
+
+  // Color: icono izquierdo/chevron por estado
+  --figma-dropdown-icon-color:          var(--p-alpha-black-600); // Input/icon/default
+  --figma-dropdown-icon-color-disabled: var(--p-alpha-black-300); // Icon/disabled
+
+  // ════════════════════════════════════════════════════════════
+  // Input/search — Nodo Figma: 2357:10050
+  // Estados: placeholder / filled / Active / focused (sin disabled
+  // documentado en Figma para este componente).
+  // ════════════════════════════════════════════════════════════
+  --figma-search-width:  var(--p-search-width);
+  --figma-search-height: var(--p-search-height);
+  --figma-search-padding: var(--p-search-padding);
+  --figma-search-gap:     var(--p-search-gap);
+  --figma-search-radius:  var(--p-search-radius);
+  --figma-search-icon-size: var(--p-search-icon-size);
+  --figma-search-font-size: var(--p-search-font-size);
+  --figma-search-line-height: var(--p-search-line-height);
+  --figma-search-shadow: var(--p-search-shadow);
+
+  --figma-search-icon-color: var(--p-alpha-black-600); // Input/icon/default
+
+  // ════════════════════════════════════════════════════════════
+  // Input/time — Nodo Figma: 2190:8950
+  // Estados: placeholder / filled / Active / focused (sin disabled
+  // documentado). A diferencia de search, el estado Active NO
+  // conserva el drop-shadow (mismo patrón que dropdown/date).
+  // ════════════════════════════════════════════════════════════
+  --figma-time-width:  var(--p-time-width);
+  --figma-time-height: var(--p-time-height);
+  --figma-time-padding: var(--p-time-padding);
+  --figma-time-gap:     var(--p-time-gap);
+  --figma-time-radius:  var(--p-time-radius);
+  --figma-time-icon-size:        var(--p-time-icon-size);
+  --figma-time-delete-icon-size: var(--p-time-delete-icon-size);
+  --figma-time-font-size:   var(--p-time-font-size);
+  --figma-time-line-height: var(--p-time-line-height);
+  --figma-time-shadow: var(--p-time-shadow);
+
+  --figma-time-icon-color: var(--p-alpha-black-600); // Input/icon/default
+
+  // ════════════════════════════════════════════════════════════
+  // Input/date — Nodo Figma: 2205:8445
+  // Estados: placeholder / filled / Active / focused (sin disabled
+  // documentado). El ancho crece de 158px (placeholder) a 163px en
+  // el resto de estados — ver .figma-date--filled/--active/--focused.
+  // ════════════════════════════════════════════════════════════
+  --figma-date-width-placeholder: var(--p-date-width-placeholder);
+  --figma-date-width-filled:      var(--p-date-width-filled);
+  --figma-date-height:  var(--p-date-height);
+  --figma-date-padding: var(--p-date-padding);
+  --figma-date-gap:     var(--p-date-gap);
+  --figma-date-radius:  var(--p-date-radius);
+  --figma-date-icon-size:        var(--p-date-icon-size);
+  --figma-date-delete-icon-size: var(--p-date-delete-icon-size);
+  --figma-date-font-size:   var(--p-date-font-size);
+  --figma-date-line-height: var(--p-date-line-height);
+  --figma-date-shadow: var(--p-date-shadow);
+  --figma-date-label-font-size:   var(--p-date-label-font-size);
+  --figma-date-label-line-height: var(--p-date-label-line-height);
+  --figma-date-label-gap:         var(--p-date-label-gap);
+
+  --figma-date-icon-color: var(--p-alpha-black-600); // Input/icon/default
+
+  // ════════════════════════════════════════════════════════════
+  // Checkbox — Nodo Figma: 2126:23516
+  // Estados: unchecked/checked × default/focused/disabled.
+  // ════════════════════════════════════════════════════════════
+  --figma-checkbox-size:   var(--p-checkbox-size);
+  --figma-checkbox-radius: var(--p-checkbox-radius);
+  --figma-checkbox-border-width: var(--p-checkbox-border-width);
+  --figma-checkbox-check-icon-size: var(--p-checkbox-check-icon-size);
+  --figma-checkbox-focus-ring: var(--p-control-focus-ring);
+
+  --figma-checkbox-border:          var(--p-neutral-300);     // Input/border/default
+  --figma-checkbox-border-focus:    var(--p-blue-light-600);  // Input/border/active
+  --figma-checkbox-surface:         var(--p-neutral-0);       // Input/surface/default
+  --figma-checkbox-surface-disabled: var(--p-neutral-100);    // Input/surface/disabled
+  --figma-checkbox-checked-bg:       var(--p-blue-light-600); // Input/check/surface/checked
+  --figma-checkbox-checked-bg-focus: var(--p-blue-light-700); // Input/check/surface/checked-hover
+  --figma-checkbox-check-color:      var(--p-neutral-0);      // Input/check/surface/default (icono blanco)
+  --figma-checkbox-check-color-disabled: var(--p-alpha-black-300); // Input/check/checker/disabled
+
+  // ════════════════════════════════════════════════════════════
+  // Radio — Nodo Figma: 2126:23592
+  // Misma paleta que Checkbox (comparten Input/border/surface/
+  // check tokens); solo cambia la forma (círculo, radio 10px) y
+  // el "check" (un punto sólido en vez de un icono SVG).
+  // ════════════════════════════════════════════════════════════
+  --figma-radio-size:   var(--p-radio-size);
+  --figma-radio-radius: var(--p-radio-radius);
+  --figma-radio-border-width: var(--p-radio-border-width);
+  --figma-radio-dot-size: var(--p-radio-dot-size);
+  --figma-radio-focus-ring: var(--p-control-focus-ring);
+
+  --figma-radio-border:           var(--p-neutral-300);     // Input/border/default
+  --figma-radio-border-focus:     var(--p-blue-light-600);  // Input/border/active
+  --figma-radio-surface:          var(--p-neutral-0);       // Input/surface/default
+  --figma-radio-surface-disabled: var(--p-neutral-100);     // Input/surface/disabled
+  --figma-radio-checked-bg:       var(--p-blue-light-600);  // Input/check/surface/checked
+  --figma-radio-checked-bg-focus: var(--p-blue-light-700);  // Input/check/surface/checked-hover
+  --figma-radio-dot-color:           var(--p-neutral-0);       // Input/check/surface/default
+  --figma-radio-dot-color-disabled:  var(--p-alpha-black-300); // Input/check/checker/disabled
+
+  // ════════════════════════════════════════════════════════════
+  // Toggle (switch) — Nodo Figma: 2101:854
+  // 2 tallas (S/M) × checked/unchecked × default/hover/focus/disabled.
+  // ════════════════════════════════════════════════════════════
+  --figma-toggle-track-width-s:  var(--p-toggle-track-width-s);
+  --figma-toggle-track-height-s: var(--p-toggle-track-height-s);
+  --figma-toggle-thumb-size-s:   var(--p-toggle-thumb-size-s);
+
+  --figma-toggle-track-width-m:  var(--p-toggle-track-width-m);
+  --figma-toggle-track-height-m: var(--p-toggle-track-height-m);
+  --figma-toggle-thumb-size-m:   var(--p-toggle-thumb-size-m);
+
+  --figma-toggle-track-padding: var(--p-toggle-track-padding);
+  --figma-toggle-track-radius:  var(--p-toggle-track-radius);
+  --figma-toggle-focus-ring:    var(--p-control-focus-ring);
+
+  --figma-toggle-track-bg-unchecked:       var(--p-neutral-100); // Surface/subtle
+  --figma-toggle-track-bg-unchecked-hover: var(--p-neutral-200); // Surface/sunken
+  --figma-toggle-track-bg-checked:         var(--p-blue-light-600); // Accent/base
+  --figma-toggle-track-bg-checked-hover:   var(--p-blue-light-700); // Accent/high
+  --figma-toggle-track-bg-disabled:        var(--p-neutral-100); // Button/surface/disabled
+
+  // ════════════════════════════════════════════════════════════
+  // *_text — Checkbox_text (2112:5843) / Radius_text (2133:9182) /
+  // Toggle_text (2131:5803). Mismo patrón: control + label a la
+  // derecha, gap 8px, tipografía Body/2-emphasis compartida.
+  // ════════════════════════════════════════════════════════════
+  --figma-control-text-gap:         var(--p-control-text-gap);
+  --figma-control-text-font-size:   var(--p-control-text-font-size);
+  --figma-control-text-line-height: var(--p-control-text-line-height);
+  --figma-control-text-font-weight: var(--p-control-text-font-weight);
+  --figma-control-text-color:       var(--p-alpha-black-800); // Text/primary
+
+  // ════════════════════════════════════════════════════════════
+  // Chip — Nodo Figma: 2373:11617 (genérico, distinto del
+  // .figma-table-chip específico de la barra de tabla). Tallas
+  // --sm/--md × default/selected.
+  // ════════════════════════════════════════════════════════════
+  --figma-chip-height-sm: var(--p-chip-height-s);
+  --figma-chip-height-md: var(--p-chip-height-m);
+  --figma-chip-padding-x-sm: var(--p-chip-padding-x-s);
+  --figma-chip-padding-x-md: var(--p-chip-padding-x-m);
+  --figma-chip-padding-y:    var(--p-chip-padding-y);
+  --figma-chip-gap:          var(--p-chip-gap);
+  --figma-chip-radius:       var(--p-chip-radius);
+  --figma-chip-border-width-default:  var(--p-chip-border-width-default);
+  --figma-chip-border-width-selected: var(--p-chip-border-width-selected);
+  --figma-chip-font-size-sm:   var(--p-chip-font-size-s);
+  --figma-chip-font-size-md:   var(--p-chip-font-size-m);
+  --figma-chip-line-height-sm: var(--p-chip-line-height-s);
+  --figma-chip-line-height-md: var(--p-chip-line-height-m);
+  --figma-chip-notification-size: var(--p-chip-notification-size);
+  --figma-chip-close-icon-size:   var(--p-chip-close-icon-size);
+  --figma-chip-group-gap-x: var(--p-chip-group-gap-x);
+  --figma-chip-group-gap-y: var(--p-chip-group-gap-y);
+
+  --figma-chip-bg:              var(--p-neutral-0);       // Surface/raised
+  --figma-chip-text:            var(--p-alpha-black-800); // Text/primary
+  --figma-chip-border-default:  var(--p-neutral-300);     // Border/high
+  --figma-chip-border-selected: var(--p-blue-light-600);  // Border/accent
+  --figma-chip-notification-bg: var(--p-red-700);         // badge de error (Error/icon aprox.)
+
+  // ════════════════════════════════════════════════════════════
+  // Dropdown_menu — Símbolo Figma: 2133:8854 (panel desplegable
+  // que aloja N _Dropdown_list-item apilados verticalmente)
+  // ════════════════════════════════════════════════════════════
+  --figma-dropdown-menu-radius: var(--p-dropdown-menu-radius);
+  --figma-dropdown-menu-border-width: var(--p-dropdown-menu-border-width);
+  --figma-dropdown-menu-shadow: var(--p-dropdown-menu-shadow);
+  --figma-dropdown-menu-bg:     var(--p-neutral-0);   // Surface/raised
+  --figma-dropdown-menu-border: var(--p-neutral-300); // Input/border/default
+
+  // ════════════════════════════════════════════════════════════
+  // _Dropdown_list-item — Nodo Figma: 2357:10229
+  // Estados: Default/Hover/Selected/Search/"add item"/"add item+tag"/delete
+  // ════════════════════════════════════════════════════════════
+  --figma-list-item-width: var(--p-list-item-width);
+  --figma-list-item-height-default: var(--p-list-item-height-default);
+  --figma-list-item-height-search:  var(--p-list-item-height-search);
+  --figma-list-item-height-add-tag: var(--p-list-item-height-add-tag);
+  --figma-list-item-height-add:     var(--p-list-item-height-add);
+
+  --figma-list-item-padding-x: var(--p-list-item-padding-x);
+  --figma-list-item-padding-y: var(--p-list-item-padding-y);
+  --figma-list-item-padding-compact: var(--p-list-item-padding-compact);
+  --figma-list-item-padding-add-x: var(--p-list-item-padding-add-x);
+  --figma-list-item-padding-add-y: var(--p-list-item-padding-add-y);
+
+  --figma-list-item-font-size:   var(--p-list-item-font-size);
+  --figma-list-item-line-height: var(--p-list-item-line-height);
+  --figma-list-item-font-size-compact:   var(--p-list-item-font-size-compact);
+  --figma-list-item-line-height-compact: var(--p-list-item-line-height-compact);
+
+  --figma-list-item-text:            var(--p-alpha-black-800); // Text/primary, Input/text/default
+  --figma-list-item-bg-hover:        var(--p-accent-alpha-low);  // Accent/alpha/low
+  --figma-list-item-bg-selected:     var(--p-accent-alpha-high); // Accent/alpha/high
+  --figma-list-item-bg-search:       var(--p-neutral-50); // Surface/base
+  --figma-list-item-divider:         var(--p-neutral-100); // Divider/default
+
+  --figma-list-item-search-input-height: var(--p-list-item-search-input-height);
+  --figma-list-item-search-input-radius: var(--p-list-item-search-input-radius);
+  --figma-list-item-search-input-border-width: var(--p-list-item-search-input-border-width);
+  --figma-list-item-search-icon-size: var(--p-list-item-search-icon-size);
+  --figma-list-item-search-input-border: var(--p-blue-light-600); // Input/border/active
+
+  --figma-list-item-add-btn-size:    var(--p-list-item-add-btn-size);
+  --figma-list-item-add-btn-padding: var(--p-list-item-add-btn-padding);
+  --figma-list-item-add-btn-radius:  var(--p-list-item-add-btn-radius);
+  --figma-list-item-add-btn-bg:      var(--p-brand-100); // color/brand/low
+
+  --figma-list-item-badge-radius:         var(--p-list-item-badge-radius);
+  --figma-list-item-badge-font-size:      var(--p-list-item-badge-font-size);
+  --figma-list-item-badge-letter-spacing: var(--p-list-item-badge-letter-spacing);
+  --figma-list-item-badge-padding-x: var(--p-list-item-badge-padding-x);
+  --figma-list-item-badge-padding-y: var(--p-list-item-badge-padding-y);
+  --figma-list-item-badge-bg:   var(--p-indigo-200); // color/indigo/200 (badge "ETT")
+  --figma-list-item-badge-text: rgba(0, 0, 0, 0.88);
+
+  // ════════════════════════════════════════════════════════════
+  // Date picker — Nodo Figma: 2419:23828
+  // 2 variantes: whole-week (2134:11223) y free-range (2419:23827).
+  // ════════════════════════════════════════════════════════════
+  --figma-datepicker-width:  var(--p-datepicker-width);
+  --figma-datepicker-radius: var(--p-datepicker-radius);
+  --figma-datepicker-shadow: var(--p-datepicker-shadow);
+  --figma-datepicker-bg:     var(--p-neutral-0); // Surface/raised
+  --figma-datepicker-divider: var(--p-neutral-100); // Divider/default
+
+  --figma-datepicker-content-padding-x: var(--p-datepicker-content-padding-x);
+  --figma-datepicker-content-padding-y: var(--p-datepicker-content-padding-y);
+  --figma-datepicker-calendar-gap:      var(--p-datepicker-calendar-gap);
+
+  --figma-datepicker-cell-size:   var(--p-datepicker-cell-size);
+  --figma-datepicker-cell-radius: var(--p-datepicker-cell-radius);
+  --figma-datepicker-cell-font-size: 14px; // fontSize/body/2
+
+  --figma-datepicker-input-row-height: var(--p-datepicker-input-row-height);
+  --figma-datepicker-input-row-gap:    var(--p-datepicker-input-row-gap);
+  --figma-datepicker-input-separator-color: var(--p-alpha-black-600); // Text/secondary
+
+  --figma-datepicker-month-font-size:   var(--p-datepicker-month-font-size);
+  --figma-datepicker-month-line-height: var(--p-datepicker-month-line-height);
+  --figma-datepicker-nav-icon-size: var(--p-datepicker-nav-icon-size);
+  --figma-datepicker-nav-btn-padding: var(--p-datepicker-nav-btn-padding);
+
+  --figma-datepicker-footer-padding-x: var(--p-datepicker-footer-padding-x);
+  --figma-datepicker-footer-padding-y: var(--p-datepicker-footer-padding-y);
+  --figma-datepicker-footer-btn-height:  var(--p-datepicker-footer-btn-height);
+  --figma-datepicker-footer-btn-padding: var(--p-datepicker-footer-btn-padding);
+
+  // Color: texto de día
+  --figma-datepicker-day-text:         var(--p-alpha-black-800); // Text/primary
+  --figma-datepicker-day-text-outside: var(--p-alpha-black-600); // Text/secondary (fuera de mes)
+  --figma-datepicker-day-today-border: var(--p-blue-light-600);  // Accent/base
+
+  // Color: whole-week — toda la semana seleccionada en un único
+  // nivel de intensidad (bloque uniforme)
+  --figma-datepicker-week-selected-bg:   var(--p-blue-light-700); // Accent/high
+  --figma-datepicker-week-selected-text: var(--p-alpha-white-100); // Text/inverted
+
+  // Color: free-range — 3 niveles (extremos, intermedios, normal)
+  --figma-datepicker-range-edge-bg:      var(--p-blue-light-700); // Accent/high
+  --figma-datepicker-range-edge-text:    var(--p-blue-light-25);  // Accent/lowest
+  --figma-datepicker-range-middle-bg:    var(--p-blue-light-100); // Accent/low
+  --figma-datepicker-range-middle-text:  var(--p-blue-light-800); // Accent/highest
+
+  // Color: input de fecha (reutiliza Input/text ya definido)
+  --figma-datepicker-input-disabled-bg:   var(--p-neutral-100);     // Input/surface/disabled
+  --figma-datepicker-input-disabled-text: var(--p-alpha-black-400); // Input/text/disabled
+
+  // ════════════════════════════════════════════════════════════
+  // Time picker — Símbolo Figma: 2190:8895 (+ AM/PM selector 2190:8753)
+  // Reutiliza radio/shadow del datepicker (--figma-datepicker-radius,
+  // --figma-datepicker-shadow, --figma-datepicker-bg, --footer-*).
+  // ════════════════════════════════════════════════════════════
+  --figma-timepicker-width: var(--p-timepicker-width);
+  --figma-timepicker-content-padding-x:      var(--p-timepicker-content-padding-x);
+  --figma-timepicker-content-padding-top:    var(--p-timepicker-content-padding-top);
+  --figma-timepicker-content-padding-bottom: var(--p-timepicker-content-padding-bottom);
+  --figma-timepicker-content-gap: var(--p-timepicker-content-gap);
+
+  --figma-timepicker-title-font-size:   var(--p-timepicker-title-font-size);
+  --figma-timepicker-title-line-height: var(--p-timepicker-title-line-height);
+  --figma-timepicker-header-icon-area:  var(--p-timepicker-header-icon-area);
+
+  --figma-timepicker-selection-gap: var(--p-timepicker-selection-gap);
+  --figma-timepicker-grid-gap:      var(--p-timepicker-grid-gap);
+  --figma-timepicker-controls-gap:  var(--p-timepicker-controls-gap);
+  --figma-timepicker-arrow-btn-padding: var(--p-timepicker-arrow-btn-padding);
+  --figma-timepicker-arrow-icon-size:   var(--p-timepicker-arrow-icon-size);
+
+  --figma-timepicker-value-padding: var(--p-timepicker-value-padding);
+  --figma-timepicker-value-radius:  var(--p-timepicker-value-radius);
+  --figma-timepicker-value-font-size:   var(--p-timepicker-value-font-size);
+  --figma-timepicker-value-line-height: var(--p-timepicker-value-line-height);
+
+  --figma-timepicker-label-font-size:      var(--p-timepicker-label-font-size);
+  --figma-timepicker-label-letter-spacing: var(--p-timepicker-label-letter-spacing);
+  --figma-timepicker-separator-font-size:  var(--p-timepicker-separator-font-size);
+
+  --figma-timepicker-title-color: var(--p-alpha-black-800); // Text/primary
+  --figma-timepicker-value-bg:     var(--p-neutral-0);       // Input/surface/default
+  --figma-timepicker-value-border: var(--p-neutral-300);     // Border/high
+  --figma-timepicker-value-text:   var(--p-alpha-black-800); // Text/primary
+  --figma-timepicker-label-color:  var(--p-alpha-black-600); // Text/secondary
+
+  // AM/PM selector
+  --figma-ampm-width-active: var(--p-ampm-width-active);
+  --figma-ampm-height:       var(--p-ampm-height);
+  --figma-ampm-padding-x:    var(--p-ampm-padding-x);
+  --figma-ampm-padding-y:    var(--p-ampm-padding-y);
+  --figma-ampm-radius:       var(--p-ampm-radius);
+  --figma-ampm-border-width-active:   var(--p-ampm-border-width-active);
+  --figma-ampm-border-width-inactive: var(--p-ampm-border-width-inactive);
+  --figma-ampm-font-size:   var(--p-ampm-font-size);
+  --figma-ampm-line-height: var(--p-ampm-line-height);
+  --figma-ampm-shadow:      var(--p-ampm-shadow);
+
+  --figma-ampm-bg:                var(--p-neutral-0);   // Surface/raised
+  --figma-ampm-border-active:     var(--p-blue-light-600); // Border/accent
+  --figma-ampm-text-active:       var(--p-alpha-black-800); // Text/primary
+  --figma-ampm-bg-inactive:       var(--p-neutral-100); // Surface/subtle (embebido en time picker)
+  --figma-ampm-border-inactive:   var(--p-neutral-200); // Border/base
+  --figma-ampm-text-inactive:     var(--p-alpha-black-600); // Text/secondary
+
+  // ════════════════════════════════════════════════════════════
+  // Nav/Tabs — Nodo Figma: 2419:19321 (item: 2419:19331)
+  // Pestañas horizontales: item activo (negrita + subrayado azul)
+  // e inactivo (regular, gris).
+  // ════════════════════════════════════════════════════════════
+  --figma-navtabs-item-height: var(--p-navtabs-item-height);
+  --figma-navtabs-item-padding-y-default: var(--p-navtabs-item-padding-y-default);
+  --figma-navtabs-underline-width: var(--p-navtabs-item-underline-width);
+  --figma-navtabs-font-size:   var(--p-navtabs-font-size);
+  --figma-navtabs-line-height: var(--p-navtabs-line-height);
+
+  --figma-navtabs-text-active:   var(--p-alpha-black-800); // Text/primary
+  --figma-navtabs-text-inactive: var(--p-alpha-black-600); // Text/secondary
+  --figma-navtabs-underline-color: var(--p-blue-light-700); // Accent/high
+
+  // ════════════════════════════════════════════════════════════
+  // Side-panel — Sección Figma: 2134:2818
+  // _Header (2112:2331) + _sidepanel-actions (2112:2332, 3 tipos:
+  // Edit Mode / View Mode / Edit mode + delete). Los botones de
+  // acciones reutilizan --figma-btn-* (talla "big" = --lg) ya
+  // definidos; aquí solo lo propio del layout del panel.
+  // ════════════════════════════════════════════════════════════
+  --figma-sidepanel-width:  var(--p-sidepanel-width);
+  --figma-sidepanel-shadow: var(--p-sidepanel-shadow);
+  --figma-sidepanel-bg:      var(--p-neutral-0);   // Surface/raised, color/neutral/0
+  --figma-sidepanel-divider: var(--p-neutral-100); // Divider/default
+
+  --figma-sidepanel-header-padding-left:   var(--p-sidepanel-header-padding-left);
+  --figma-sidepanel-header-padding-right:  var(--p-sidepanel-header-padding-right);
+  --figma-sidepanel-header-padding-top:    var(--p-sidepanel-header-padding-top);
+  --figma-sidepanel-header-padding-bottom: var(--p-sidepanel-header-padding-bottom);
+  --figma-sidepanel-header-gap: var(--p-sidepanel-header-gap);
+  --figma-sidepanel-header-title-font-size:   var(--p-sidepanel-header-title-font-size);
+  --figma-sidepanel-header-title-line-height: var(--p-sidepanel-header-title-line-height);
+  --figma-sidepanel-header-title-color: var(--p-alpha-black-800); // Text/primary
+  --figma-sidepanel-header-close-padding: var(--p-sidepanel-header-close-padding);
+  --figma-sidepanel-header-close-radius:  var(--p-sidepanel-header-close-radius);
+  --figma-sidepanel-header-close-icon-size: var(--p-sidepanel-header-close-icon-size);
+
+  --figma-sidepanel-actions-padding-x: var(--p-sidepanel-actions-padding-x);
+  --figma-sidepanel-actions-padding-y: var(--p-sidepanel-actions-padding-y);
+  --figma-sidepanel-actions-gap-left:  var(--p-sidepanel-actions-gap-left);
+  --figma-sidepanel-actions-gap-right: var(--p-sidepanel-actions-gap-right);
+  --figma-sidepanel-delete-icon-size: var(--p-sidepanel-delete-icon-size);
+  --figma-sidepanel-edit-icon-size:   var(--p-sidepanel-edit-icon-size);
+
+  // ════════════════════════════════════════════════════════════
+  // Modal — Sección Figma: 2134:15352
+  // 4 tipos: confirmation / destructive-confirmation / save-changes
+  // / upload-file. Los botones del footer reutilizan --figma-btn-*
+  // (talla "big" = --lg, igual que Side-panel).
+  // ════════════════════════════════════════════════════════════
+  --figma-modal-overlay-blur:  var(--p-modal-overlay-blur);
+  --figma-modal-overlay-bg:    var(--p-alpha-black-600); // color/modal-overlay/surface
+  --figma-modal-card-radius:   var(--p-modal-card-radius);
+  --figma-modal-card-padding:  var(--p-modal-card-padding);
+  --figma-modal-card-gap:      var(--p-modal-card-gap);
+  --figma-modal-card-shadow:   var(--p-modal-card-shadow);
+  --figma-modal-card-bg:       var(--p-neutral-0); // Surface/raised
+  --figma-modal-card-width-sm: var(--p-modal-card-width-sm);
+  --figma-modal-card-width-lg: var(--p-modal-card-width-lg);
+
+  --figma-modal-content-gap:       var(--p-modal-content-gap);
+  --figma-modal-content-gap-title: var(--p-modal-content-gap-title);
+
+  --figma-modal-icon-size: var(--p-modal-icon-size);
+  --figma-modal-icon-color-error:   var(--p-red-700);    // Error/icon
+  --figma-modal-icon-color-warning: var(--p-orange-700); // Warning/icon
+
+  --figma-modal-title-font-size:   var(--p-modal-title-font-size);
+  --figma-modal-title-line-height: var(--p-modal-title-line-height);
+  --figma-modal-title-color: var(--p-alpha-black-800); // Text/primary
+  --figma-modal-body-font-size:   var(--p-modal-body-font-size);
+  --figma-modal-body-line-height: var(--p-modal-body-line-height);
+  --figma-modal-body-color: var(--p-alpha-black-600); // Text/secondary
+
+  // Danger button (Eliminar, en destructive-confirmation) —
+  // reutiliza el patrón .figma-btn-danger ya definido para botones
+  // pero con talla "big"; el color de texto aquí es Button/text/on-dark
+  --figma-modal-danger-btn-text: var(--p-neutral-50); // Button/text/on-dark
+
+  // File upload (dropzone)
+  --figma-modal-upload-gap: var(--p-modal-upload-gap);
+  --figma-modal-upload-zone-padding-x: var(--p-modal-upload-zone-padding-x);
+  --figma-modal-upload-zone-padding-y: var(--p-modal-upload-zone-padding-y);
+  --figma-modal-upload-zone-radius: var(--p-modal-upload-zone-radius);
+  --figma-modal-upload-zone-border-width: var(--p-modal-upload-zone-border-width);
+  --figma-modal-upload-zone-content-gap: var(--p-modal-upload-zone-content-gap);
+  --figma-modal-upload-zone-border: var(--p-neutral-100); // Surface/subtle (usado como borde)
+  --figma-modal-upload-zone-bg:     var(--p-neutral-0);   // Surface/raised
+
+  --figma-modal-upload-icon-wrapper-size:   var(--p-modal-upload-icon-wrapper-size);
+  --figma-modal-upload-icon-wrapper-radius: var(--p-modal-upload-icon-wrapper-radius);
+  --figma-modal-upload-icon-size: var(--p-modal-upload-icon-size);
+  --figma-modal-upload-icon-wrapper-bg: var(--p-neutral-50); // Background/color-background-light
+
+  --figma-modal-upload-action-gap: var(--p-modal-upload-action-gap);
+  --figma-modal-upload-text-gap:   var(--p-modal-upload-text-gap);
+  --figma-modal-upload-cta-font-size:  var(--p-modal-upload-cta-font-size);
+  --figma-modal-upload-cta-color:      var(--p-blue-light-700); // Text/link
+  --figma-modal-upload-hint-font-size: var(--p-modal-upload-hint-font-size);
+  --figma-modal-upload-hint-color:     var(--p-alpha-black-600); // Text/secondary
+
+  // File queue
+  --figma-modal-upload-queue-gap: var(--p-modal-upload-queue-gap);
+  --figma-modal-upload-item-padding: var(--p-modal-upload-item-padding);
+  --figma-modal-upload-item-radius:  var(--p-modal-upload-item-radius);
+  --figma-modal-upload-item-border-width: var(--p-modal-upload-item-border-width);
+  --figma-modal-upload-item-gap: var(--p-modal-upload-item-gap);
+  --figma-modal-upload-item-content-gap: var(--p-modal-upload-item-content-gap);
+  --figma-modal-upload-item-text-gap: var(--p-modal-upload-item-text-gap);
+  --figma-modal-upload-item-font-size:   var(--p-modal-upload-item-font-size);
+  --figma-modal-upload-item-line-height: var(--p-modal-upload-item-line-height);
+
+  --figma-modal-upload-item-border:          var(--p-neutral-100);    // Surface/subtle (item en reposo)
+  --figma-modal-upload-item-border-active:   var(--p-blue-light-600); // Accent/base (item en progreso)
+  --figma-modal-upload-item-name-color: var(--p-alpha-black-800); // Text/primary
+  --figma-modal-upload-item-meta-color: var(--p-alpha-black-600); // Text/secondary
+
+  --figma-modal-upload-progress-gap:    var(--p-modal-upload-progress-gap);
+  --figma-modal-upload-progress-height: var(--p-modal-upload-progress-height);
+  --figma-modal-upload-progress-radius: var(--p-modal-upload-progress-radius);
+  --figma-modal-upload-progress-track: var(--p-neutral-50); // Background/color-background-light
+  --figma-modal-upload-progress-fill:  var(--p-blue-light-600); // Accent/base
+  --figma-modal-upload-progress-track-done: var(--p-neutral-100); // Surface/subtle (al 100%)
+
+  --figma-modal-upload-checkbox-size:   var(--p-modal-upload-checkbox-size);
+  --figma-modal-upload-checkbox-radius: var(--p-modal-upload-checkbox-radius);
+  --figma-modal-upload-checkbox-check-icon-size: var(--p-modal-upload-checkbox-check-icon-size);
+  --figma-modal-upload-checkbox-bg: var(--p-blue-light-600); // Accent/base (siempre checked en la cola)
+
+  --figma-modal-upload-delete-btn-size:    var(--p-modal-upload-delete-btn-size);
+  --figma-modal-upload-delete-btn-padding: var(--p-modal-upload-delete-btn-padding);
+  --figma-modal-upload-delete-btn-radius:  var(--p-modal-upload-delete-btn-radius);
+
+  // ════════════════════════════════════════════════════════════
+  // Side-menu — Símbolo Figma: 2085:4677
+  // Sidebar oscuro completo: header (logo+marca) + lista de
+  // navegación + submenú "Configuración" + footer (cuenta/salir +
+  // powered-by) + botón flotante de colapsar.
+  // ════════════════════════════════════════════════════════════
+  --figma-sidemenu-width: var(--p-sidemenu-width);
+  --figma-sidemenu-border-width: var(--p-sidemenu-border-width);
+  --figma-sidemenu-bg:     var(--p-neutral-800); // color/side-menu/surface
+  --figma-sidemenu-border: var(--p-neutral-300); // Border/high
+  --figma-sidemenu-divider: rgba(255, 255, 255, 0.1); // borde interno header/footer (no hay token propio)
+
+  --figma-sidemenu-header-height: var(--p-sidemenu-header-height);
+  --figma-sidemenu-header-padding-x: var(--p-sidemenu-header-padding-x);
+  --figma-sidemenu-header-padding-top: var(--p-sidemenu-header-padding-top);
+  --figma-sidemenu-header-padding-bottom: var(--p-sidemenu-header-padding-bottom);
+  --figma-sidemenu-header-gap: var(--p-sidemenu-header-gap);
+  --figma-sidemenu-header-logo-size: var(--p-sidemenu-header-logo-size);
+  --figma-sidemenu-header-brand-color:   var(--p-alpha-white-50);  // color/alpha/white/50
+  --figma-sidemenu-header-tagline-color: var(--p-alpha-white-300); // color/alpha/white/300
+
+  --figma-sidemenu-list-padding-left:  var(--p-sidemenu-list-padding-left);
+  --figma-sidemenu-list-padding-right: var(--p-sidemenu-list-padding-right);
+  --figma-sidemenu-list-padding-y:     var(--p-sidemenu-list-padding-y);
+  --figma-sidemenu-list-item-gap:      var(--p-sidemenu-list-item-gap);
+
+  --figma-sidemenu-link-radius:  var(--p-sidemenu-link-radius);
+  --figma-sidemenu-link-padding: var(--p-sidemenu-link-padding);
+  --figma-sidemenu-link-gap:     var(--p-sidemenu-link-gap);
+  --figma-sidemenu-link-icon-size: var(--p-sidemenu-link-icon-size);
+  --figma-sidemenu-link-text: var(--p-alpha-white-50); // Text/on-dark/primary
+
+  --figma-sidemenu-toggle-radius:      var(--p-sidemenu-toggle-radius);
+  --figma-sidemenu-toggle-padding-x:   var(--p-sidemenu-toggle-padding-x);
+  --figma-sidemenu-toggle-padding-y:   var(--p-sidemenu-toggle-padding-y);
+  --figma-sidemenu-toggle-gap:         var(--p-sidemenu-toggle-gap);
+  --figma-sidemenu-toggle-chevron-size: var(--p-sidemenu-toggle-chevron-size);
+
+  --figma-sidemenu-submenu-padding-left:   var(--p-sidemenu-submenu-padding-left);
+  --figma-sidemenu-submenu-item-gap:       var(--p-sidemenu-submenu-item-gap);
+  --figma-sidemenu-submenu-link-padding-x: var(--p-sidemenu-submenu-link-padding-x);
+  --figma-sidemenu-submenu-link-padding-y: var(--p-sidemenu-submenu-link-padding-y);
+  --figma-sidemenu-submenu-link-gap:       var(--p-sidemenu-submenu-link-gap);
+  --figma-sidemenu-submenu-text: rgba(248, 250, 252, 0.87); // color usado en el submenú (sin token propio en este nodo)
+
+  --figma-sidemenu-footer-padding-x:        var(--p-sidemenu-footer-padding-x);
+  --figma-sidemenu-footer-padding-bottom:   var(--p-sidemenu-footer-padding-bottom);
+  --figma-sidemenu-footer-padding-top:      var(--p-sidemenu-footer-padding-top);
+  --figma-sidemenu-footer-gap:              var(--p-sidemenu-footer-gap);
+  --figma-sidemenu-footer-item-padding-x:   var(--p-sidemenu-footer-item-padding-x);
+  --figma-sidemenu-footer-item-padding-y:   var(--p-sidemenu-footer-item-padding-y);
+  --figma-sidemenu-footer-item-gap:         var(--p-sidemenu-footer-item-gap);
+  --figma-sidemenu-footer-item-icon-size:   var(--p-sidemenu-footer-item-icon-size);
+  --figma-sidemenu-footer-item-text: var(--p-alpha-white-50); // Text/on-dark/primary
+
+  --figma-sidemenu-poweredby-width:  var(--p-sidemenu-poweredby-width);
+  --figma-sidemenu-poweredby-height: var(--p-sidemenu-poweredby-height);
+  --figma-sidemenu-poweredby-padding-y-bottom: var(--p-sidemenu-poweredby-padding-y-bottom);
+  --figma-sidemenu-poweredby-padding-y-top:    var(--p-sidemenu-poweredby-padding-y-top);
+  --figma-sidemenu-poweredby-opacity: 0.5;
+
+  --figma-sidemenu-collapse-btn-width:  var(--p-sidemenu-collapse-btn-width);
+  --figma-sidemenu-collapse-btn-height: var(--p-sidemenu-collapse-btn-height);
+  --figma-sidemenu-collapse-btn-padding-y: var(--p-sidemenu-collapse-btn-padding-y);
+  --figma-sidemenu-collapse-btn-padding-x: var(--p-sidemenu-collapse-btn-padding-x);
+  --figma-sidemenu-collapse-btn-radius:    var(--p-sidemenu-collapse-btn-radius);
+  --figma-sidemenu-collapse-btn-gap:       var(--p-sidemenu-collapse-btn-gap);
+  --figma-sidemenu-collapse-btn-icon-size: var(--p-sidemenu-collapse-btn-icon-size);
+  --figma-sidemenu-collapse-btn-shadow:    var(--p-sidemenu-collapse-btn-shadow);
+  --figma-sidemenu-collapse-btn-bg:     var(--p-neutral-800);     // color/side-menu/surface #27292e
+  --figma-sidemenu-collapse-btn-border: var(--p-neutral-300);     // Border/high #b3b6bd
+  --figma-sidemenu-collapse-btn-icon:   var(--p-alpha-white-50);  // Icon/on-dark #fafafa
+
+  // ════════════════════════════════════════════════════════════
+  // Empty state — Nodos Figma: 2464:44424 (empleados) ·
+  // 2139:7847 (turnos) · 2139:8257 (tiendas). Ilustración 2138:7849.
+  // OJO: el título va en Text/secondary, no primary.
+  // ════════════════════════════════════════════════════════════
+  --figma-emptystate-padding-y:   var(--p-emptystate-padding-y);
+  --figma-emptystate-gap:         var(--p-emptystate-gap);
+  --figma-emptystate-img-size:    var(--p-emptystate-img-size);
+  --figma-emptystate-title-size:  var(--p-emptystate-title-size);
+  --figma-emptystate-title-line-height: var(--p-emptystate-title-line-height);
+  --figma-emptystate-title-color: var(--p-alpha-black-600); // Text/secondary rgba(6,15,25,.66)
+  --figma-emptystate-desc-size:   var(--p-emptystate-desc-size);
+  --figma-emptystate-desc-line-height: var(--p-emptystate-desc-line-height);
+  --figma-emptystate-desc-color:  var(--p-alpha-black-600); // Text/secondary
+  --figma-emptystate-desc-padding-bottom: var(--p-emptystate-desc-padding-bottom);
+  --figma-emptystate-actions-gap: var(--p-emptystate-actions-gap);
+  --figma-emptystate-actions-padding-y: var(--p-emptystate-actions-padding-y);
+
+  // ════════════════════════════════════════════════════════════
+  // Header (página) — Nodo Figma: 2294:11298
+  // Título + selector de fecha/rango (chip "Hoy" + flechas + input
+  // de rango). El input de fecha reutiliza --figma-input-*.
+  // ════════════════════════════════════════════════════════════
+  --figma-pageheader-title-font-size:   var(--p-pageheader-title-font-size);
+  --figma-pageheader-title-line-height: var(--p-pageheader-title-line-height);
+  --figma-pageheader-title-color: var(--p-alpha-black-800); // Text/primary
+
+  --figma-pageheader-today-chip-radius:    var(--p-pageheader-today-chip-radius);
+  --figma-pageheader-today-chip-padding-x: var(--p-pageheader-today-chip-padding-x);
+  --figma-pageheader-today-chip-padding-y: var(--p-pageheader-today-chip-padding-y);
+  --figma-pageheader-today-chip-font-size: var(--p-pageheader-today-chip-font-size);
+  --figma-pageheader-today-chip-border: var(--p-blue-light-600); // Border/accent (Chip-today azul)
+  --figma-pageheader-today-chip-text:   var(--p-alpha-black-800); // Text/primary
+
+  --figma-pageheader-nav-icon-size: var(--p-pageheader-nav-icon-size);
+  --figma-pageheader-nav-padding:   var(--p-pageheader-nav-padding);
+  --figma-pageheader-nav-icon-color: var(--p-blue-light-700); // Icon/link
+
+  --figma-pageheader-date-input-padding-x: var(--p-pageheader-date-input-padding-x);
+  --figma-pageheader-date-input-padding-y: var(--p-pageheader-date-input-padding-y);
+  --figma-pageheader-date-input-gap:       var(--p-pageheader-date-input-gap);
+  --figma-pageheader-date-input-shadow:    var(--p-pageheader-date-input-shadow);
+  --figma-pageheader-date-input-radius:    var(--p-pageheader-date-input-radius);
+  --figma-pageheader-date-input-icon-size: var(--p-pageheader-date-input-icon-size);
+  --figma-pageheader-date-input-font-size:   var(--p-pageheader-date-input-font-size);
+  --figma-pageheader-date-input-line-height: var(--p-pageheader-date-input-line-height);
+  --figma-pageheader-date-input-icon-color: var(--p-alpha-black-600); // Input/icon/default
+  --figma-pageheader-date-input-bg:     var(--p-neutral-0);   // Input/surface/default
+  --figma-pageheader-date-input-border: var(--p-neutral-300); // Input/border/default
+  --figma-pageheader-date-input-text:   var(--p-alpha-black-800); // Input/text/default
+
+  // ════════════════════════════════════════════════════════════
+  // worker — celdas de horario — Nodo Figma: 2236:3311
+  // Celda de turno (texto de horas) + badge de ocupación (icono +
+  // número), estados: default/hover/Add-active/skeleton-loading/
+  // warning/error, tags: none/ett.
+  // ════════════════════════════════════════════════════════════
+  --figma-worker-cell-radius:   var(--p-worker-cell-radius);
+  --figma-worker-cell-padding-x: var(--p-worker-cell-padding-x);
+  --figma-worker-cell-padding-y: var(--p-worker-cell-padding-y);
+  --figma-worker-cell-font-size:   var(--p-worker-cell-font-size);
+  --figma-worker-cell-line-height: var(--p-worker-cell-line-height);
+  --figma-worker-badge-gap: var(--p-worker-badge-gap);
+  --figma-worker-badge-add-icon-size: var(--p-worker-badge-add-icon-size);
+  --figma-worker-tag-radius: var(--p-worker-tag-radius);
+  --figma-worker-warning-icon-size: var(--p-worker-warning-icon-size);
+
+  --figma-worker-cell-text:         var(--p-alpha-black-800); // Text/primary
+  --figma-worker-cell-text-muted:   var(--p-alpha-black-600); // Text/secondary
+  --figma-worker-cell-text-disabled: var(--p-alpha-black-400); // Text/disabled
+  --figma-worker-cell-icon-disabled: var(--p-alpha-black-300); // Icon/disabled
+  --figma-worker-cell-bg-hover:     var(--p-neutral-200); // Surface/sunken (aprox., hover)
+  --figma-worker-cell-bg-skeleton:  var(--p-neutral-100); // Surface/subtle
+  --figma-worker-cell-add-active-bg: var(--p-brand-50);   // color/yellowZebra/50
+  --figma-worker-cell-add-btn-bg:     var(--p-brand-100); // Brand.../brand/low
+
+  --figma-worker-tag-ett-bg:   var(--p-indigo-100); // color/indigo/100
+  --figma-worker-tag-ett-text: var(--p-alpha-black-700); // Text/on-light/secondary
+
+  --figma-worker-warning-bg:     var(--p-orange-50);  // Warning/surface
+  --figma-worker-warning-border: var(--p-orange-200); // Warning/border
+  --figma-worker-warning-text:   var(--p-orange-900); // Warning/text
+  --figma-worker-warning-icon:   var(--p-orange-700); // Warning/icon
+
+  --figma-worker-error-bg:   var(--p-red-50);  // Error/surface
+  --figma-worker-error-text: var(--p-red-900); // Error/text
+  --figma-worker-error-icon: var(--p-red-700); // Error/icon
+
+  // ════════════════════════════════════════════════════════════
+  // Dropdown de búsqueda de empleados — Nodo Figma: 2483:29781
+  // Instancia de Dropdown_menu con un Input/search arriba (reutiliza
+  // --figma-search-*) y filas "Nombre + botón añadir" (reutiliza
+  // --figma-list-item-* / --figma-list-item-add-btn-*).
+  // ════════════════════════════════════════════════════════════
+  --figma-dropdown-search-row-padding-x: var(--p-dropdown-employee-row-padding-x);
+  --figma-dropdown-search-row-padding-y: var(--p-dropdown-employee-row-padding-y);
+  --figma-dropdown-search-row-font-size: var(--p-dropdown-employee-row-font-size);
+  --figma-dropdown-search-add-btn-size:    var(--p-dropdown-employee-add-btn-size);
+  --figma-dropdown-search-add-btn-padding: var(--p-dropdown-employee-add-btn-padding);
+  --figma-dropdown-search-add-btn-radius:  var(--p-dropdown-employee-add-btn-radius);
+  --figma-dropdown-search-add-btn-bg: var(--p-brand-100); // Brand.../brand/low
+
+  // ════════════════════════════════════════════════════════════
+  // Inicio - Dashboard — Nodo Figma: 2424:18371
+  // Layout de secciones + patrón "Caja" (card blanca con borde,
+  // 3 variantes: fila de planificación, fila de horas-extra,
+  // stat-card número+label).
+  // ════════════════════════════════════════════════════════════
+  --figma-dashboard-section-gap: var(--p-dashboard-section-gap);
+  --figma-dashboard-section-padding-bottom: var(--p-dashboard-section-padding-bottom);
+  --figma-dashboard-column-gap: var(--p-dashboard-column-gap);
+  --figma-dashboard-column-padding-bottom: var(--p-dashboard-column-padding-bottom);
+
+  --figma-dashboard-section-title-gap: var(--p-dashboard-section-title-gap);
+  --figma-dashboard-section-title-padding-y: var(--p-dashboard-section-title-padding-y);
+  --figma-dashboard-section-title-icon-size: var(--p-dashboard-section-title-icon-size);
+  --figma-dashboard-section-title-font-size:   var(--p-dashboard-section-title-font-size);
+  --figma-dashboard-section-title-line-height: var(--p-dashboard-section-title-line-height);
+  --figma-dashboard-section-title-color: var(--p-alpha-black-800); // Text/primary
+
+  --figma-dashboard-card-radius:       var(--p-dashboard-card-radius);
+  --figma-dashboard-card-border-width: var(--p-dashboard-card-border-width);
+  --figma-dashboard-card-padding:      var(--p-dashboard-card-padding);
+  --figma-dashboard-card-gap:          var(--p-dashboard-card-gap);
+  --figma-dashboard-card-bg:     var(--p-neutral-0);   // Surface/raised
+  --figma-dashboard-card-border: var(--p-neutral-200); // Border/base
+
+  --figma-dashboard-row-gap: var(--p-dashboard-row-gap);
+  --figma-dashboard-planrow-gap: var(--p-dashboard-planrow-gap);
+  --figma-dashboard-planrow-icon-size: var(--p-dashboard-planrow-icon-size);
+  --figma-dashboard-planrow-text: var(--p-alpha-black-800); // Text/primary
+
+  --figma-dashboard-hourrow-gap: var(--p-dashboard-hourrow-gap);
+  --figma-dashboard-hourrow-padding-y: var(--p-dashboard-hourrow-padding-y);
+  --figma-dashboard-hourrow-icon-size: var(--p-dashboard-hourrow-icon-size);
+  --figma-dashboard-hourrow-divider: var(--p-neutral-100); // Border/low
+  --figma-dashboard-hourrow-text: var(--p-alpha-black-800); // Text/primary
+
+  --figma-dashboard-card-title-gap: var(--p-dashboard-card-title-gap);
+  --figma-dashboard-card-title-padding-bottom: var(--p-dashboard-card-title-padding-bottom);
+  --figma-dashboard-card-title-font-size:      var(--p-dashboard-card-title-font-size);
+  --figma-dashboard-card-title-line-height:    var(--p-dashboard-card-title-line-height);
+  --figma-dashboard-card-title-letter-spacing: var(--p-dashboard-card-title-letter-spacing);
+  --figma-dashboard-card-title-text:   var(--p-alpha-black-800); // Text/primary
+  --figma-dashboard-card-title-muted:  var(--p-alpha-black-600); // Text/secondary
+
+  --figma-dashboard-stat-width:     var(--p-dashboard-stat-width);
+  --figma-dashboard-stat-width-ett: var(--p-dashboard-stat-width-ett);
+  --figma-dashboard-stat-gap: var(--p-dashboard-stat-gap);
+  --figma-dashboard-stat-number-font-size:   var(--p-dashboard-stat-number-font-size);
+  --figma-dashboard-stat-number-line-height: var(--p-dashboard-stat-number-line-height);
+  --figma-dashboard-stat-number-color: var(--p-alpha-black-800); // Text/primary
+
+  // ── Extensión: stat-card CON icono — implementación real Cabrero
+  // (Panel General: Empleados activos/Turnos hoy/Ausencias pendientes).
+  // Sin mockup 1:1 en Figma; colores de icono aproximados a partir
+  // de la paleta ya existente en el proyecto (tonos "pálido" del
+  // mismo patrón usado en Modal/list-item para iconos con fondo).
+  --figma-dashboard-stat-icon-wrapper-size:   var(--p-dashboard-stat-icon-wrapper-size);
+  --figma-dashboard-stat-icon-wrapper-radius: var(--p-dashboard-stat-icon-wrapper-radius);
+  --figma-dashboard-stat-icon-size: var(--p-dashboard-stat-icon-size);
+
+  --figma-dashboard-stat-icon-bg-brand: var(--p-brand-100);      // amarillo (Empleados activos)
+  --figma-dashboard-stat-icon-color-brand: var(--p-orange-900);  // icono sobre fondo amarillo (aprox.)
+  --figma-dashboard-stat-icon-bg-info:  var(--p-blue-light-100); // azul (Turnos hoy)
+  --figma-dashboard-stat-icon-color-info: var(--p-blue-light-700);
+  --figma-dashboard-stat-icon-bg-warning: var(--p-orange-100);   // naranja (Ausencias pendientes)
+  --figma-dashboard-stat-icon-color-warning: var(--p-orange-700);
+
+  // ── Extensión: calendario mensual grande — implementación real
+  // Cabrero. Reutiliza --figma-datepicker-* (radio/sombra/bg) ya
+  // definidos arriba para el contenedor; añade solo lo propio de
+  // la vista de mes (cabecera de días con fondo, celdas grandes).
+  --figma-monthcalendar-header-padding-y: var(--p-monthcalendar-header-padding-y);
+  --figma-monthcalendar-header-font-size: var(--p-monthcalendar-header-font-size);
+  --figma-monthcalendar-header-bg:   var(--p-neutral-50);  // Surface/base (aprox.)
+  --figma-monthcalendar-header-text: var(--p-alpha-black-600); // Text/secondary
+
+  --figma-monthcalendar-cell-min-height:   var(--p-monthcalendar-cell-min-height);
+  --figma-monthcalendar-cell-padding:      var(--p-monthcalendar-cell-padding);
+  --figma-monthcalendar-cell-border-width: var(--p-monthcalendar-cell-border-width);
+  --figma-monthcalendar-cell-border: var(--p-neutral-100); // Divider/default
+  --figma-monthcalendar-cell-bg-outside: var(--p-neutral-50); // Surface/base (días fuera de mes)
+
+  --figma-monthcalendar-day-number-font-size: var(--p-monthcalendar-day-number-font-size);
+  --figma-monthcalendar-day-number-color:         var(--p-alpha-black-800); // Text/primary
+  --figma-monthcalendar-day-number-color-outside: var(--p-alpha-black-600); // Text/secondary
+
+  --figma-monthcalendar-today-badge-size:   var(--p-monthcalendar-today-badge-size);
+  --figma-monthcalendar-today-badge-radius: var(--p-monthcalendar-today-badge-radius);
+  --figma-monthcalendar-today-badge-bg:   var(--p-brand-300); // Button/surface/primary/default (aprox.)
+  --figma-monthcalendar-today-badge-text: var(--p-alpha-black-800); // Text/primary
+
+  // ── Extensión: leyenda de turnos (círculo de color + etiqueta) —
+  // implementación real Cabrero, sin mockup 1:1 en Figma.
+  --figma-shiftlegend-gap: var(--p-shiftlegend-gap);
+  --figma-shiftlegend-item-gap: var(--p-shiftlegend-item-gap);
+  --figma-shiftlegend-dot-size: var(--p-shiftlegend-dot-size);
+  --figma-shiftlegend-font-size: var(--p-shiftlegend-font-size);
+  --figma-shiftlegend-text: var(--p-alpha-black-600); // Text/secondary
+
+  --figma-shiftlegend-dot-color-1: var(--p-blue-light-600); // "M" Mañana
+  --figma-shiftlegend-dot-color-2: var(--p-blue-light-400); // "S" Sábado Mañana
+  --figma-shiftlegend-dot-color-3: var(--p-purple-100);     // "S" Sábado Tarde (aprox.)
+  --figma-shiftlegend-dot-color-4: var(--p-indigo-200);     // "T" Tarde (aprox.)
+
+  // ════════════════════════════════════════════════════════════
+  // Tabla de planificación — Nodo Figma: 2464:40401
+  // Columnas de sección + filas día×turno + columna Ausencias amarilla.
+  // ════════════════════════════════════════════════════════════
+  --figma-plantable-border-width: var(--p-plantable-border-width);
+  --figma-plantable-border:   var(--p-neutral-200); // Border/base
+  --figma-plantable-header-bg: var(--p-neutral-50); // Surface/base
+  --figma-plantable-text:      var(--p-alpha-black-800); // Text/primary
+  --figma-plantable-text-muted: var(--p-alpha-black-600); // Text/secondary
+
+  // Cabecera de tienda (Hu T01 + badges)
+  --figma-plantable-th-tienda-bg: var(--p-neutral-100); // Surface/subtle
+  --figma-plantable-th-tienda-height:    var(--p-plantable-th-tienda-height);
+  --figma-plantable-th-tienda-padding-x: var(--p-plantable-th-tienda-padding-x);
+  --figma-plantable-th-tienda-gap:       var(--p-plantable-th-tienda-gap);
+  --figma-plantable-th-tienda-font-size: var(--p-plantable-th-tienda-font-size);
+
+  // Cabecera de columna (DÍA / TURNOS / ENCARGADA / CAJA...)
+  --figma-plantable-header-cell-height:    var(--p-plantable-header-cell-height);
+  --figma-plantable-header-cell-padding-y: var(--p-plantable-header-cell-padding-y);
+  --figma-plantable-header-cell-font-size: var(--p-plantable-header-cell-font-size);
+  --figma-plantable-header-cell-letter-spacing: var(--p-plantable-header-cell-letter-spacing);
+
+  // Columna Día + número "hoy"
+  --figma-plantable-day-cell-height:      var(--p-plantable-day-cell-height);
+  --figma-plantable-day-cell-height-tall: var(--p-plantable-day-cell-height-tall);
+  --figma-plantable-day-cell-padding-x:   var(--p-plantable-day-cell-padding-x);
+  --figma-plantable-day-cell-padding-y:   var(--p-plantable-day-cell-padding-y);
+  --figma-plantable-daynum-size:         var(--p-plantable-daynum-size);
+  --figma-plantable-daynum-border-width: var(--p-plantable-daynum-border-width);
+  --figma-plantable-daynum-border-today: var(--p-blue-light-600); // Accent/base
+  --figma-plantable-daynum-font-size:    var(--p-plantable-daynum-font-size);
+  --figma-plantable-dayname-font-size:   var(--p-plantable-dayname-font-size);
+  --figma-plantable-dayname-letter-spacing: var(--p-plantable-dayname-letter-spacing);
+
+  // Celda de datos + workers
+  --figma-plantable-cell-padding: var(--p-plantable-cell-padding);
+  --figma-plantable-cell-gap:     var(--p-plantable-cell-gap);
+
+  --figma-plantable-worker-height:     var(--p-plantable-worker-height);
+  --figma-plantable-worker-min-height: var(--p-plantable-worker-min-height);
+  --figma-plantable-worker-padding-x:  var(--p-plantable-worker-padding-x);
+  --figma-plantable-worker-padding-y:  var(--p-plantable-worker-padding-y);
+  --figma-plantable-worker-gap:        var(--p-plantable-worker-gap);
+  --figma-plantable-worker-radius:     var(--p-plantable-worker-radius);
+  --figma-plantable-worker-bg:         var(--p-brand-50); // color/yellowZebra/50 (celda ausencia/horario amarilla)
+  --figma-plantable-worker-name-font-size: var(--p-plantable-worker-name-font-size);
+  --figma-plantable-worker-qty-font-size:  var(--p-plantable-worker-qty-font-size);
+  --figma-plantable-worker-time-font-size: var(--p-plantable-worker-time-font-size);
+
+  // Chip de horario modo edición (borde punteado amarillo)
+  --figma-plantable-chip-height:       var(--p-plantable-chip-height);
+  --figma-plantable-chip-padding-x:    var(--p-plantable-chip-padding-x);
+  --figma-plantable-chip-padding-y:    var(--p-plantable-chip-padding-y);
+  --figma-plantable-chip-gap:          var(--p-plantable-chip-gap);
+  --figma-plantable-chip-inner-gap:    var(--p-plantable-chip-inner-gap);
+  --figma-plantable-chip-radius:       var(--p-plantable-chip-radius);
+  --figma-plantable-chip-border-width: var(--p-plantable-chip-border-width);
+  --figma-plantable-chip-font-size:    var(--p-plantable-chip-font-size);
+  --figma-plantable-chip-border:       var(--p-brand-100); // brand/low #fef1cc (borde punteado)
+
+  // Cajita de NOMBRE en modo edición (Figma 2497:35588): fondo indigo-100,
+  // texto negro normal. La variante "moviéndose"/asignado.
+  --figma-plantable-name-bg:      var(--p-indigo-100); // color/indigo/100 #e0eaff
+  --figma-plantable-name-text:    var(--p-alpha-black-800); // Text/primary
+  --figma-plantable-name-font-size: var(--p-plantable-name-font-size);
+  // Cajita de nombre con WARNING (Figma "Marina Pérez"): fondo/borde ámbar.
+  --figma-plantable-name-warning-bg:     var(--p-orange-50);  // Warning/surface
+  --figma-plantable-name-warning-border: var(--p-orange-200); // Warning/border
+  --figma-plantable-name-warning-text:   var(--p-orange-900); // Warning/text
+  --figma-plantable-name-warning-icon:   var(--p-orange-700); // Warning/icon
+
+  // Cajita de nombre con ERROR (Figma "Minerva Paños" rojo, punto 6 severidad error)
+  --figma-plantable-name-error-bg:     var(--p-red-50);  // Error/surface
+  --figma-plantable-name-error-border: var(--p-red-200); // Error/border/low
+  --figma-plantable-name-error-text:   var(--p-red-900); // Error/text
+  --figma-plantable-name-error-icon:   var(--p-red-700); // Error/icon
+
+  // Columna Ausencias (cabecera y celdas amarillas)
+  --figma-plantable-ausencias-bg: var(--p-brand-50); // color/yellowZebra/50
+
+  // Badges error/warning en cabecera de tienda
+  --figma-plantable-badge-radius:  var(--p-plantable-badge-radius);
+  --figma-plantable-badge-padding: var(--p-plantable-badge-padding);
+  --figma-plantable-badge-gap:     var(--p-plantable-badge-gap);
+  --figma-plantable-badge-icon-size: var(--p-plantable-badge-icon-size);
+  --figma-plantable-badge-font-size: var(--p-plantable-badge-font-size);
+  --figma-plantable-badge-error-bg:     var(--p-red-50);    // Error/surface
+  --figma-plantable-badge-error-border: var(--p-red-200);   // Error/border/low
+  --figma-plantable-badge-error-text:   var(--p-red-900);   // Error/text
+  --figma-plantable-badge-error-icon:   var(--p-red-700);   // Error/icon
+  --figma-plantable-badge-warning-bg:     var(--p-orange-50);  // Warning/surface
+  --figma-plantable-badge-warning-border: var(--p-orange-200); // Warning/border
+  --figma-plantable-badge-warning-text:   var(--p-orange-900); // Warning/text
+  --figma-plantable-badge-warning-icon:   var(--p-orange-700); // Warning/icon
+
+  // Anchos de columna
+  --figma-plantable-col-dia:      var(--p-plantable-col-dia);
+  --figma-plantable-col-turnos:   var(--p-plantable-col-turnos);
+  --figma-plantable-col-ausencias: var(--p-plantable-col-ausencias);
+  --figma-plantable-col-section:        var(--p-plantable-col-section);
+  --figma-plantable-col-section-wide:   var(--p-plantable-col-section-wide);
+  --figma-plantable-col-section-narrow: var(--p-plantable-col-section-narrow);
+}
+
+// ============================================================
+// Clases de botón — construidas únicamente con las variables
+// SEMÁNTICAS --figma-btn-* de arriba (ningún valor hardcodeado).
+// ============================================================
+
+// Propiedades comunes a todas las variantes, talla small.
+%figma-btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--figma-btn-gap);
+  height: var(--figma-btn-height-sm);
+  padding: var(--figma-btn-gap) var(--figma-btn-padding-sm);
+  border-radius: var(--figma-btn-radius);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+
+  font-family: var(--figma-btn-font-family);
+  font-weight: var(--figma-btn-font-weight);
+  font-size: var(--figma-btn-font-size-sm);
+  line-height: var(--figma-btn-line-height);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+// Icono interno (16px, como en Figma) + spinner de estado [loading],
+// reutilizables por cualquier variante .figma-btn-*.
+.figma-btn-outline__icon,
+.figma-btn-primary__icon,
+.figma-btn-secondary__icon,
+.figma-btn-danger__icon,
+.figma-btn-danger-outlined__icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 1;
+}
+
+.figma-btn-outline,
+.figma-btn-primary,
+.figma-btn-secondary,
+.figma-btn-danger,
+.figma-btn-danger-outlined {
+  .btn-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 9999px;
+    animation: figma-btn-spin 0.65s linear infinite;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes figma-btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+// Outline neutro (p.ej. Generar, Descargar PDF, Cancelar)
+.figma-btn-outline {
+  @extend %figma-btn-base;
+  border-color: var(--figma-btn-outline-border);
+  color: var(--figma-btn-outline-text);
+}
+
+// Filled primario (p.ej. Editar, Guardar, ReGenerar)
+.figma-btn-primary {
+  @extend %figma-btn-base;
+  background: var(--figma-btn-primary-bg);
+  color: var(--figma-btn-primary-text);
+
+  &:hover  { background: var(--figma-btn-primary-bg-hover); }
+  &:active { background: var(--figma-btn-primary-bg-active); }
+}
+
+// Secondary (outline con hover/active tintado de acento)
+.figma-btn-secondary {
+  @extend %figma-btn-base;
+  border-color: var(--figma-btn-secondary-border);
+  color: var(--figma-btn-secondary-text);
+
+  &:hover  { background: var(--figma-btn-secondary-bg-hover); }
+  &:active { background: var(--figma-btn-secondary-bg-active); }
+}
+
+// Danger filled
+.figma-btn-danger {
+  @extend %figma-btn-base;
+  background: var(--figma-btn-danger-bg);
+  color: var(--figma-btn-danger-text);
+
+  &:hover  { background: var(--figma-btn-danger-bg-hover); }
+  &:active { background: var(--figma-btn-danger-bg-active); }
+}
+
+// Danger outlined (p.ej. Borrar)
+.figma-btn-danger-outlined {
+  @extend %figma-btn-base;
+  border-color: var(--figma-btn-danger-outlined-border);
+  color: var(--figma-btn-danger-outlined-text);
+
+  &:hover  { background: var(--figma-btn-danger-outlined-bg-hover); }
+  &:active { background: var(--figma-btn-danger-outlined-bg-active); }
+}
+
+// Disabled (aplicable sobre cualquier variante)
+.figma-btn-outline[disabled],
+.figma-btn-primary[disabled],
+.figma-btn-secondary[disabled],
+.figma-btn-danger[disabled],
+.figma-btn-danger-outlined[disabled] {
+  background: var(--figma-btn-disabled-bg);
+  color: var(--figma-btn-disabled-text);
+  border-color: transparent;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+// Modificador de talla "big" (40px/28px/16px) — usado por los
+// botones del Side-panel (nodo 2134:2818). Se añade junto a
+// cualquiera de las clases .figma-btn-* de arriba.
+.figma-btn-outline.figma-btn--lg,
+.figma-btn-primary.figma-btn--lg,
+.figma-btn-danger.figma-btn--lg,
+.figma-btn-danger-outlined.figma-btn--lg {
+  height: var(--figma-btn-height-lg);
+  padding: var(--figma-btn-gap) var(--figma-btn-padding-lg);
+  font-size: var(--figma-btn-font-size-lg);
+  gap: var(--figma-btn-gap);
+}
+
+// ============================================================
+// Botón texto / text link — Nodo Figma: 2088:3639
+// (ABRIR SITIO — sin fondo ni borde, solo texto + icono)
+// Construidas únicamente con las variables --figma-btn-text-*
+// de arriba. Cada talla es una clase de modificador (--sm/--md/--lg)
+// aplicada junto con la base .figma-btn-text.
+// ============================================================
+
+.figma-btn-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--figma-btn-text-gap);
+  padding: 0 var(--figma-btn-text-padding-x);
+  border-radius: var(--figma-btn-text-radius);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  font-family: var(--figma-btn-font-family);
+  font-weight: var(--figma-btn-font-weight);
+  color: var(--figma-btn-text-color);
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  // Icono (Masked Icon / Style=Outlined en Figma)
+  svg, img, .figma-btn-text__icon {
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+
+  // Talla small (nodo 2088:3647 / 2088:3651)
+  &--sm {
+    padding-top: var(--figma-btn-text-padding-y-sm);
+    padding-bottom: var(--figma-btn-text-padding-y-sm);
+    font-size: var(--figma-btn-text-font-size-sm);
+    line-height: var(--figma-btn-text-line-height-sm);
+    letter-spacing: var(--figma-btn-text-letter-spacing-sm);
+
+    .figma-btn-text__icon { width: var(--figma-btn-text-icon-size-sm); height: var(--figma-btn-text-icon-size-sm); }
+  }
+
+  // Talla medium (nodo 2088:3648 / 2088:3652)
+  &--md {
+    padding-top: var(--figma-btn-text-padding-y-md);
+    padding-bottom: var(--figma-btn-text-padding-y-md);
+    font-size: var(--figma-btn-text-font-size-md);
+    line-height: var(--figma-btn-text-line-height-md);
+    letter-spacing: var(--figma-btn-text-letter-spacing-md);
+
+    .figma-btn-text__icon { width: var(--figma-btn-text-icon-size-md); height: var(--figma-btn-text-icon-size-md); }
+  }
+
+  // Talla big (nodo 2088:3649 / 2088:3653)
+  &--lg {
+    padding-top: var(--figma-btn-text-padding-y-lg);
+    padding-bottom: var(--figma-btn-text-padding-y-lg);
+    font-size: var(--figma-btn-text-font-size-lg);
+    line-height: var(--figma-btn-text-line-height-lg);
+    letter-spacing: var(--figma-btn-text-letter-spacing-lg);
+
+    .figma-btn-text__icon { width: var(--figma-btn-text-icon-size-lg); height: var(--figma-btn-text-icon-size-lg); }
+  }
+
+  // Estado con fondo tintado (nodos 2088:3651/3652/3653 — hover/active)
+  &--tinted {
+    background: var(--figma-btn-text-bg-tinted);
+  }
+}
+
+// ============================================================
+// Table — Action bar / filtros — Nodo Figma: 2378:23347
+// (Mostrar/Columnas/Filtros + chips de estado + acciones derecha)
+// Construidas únicamente con las variables --figma-table-* de
+// arriba. Los botones de la derecha (Importar Excel/Descargar
+// Excel/+ Nuevo) reutilizan .figma-btn-outline / .figma-btn-primary
+// ya definidos más arriba — no se repiten aquí.
+// ============================================================
+
+// Contenedor de la barra completa (fila "Action_bar" o "filters")
+.figma-table-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--figma-table-bar-gap);
+  width: 100%;
+  border-radius: var(--figma-table-bar-radius);
+}
+
+// Grupo de controles a la izquierda (Mostrar/Columnas/Filtros/chips)
+.figma-table-bar__config {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-table-config-gap);
+  flex: 1 0 0;
+}
+
+// Grupo de botones a la derecha (Importar/Descargar Excel/+ Nuevo)
+.figma-table-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-table-actions-gap);
+}
+
+// Texto "Mostrar" junto al input numérico
+.figma-table-label {
+  font-family: var(--figma-btn-font-family);
+  font-size: var(--figma-table-label-font-size);
+  line-height: var(--figma-table-label-line-height);
+  color: var(--figma-table-label-text);
+}
+
+// Input-dropdown: Mostrar [100], Columnas, Filtros (Todas ▾)
+.figma-table-input {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--figma-table-input-gap);
+  padding: var(--figma-table-input-padding-y) var(--figma-table-input-padding-x);
+  background: var(--figma-table-input-bg);
+  border: 1px solid var(--figma-table-input-border);
+  border-radius: var(--figma-table-input-radius);
+  box-shadow: var(--figma-table-input-shadow);
+  cursor: pointer;
+
+  font-family: var(--figma-btn-font-family);
+  font-size: var(--figma-table-input-font-size);
+  line-height: var(--figma-table-input-line-height);
+  color: var(--figma-table-input-text);
+  white-space: nowrap;
+
+  // Iconos (settings, expand_more, filter_list)
+  .figma-table-input__icon {
+    width: var(--figma-table-input-icon-size);
+    height: var(--figma-table-input-icon-size);
+    color: var(--figma-table-input-icon);
+    flex-shrink: 0;
+  }
+}
+
+// Grupo de chips de estado (Todas/Pendientes/Aprobadas/Rechazadas)
+.figma-table-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--figma-table-chip-gap);
+}
+
+// Chip individual de filtro
+.figma-table-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--figma-table-chip-gap);
+  height: var(--figma-table-chip-height);
+  padding: var(--figma-table-chip-padding-y) var(--figma-table-chip-padding-x);
+  border-radius: var(--figma-table-chip-radius);
+  border: var(--figma-table-chip-border-width-default) solid var(--figma-table-chip-border-default);
+  background: var(--figma-table-chip-bg);
+  cursor: pointer;
+
+  font-family: var(--figma-btn-font-family);
+  font-size: var(--figma-table-input-font-size);
+  line-height: var(--figma-table-input-line-height);
+  color: var(--figma-table-chip-text);
+  white-space: nowrap;
+
+  // Chip activo (p.ej. "Todas" seleccionada — borde acento más grueso)
+  &--selected {
+    border-width: var(--figma-table-chip-border-width-selected);
+    border-color: var(--figma-table-chip-border-selected);
+  }
+}
+
+// ============================================================
+// Table/Pagination — Nodo Figma: 2120:13001
+// (← Anterior | 1 2 3 … 8 9 10 | Siguiente →)
+// Construidas únicamente con las variables --figma-pagination-*
+// de arriba.
+// ============================================================
+
+.figma-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--figma-pagination-padding-y) var(--figma-pagination-padding-x);
+  border-top: 1px solid var(--figma-pagination-border);
+
+  font-family: var(--figma-btn-font-family);
+  font-size: var(--figma-pagination-font-size);
+  line-height: var(--figma-pagination-line-height);
+}
+
+// Botón "Anterior" / "Siguiente" (icono + texto)
+.figma-pagination__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--figma-pagination-nav-gap);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--figma-pagination-text);
+
+  .figma-pagination__icon {
+    width: var(--figma-pagination-icon-size);
+    height: var(--figma-pagination-icon-size);
+    flex-shrink: 0;
+  }
+
+  // Estado deshabilitado (p.ej. "Anterior" en la primera página)
+  &[disabled] {
+    color: var(--figma-pagination-nav-disabled-text);
+    cursor: not-allowed;
+    pointer-events: none;
+
+    .figma-pagination__icon { color: var(--figma-pagination-nav-disabled-icon); }
+  }
+}
+
+// Contenedor de los números de página
+.figma-pagination__numbers {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-pagination-number-gap);
+}
+
+// Número de página individual (o "...")
+.figma-pagination__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--figma-pagination-number-size);
+  height: var(--figma-pagination-number-size);
+  border-radius: var(--figma-pagination-number-radius);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--figma-pagination-text-muted);
+  font-weight: var(--figma-btn-font-weight);
+
+  // Página activa (p.ej. "1" seleccionada)
+  &--active {
+    background: var(--figma-pagination-active-bg);
+    color: var(--figma-pagination-text);
+  }
+}
+
+// ============================================================
+// Alert — Nodo Figma: 2112:2223 (light) / 2182:28743 (dark)
+// (Warning/Info/Success/Error, con icono + Título + Descripción +
+// botón cerrar opcional + link opcional). Construidas únicamente
+// con las variables --figma-alert-* de arriba.
+// ============================================================
+
+.figma-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--figma-alert-gap-outer);
+  padding: var(--figma-alert-padding-outer);
+  border: 1px solid transparent;
+  border-radius: var(--figma-alert-radius);
+
+  font-family: var(--figma-btn-font-family);
+
+  // Bloque icono + título/descripción (padding-right propio, separado
+  // del botón cerrar)
+  &__content {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--figma-alert-gap-inner);
+    padding-right: var(--figma-alert-padding-inner);
+    flex: 1;
+  }
+
+  &__icon {
+    width: var(--figma-alert-icon-size);
+    height: var(--figma-alert-icon-size);
+    flex-shrink: 0;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-weight: var(--figma-btn-font-weight);
+    font-size: var(--figma-alert-title-font-size);
+    line-height: var(--figma-alert-title-line-height);
+  }
+
+  &__description {
+    font-weight: 400;
+    font-size: var(--figma-alert-desc-font-size);
+    line-height: var(--figma-alert-desc-line-height);
+  }
+
+  // Link opcional dentro de la descripción (subrayado + icono)
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--figma-alert-link-gap);
+    text-decoration: underline;
+    font-size: var(--figma-alert-desc-font-size);
+    line-height: var(--figma-alert-desc-line-height);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+
+    .figma-alert__link-icon {
+      width: var(--figma-alert-link-icon-size);
+      height: var(--figma-alert-link-icon-size);
+    }
+  }
+
+  // Botón cerrar (X)
+  &__close {
+    width: var(--figma-alert-close-size);
+    height: var(--figma-alert-close-size);
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+
+    svg, img { width: var(--figma-alert-close-icon-size); height: var(--figma-alert-close-icon-size); }
+  }
+
+  // ── Variantes de tipo (light theme, por defecto) ────────────────
+  &--warning {
+    background: var(--figma-alert-warning-surface);
+    border-color: var(--figma-alert-warning-border);
+    color: var(--figma-alert-warning-text);
+    .figma-alert__icon { color: var(--figma-alert-warning-icon); }
+  }
+
+  &--info {
+    background: var(--figma-alert-info-surface);
+    border-color: var(--figma-alert-info-border);
+    color: var(--figma-alert-info-text);
+    .figma-alert__icon { color: var(--figma-alert-info-icon); }
+  }
+
+  &--success {
+    background: var(--figma-alert-success-surface);
+    border-color: var(--figma-alert-success-border);
+    color: var(--figma-alert-success-text);
+    .figma-alert__icon { color: var(--figma-alert-success-icon); }
+  }
+
+  &--error {
+    background: var(--figma-alert-error-surface);
+    border-color: var(--figma-alert-error-border);
+    color: var(--figma-alert-error-text);
+    .figma-alert__icon { color: var(--figma-alert-error-icon); }
+  }
+
+  // ── Variante COMPACTA (spacing=compact, nodo 2443:23460) ────────
+  // Alert de una sola línea: solo icono + título (sin descripción ni
+  // botón cerrar). Padding 8px horizontal / 4px vertical, todo centrado.
+  // Se usa p.ej. para "Hay N vacantes por cubrir" del modo edición.
+  &--compact {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--p-alert-default-padding-outer) var(--p-alert-default-padding-inner); // 4px 8px... se ajusta abajo
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    gap: 4px; // box/inner/gap/s
+
+    .figma-alert__content { align-items: center; padding-right: 0; }
+    // Icono SVG (error.svg / warning.svg de Figma), 14px como el mockup.
+    .figma-alert__icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+    .figma-alert__title {
+      font-size: var(--figma-alert-desc-font-size); // 12px (caption), como Figma
+      line-height: var(--figma-alert-desc-line-height);
+      white-space: nowrap;
+    }
+  }
+
+  // Alert clicable (abre el detalle de errores/avisos al pulsar).
+  &--clickable {
+    cursor: pointer;
+    &:hover { filter: brightness(0.97); }
+  }
+
+  // ── Variantes de tipo (dark theme) — nodo 2182:28743 ────────────
+  // Uso: <div class="figma-alert figma-alert--warning figma-alert--dark">
+  &.figma-alert--dark {
+    &.figma-alert--warning {
+      background: var(--figma-alert-dark-warning-surface);
+      border-color: var(--figma-alert-dark-warning-border);
+      color: var(--figma-alert-dark-warning-text);
+      .figma-alert__icon { color: var(--figma-alert-dark-warning-icon); }
+    }
+
+    &.figma-alert--info {
+      background: var(--figma-alert-dark-info-surface);
+      border-color: var(--figma-alert-dark-info-border);
+      color: var(--figma-alert-dark-info-text);
+      .figma-alert__icon { color: var(--figma-alert-dark-info-icon); }
+    }
+
+    &.figma-alert--success {
+      background: var(--figma-alert-dark-success-surface);
+      border-color: var(--figma-alert-dark-success-border);
+      color: var(--figma-alert-dark-success-text);
+      .figma-alert__icon { color: var(--figma-alert-dark-success-icon); }
+    }
+
+    &.figma-alert--error {
+      background: var(--figma-alert-dark-error-surface);
+      border-color: var(--figma-alert-dark-error-border);
+      color: var(--figma-alert-dark-error-text);
+      .figma-alert__icon { color: var(--figma-alert-dark-error-icon); }
+    }
+  }
+}
+
+// ============================================================
+// Input/text — Nodo Figma: 2112:2447
+// Estados: filled / placeholder / Active / focused / Error / disabled.
+// Construidas únicamente con las variables --figma-input-* de
+// arriba. Estructura: .figma-input > __label + __box (+ __icon) + __hint
+// ============================================================
+
+.figma-input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--figma-input-label-gap);
+  width: var(--figma-input-width);
+
+  &__label {
+    font-family: var(--figma-btn-font-family);
+    font-size: var(--figma-input-label-font-size);
+    line-height: var(--figma-input-label-line-height);
+    letter-spacing: var(--figma-input-label-letter-spacing);
+    font-weight: var(--figma-btn-font-weight);
+    text-transform: uppercase;
+    color: var(--figma-input-label-color);
+  }
+
+  &__box {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-input-gap);
+    width: 100%;
+    padding: var(--figma-input-padding);
+    border-radius: var(--figma-input-radius);
+    border: var(--figma-input-border-width) solid var(--figma-input-border);
+    background: var(--figma-input-surface);
+    box-shadow: var(--figma-input-shadow);
+
+    font-family: var(--figma-btn-font-family);
+    font-size: var(--figma-input-value-font-size);
+    line-height: var(--figma-input-value-line-height);
+    color: var(--figma-input-text);
+  }
+
+  &__icon {
+    width: var(--figma-input-icon-size);
+    height: var(--figma-input-icon-size);
+    flex-shrink: 0;
+  }
+
+  &__hint {
+    font-family: var(--figma-btn-font-family);
+    font-size: var(--figma-input-hint-font-size);
+    line-height: var(--figma-input-hint-line-height);
+    color: var(--figma-input-label-color);
+  }
+
+  // Placeholder (contenido vacío mostrando texto de ejemplo)
+  &__box:has(.figma-input__value:placeholder-shown),
+  .figma-input__value::placeholder {
+    color: var(--figma-input-placeholder);
+  }
+
+  // Estado Active (borde azul 2px, sin sombra) — p.ej. click sin foco de teclado
+  &--active .figma-input__box {
+    border-width: var(--figma-input-border-width-active);
+    border-color: var(--figma-input-border-active);
+    box-shadow: none;
+  }
+
+  // Estado focused (borde azul 1px + anillo de foco) — :focus-within cubre
+  // el caso real de un <input> dentro de __box
+  &__box:focus-within {
+    border-width: var(--figma-input-border-width);
+    border-color: var(--figma-input-border-active);
+    box-shadow: var(--figma-input-focus-ring);
+  }
+
+  // Estado Error
+  &--error {
+    .figma-input__label { color: var(--figma-input-label-color-error); }
+    .figma-input__box {
+      border-width: var(--figma-input-border-width-active);
+      border-color: var(--figma-input-border-error);
+      box-shadow: none;
+      color: var(--figma-input-text-error);
+    }
+    .figma-input__hint { color: var(--figma-input-text-error); }
+  }
+
+  // Estado disabled
+  &--disabled .figma-input__box {
+    background: var(--figma-input-surface-disabled);
+    color: var(--figma-input-text-disabled);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  // ── Modificador --textarea — Nodo Figma: 2394:15821 (Input/area) ─
+  // Misma base que .figma-input; altura fija en la caja (salvo en
+  // Error, que crece verticalmente con items-start).
+  &--textarea {
+    .figma-input__box {
+      align-items: center;
+      height: var(--figma-input-area-height);
+    }
+    .figma-input__value {
+      min-height: var(--figma-input-area-content-min-h);
+      flex: 1;
+      resize: none;
+    }
+
+    // Error: el texto puede hacer wrap → alinear arriba, no centrar,
+    // y usar el gap propio de este estado en vez del gap por defecto.
+    &.figma-input--error .figma-input__box {
+      align-items: flex-start;
+      height: auto;
+      gap: var(--figma-input-area-error-gap);
+    }
+  }
+
+  // ── Modificador --calendar — Nodo Figma: 2112:2406 (Input/calendar) ─
+  // Icono de calendario siempre visible (a diferencia del icono
+  // opcional de .figma-input base), con color propio por estado.
+  &--calendar {
+    width: var(--figma-input-calendar-width);
+
+    .figma-input__icon {
+      width: var(--figma-input-calendar-icon-size);
+      height: var(--figma-input-calendar-icon-size);
+      color: var(--figma-input-calendar-icon-color);
+    }
+
+    .figma-input__help-icon {
+      width: var(--figma-input-calendar-help-icon-size);
+      height: var(--figma-input-calendar-help-icon-size);
+      flex-shrink: 0;
+    }
+
+    &.figma-input--error .figma-input__icon {
+      color: var(--figma-input-calendar-icon-color-error);
+    }
+
+    &.figma-input--disabled .figma-input__icon {
+      color: var(--figma-input-calendar-icon-color-disabled);
+    }
+  }
+}
+
+// ============================================================
+// Input/dropdown — Nodo Figma: 2112:3686
+// (Mostrar/Columnas/Filtros usan la variante --compact de este
+// mismo componente vía .figma-table-input; este bloque es la
+// versión genérica reutilizable con label). 2 tallas: --sm
+// (talla "default" de Figma, 32px) y --compact (24px).
+// Construidas únicamente con --figma-dropdown-* y --figma-input-*
+// (bordes/colores de texto ya definidos en Input/text).
+// ============================================================
+
+.figma-dropdown {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--figma-dropdown-label-gap);
+  width: var(--figma-dropdown-width);
+
+  &__label {
+    font-family: var(--figma-btn-font-family);
+    font-size: var(--figma-input-label-font-size);
+    line-height: var(--figma-input-label-line-height);
+    letter-spacing: var(--figma-input-label-letter-spacing);
+    font-weight: var(--figma-btn-font-weight);
+    text-transform: uppercase;
+    color: var(--figma-input-label-color);
+  }
+
+  &__box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border-radius: var(--figma-dropdown-radius);
+    border: var(--figma-input-border-width) solid var(--figma-input-border);
+    background: var(--figma-input-surface);
+    box-shadow: var(--figma-input-shadow);
+    cursor: pointer;
+
+    font-family: var(--figma-btn-font-family);
+    color: var(--figma-input-text);
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+  }
+
+  &__icon-left,
+  &__icon-chevron {
+    flex-shrink: 0;
+    color: var(--figma-dropdown-icon-color);
+  }
+
+  &__hint {
+    font-family: var(--figma-btn-font-family);
+    font-size: var(--figma-dropdown-hint-font-size);
+    line-height: var(--figma-dropdown-hint-line-height);
+    color: var(--figma-input-label-color);
+  }
+
+  // Placeholder
+  &__value--placeholder { color: var(--figma-input-placeholder); }
+
+  // ── Talla "default" de Figma (32px alto) ────────────────────────
+  &--sm {
+    .figma-dropdown__box { padding: var(--figma-dropdown-padding-y-sm) var(--figma-dropdown-padding-x-sm); }
+    .figma-dropdown__content { gap: var(--figma-dropdown-gap-sm); }
+    .figma-dropdown__box { font-size: var(--figma-dropdown-font-size-sm); line-height: var(--figma-dropdown-line-height-sm); }
+    .figma-dropdown__icon-left    { width: var(--figma-dropdown-icon-left-size-sm);    height: var(--figma-dropdown-icon-left-size-sm); }
+    .figma-dropdown__icon-chevron { width: var(--figma-dropdown-icon-chevron-size-sm); height: var(--figma-dropdown-icon-chevron-size-sm); }
+    .figma-dropdown__icon-help    { width: var(--figma-dropdown-icon-help-size-sm);    height: var(--figma-dropdown-icon-help-size-sm); }
+  }
+
+  // ── Talla "compact" de Figma (24px alto) ────────────────────────
+  &--compact {
+    .figma-dropdown__box { padding: var(--figma-dropdown-padding-y-compact) var(--figma-dropdown-padding-x-compact); }
+    .figma-dropdown__content { gap: var(--figma-dropdown-gap-compact); }
+    .figma-dropdown__box { font-size: var(--figma-dropdown-font-size-compact); line-height: var(--figma-dropdown-line-height-compact); }
+    .figma-dropdown__icon-left    { width: var(--figma-dropdown-icon-left-size-compact);    height: var(--figma-dropdown-icon-left-size-compact); }
+    .figma-dropdown__icon-chevron { width: var(--figma-dropdown-icon-chevron-size-compact); height: var(--figma-dropdown-icon-chevron-size-compact); }
+  }
+
+  // Estado active (borde azul 2px, sin sombra, icono chevron invertido
+  // vía modificador de clase en el HTML — expand_less en vez de expand_more)
+  &--active .figma-dropdown__box {
+    border-width: var(--figma-input-border-width-active);
+    border-color: var(--figma-input-border-active);
+    box-shadow: none;
+  }
+
+  // Estado focused (borde azul 1px + anillo de foco)
+  &--focused .figma-dropdown__box {
+    border-color: var(--figma-input-border-active);
+    box-shadow: var(--figma-input-focus-ring);
+  }
+
+  // Estado disabled
+  &--disabled {
+    .figma-dropdown__box {
+      background: var(--figma-input-surface-disabled);
+      color: var(--figma-input-text-disabled);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    .figma-dropdown__icon-left,
+    .figma-dropdown__icon-chevron {
+      color: var(--figma-dropdown-icon-color-disabled);
+    }
+  }
+}
+
+// ============================================================
+// Input/search — Nodo Figma: 2357:10050
+// (lupa + texto + "x" de limpiar opcional). Construidas
+// únicamente con --figma-search-* y --figma-input-* (colores de
+// borde/texto ya definidos en Input/text).
+// ============================================================
+
+.figma-search {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-search-gap);
+  width: var(--figma-search-width);
+  height: var(--figma-search-height);
+  padding: var(--figma-search-padding);
+  border-radius: var(--figma-search-radius);
+  border: var(--figma-input-border-width) solid var(--figma-input-border);
+  background: var(--figma-input-surface);
+  box-shadow: var(--figma-search-shadow);
+
+  font-family: var(--figma-btn-font-family);
+  font-size: var(--figma-search-font-size);
+  line-height: var(--figma-search-line-height);
+  color: var(--figma-input-text);
+
+  &__icon {
+    width: var(--figma-search-icon-size);
+    height: var(--figma-search-icon-size);
+    flex-shrink: 0;
+    color: var(--figma-search-icon-color);
+  }
+
+  &__value::placeholder {
+    color: var(--figma-input-placeholder);
+  }
+
+  // Estado Active — a diferencia de dropdown/time/date, ESTE
+  // componente conserva el drop-shadow además del borde 2px.
+  &--active {
+    border-width: var(--figma-input-border-width-active);
+    border-color: var(--figma-input-border-active);
+  }
+
+  // Estado focused (borde azul 1px + anillo de foco, sustituye el shadow)
+  &:focus-within,
+  &--focused {
+    border-width: var(--figma-input-border-width);
+    border-color: var(--figma-input-border-active);
+    box-shadow: var(--figma-input-focus-ring);
+  }
+}
+
+// ============================================================
+// Input/time — Nodo Figma: 2190:8950
+// (icono reloj + rango "HH:MM - HH:MM" + "x" de borrar opcional).
+// Construidas únicamente con --figma-time-* y --figma-input-*.
+// ============================================================
+
+.figma-time {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-time-gap);
+  width: var(--figma-time-width);
+  height: var(--figma-time-height);
+  padding: var(--figma-time-padding);
+  border-radius: var(--figma-time-radius);
+  border: var(--figma-input-border-width) solid var(--figma-input-border);
+  background: var(--figma-input-surface);
+  box-shadow: var(--figma-time-shadow);
+
+  font-family: var(--figma-btn-font-family);
+  font-size: var(--figma-time-font-size);
+  line-height: var(--figma-time-line-height);
+  color: var(--figma-input-text);
+
+  &__icon {
+    width: var(--figma-time-icon-size);
+    height: var(--figma-time-icon-size);
+    flex-shrink: 0;
+    color: var(--figma-time-icon-color);
+  }
+
+  &__delete-icon {
+    width: var(--figma-time-delete-icon-size);
+    height: var(--figma-time-delete-icon-size);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  &__value--placeholder { color: var(--figma-input-placeholder); }
+
+  // Estado Active — sin drop-shadow (a diferencia de .figma-search)
+  &--active {
+    border-width: var(--figma-input-border-width-active);
+    border-color: var(--figma-input-border-active);
+    box-shadow: none;
+  }
+
+  // Estado focused
+  &:focus-within,
+  &--focused {
+    border-width: var(--figma-input-border-width);
+    border-color: var(--figma-input-border-active);
+    box-shadow: var(--figma-input-focus-ring);
+  }
+}
+
+// ============================================================
+// Input/date — Nodo Figma: 2205:8445
+// (icono calendario + rango "DD/MM/AAAA" + label opcional + "x"
+// de borrar opcional). Construidas únicamente con --figma-date-*
+// y --figma-input-*.
+// ============================================================
+
+.figma-date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--figma-date-label-gap);
+
+  &__label {
+    font-family: var(--figma-btn-font-family);
+    font-size: var(--figma-date-label-font-size);
+    line-height: var(--figma-date-label-line-height);
+    letter-spacing: var(--figma-input-label-letter-spacing);
+    font-weight: var(--figma-btn-font-weight);
+    text-transform: uppercase;
+    color: var(--figma-input-label-color);
+  }
+
+  &__box {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-date-gap);
+    height: var(--figma-date-height);
+    padding: var(--figma-date-padding);
+    border-radius: var(--figma-date-radius);
+    border: var(--figma-input-border-width) solid var(--figma-input-border);
+    background: var(--figma-input-surface);
+    box-shadow: var(--figma-date-shadow);
+
+    font-family: var(--figma-btn-font-family);
+    font-size: var(--figma-date-font-size);
+    line-height: var(--figma-date-line-height);
+    color: var(--figma-input-text);
+  }
+
+  &__icon {
+    width: var(--figma-date-icon-size);
+    height: var(--figma-date-icon-size);
+    flex-shrink: 0;
+    color: var(--figma-date-icon-color);
+  }
+
+  &__delete-icon {
+    width: var(--figma-date-delete-icon-size);
+    height: var(--figma-date-delete-icon-size);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  &__value--placeholder { color: var(--figma-input-placeholder); }
+
+  // Placeholder: ancho más estrecho (sin espacio reservado para "x")
+  &--placeholder .figma-date__box { width: var(--figma-date-width-placeholder); }
+
+  // Filled/Active/focused: ancho ligeramente mayor
+  &--filled .figma-date__box,
+  &--active .figma-date__box,
+  &--focused .figma-date__box {
+    width: var(--figma-date-width-filled);
+  }
+
+  // Estado Active — sin drop-shadow (igual que time/dropdown)
+  &--active .figma-date__box {
+    border-width: var(--figma-input-border-width-active);
+    border-color: var(--figma-input-border-active);
+    box-shadow: none;
+  }
+
+  // Estado focused
+  &--focused .figma-date__box {
+    border-width: var(--figma-input-border-width);
+    border-color: var(--figma-input-border-active);
+    box-shadow: var(--figma-input-focus-ring);
+  }
+}
+
+// ============================================================
+// Checkbox — Nodo Figma: 2126:23516
+// (control aislado, sin label — ver .figma-checkbox-text para la
+// versión con texto). Construidas únicamente con --figma-checkbox-*.
+// ============================================================
+
+.figma-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--figma-checkbox-size);
+  height: var(--figma-checkbox-size);
+  border-radius: var(--figma-checkbox-radius);
+  border: var(--figma-checkbox-border-width) solid var(--figma-checkbox-border);
+  background: var(--figma-checkbox-surface);
+  cursor: pointer;
+
+  &__icon {
+    width: var(--figma-checkbox-check-icon-size);
+    height: var(--figma-checkbox-check-icon-size);
+    color: var(--figma-checkbox-check-color);
+    display: none;
+  }
+
+  // Focused (unchecked) — borde azul + anillo de foco
+  &--focused:not(&--checked) {
+    border-color: var(--figma-checkbox-border-focus);
+    box-shadow: var(--figma-checkbox-focus-ring);
+  }
+
+  // Checked — fondo azul, sin borde, icono visible
+  &--checked {
+    border-color: transparent;
+    background: var(--figma-checkbox-checked-bg);
+
+    .figma-checkbox__icon { display: block; }
+
+    &.figma-checkbox--focused {
+      background: var(--figma-checkbox-checked-bg-focus);
+      box-shadow: var(--figma-checkbox-focus-ring);
+    }
+  }
+
+  // Disabled — tanto checked como unchecked usan fondo gris; el
+  // icono check (si checked) se atenúa en vez de ir en blanco.
+  &--disabled {
+    background: var(--figma-checkbox-surface-disabled);
+    border-color: var(--figma-checkbox-border);
+    cursor: not-allowed;
+
+    &.figma-checkbox--checked .figma-checkbox__icon {
+      color: var(--figma-checkbox-check-color-disabled);
+    }
+  }
+}
+
+// ============================================================
+// Radio — Nodo Figma: 2126:23592
+// (control aislado, sin label — ver .figma-radio-text). Construidas
+// únicamente con --figma-radio-*. El "check" es un punto sólido
+// centrado, no un icono SVG (a diferencia de Checkbox).
+// ============================================================
+
+.figma-radio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--figma-radio-size);
+  height: var(--figma-radio-size);
+  border-radius: var(--figma-radio-radius);
+  border: var(--figma-radio-border-width) solid var(--figma-radio-border);
+  background: var(--figma-radio-surface);
+  cursor: pointer;
+
+  &__dot {
+    width: var(--figma-radio-dot-size);
+    height: var(--figma-radio-dot-size);
+    border-radius: 9999px;
+    background: var(--figma-radio-dot-color);
+    display: none;
+  }
+
+  // Focused (unchecked)
+  &--focused:not(&--checked) {
+    border-color: var(--figma-radio-border-focus);
+    box-shadow: var(--figma-radio-focus-ring);
+  }
+
+  // Checked — fondo azul, punto blanco centrado
+  &--checked {
+    border-color: transparent;
+    background: var(--figma-radio-checked-bg);
+
+    .figma-radio__dot { display: block; }
+
+    &.figma-radio--focused {
+      background: var(--figma-radio-checked-bg-focus);
+      box-shadow: var(--figma-radio-focus-ring);
+    }
+  }
+
+  // Disabled
+  &--disabled {
+    background: var(--figma-radio-surface-disabled);
+    border-color: var(--figma-radio-border);
+    cursor: not-allowed;
+
+    &.figma-radio--checked .figma-radio__dot {
+      background: var(--figma-radio-dot-color-disabled);
+    }
+  }
+}
+
+// ============================================================
+// Toggle (switch) — Nodo Figma: 2101:854
+// Tallas --sm/--md, estados checked/hover/focused/disabled.
+// Construidas únicamente con --figma-toggle-*.
+// ============================================================
+
+.figma-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--figma-toggle-track-padding);
+  border-radius: var(--figma-toggle-track-radius);
+  background: var(--figma-toggle-track-bg-unchecked);
+  cursor: pointer;
+  border: none;
+
+  &:hover:not(&--disabled) { background: var(--figma-toggle-track-bg-unchecked-hover); }
+
+  &--focused {
+    box-shadow: var(--figma-toggle-focus-ring);
+  }
+
+  &__thumb {
+    border-radius: 9999px;
+    background: var(--p-neutral-0);
+    flex-shrink: 0;
+  }
+
+  // Talla S: track 36×20, thumb 16×16
+  &--sm {
+    width: var(--figma-toggle-track-width-s);
+    height: var(--figma-toggle-track-height-s);
+    .figma-toggle__thumb { width: var(--figma-toggle-thumb-size-s); height: var(--figma-toggle-thumb-size-s); }
+  }
+
+  // Talla M: track 44×24, thumb 20×20
+  &--md {
+    width: var(--figma-toggle-track-width-m);
+    height: var(--figma-toggle-track-height-m);
+    .figma-toggle__thumb { width: var(--figma-toggle-thumb-size-m); height: var(--figma-toggle-thumb-size-m); }
+  }
+
+  // Checked: fondo azul + thumb desplazado a la derecha
+  &--checked {
+    background: var(--figma-toggle-track-bg-checked);
+    justify-content: flex-end;
+
+    &:hover:not(.figma-toggle--disabled) { background: var(--figma-toggle-track-bg-checked-hover); }
+  }
+
+  // Disabled: mismo fondo gris en checked y unchecked, sin hover
+  &--disabled {
+    background: var(--figma-toggle-track-bg-disabled);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// ============================================================
+// *_text — Checkbox_text / Radius_text / Toggle_text
+// (control + label). Comparten tipografía y gap vía la placeholder
+// %figma-control-text-label; cada uno envuelve su propio control
+// (.figma-checkbox / .figma-radio / .figma-toggle ya definidos).
+// ============================================================
+
+%figma-control-text-label {
+  font-family: var(--figma-btn-font-family);
+  font-weight: var(--figma-control-text-font-weight);
+  font-size: var(--figma-control-text-font-size);
+  line-height: var(--figma-control-text-line-height);
+  color: var(--figma-control-text-color);
+  white-space: nowrap;
+}
+
+.figma-checkbox-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--figma-control-text-gap);
+
+  &__label { @extend %figma-control-text-label; }
+}
+
+.figma-radio-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--figma-control-text-gap);
+
+  &__label { @extend %figma-control-text-label; }
+}
+
+.figma-toggle-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--figma-control-text-gap);
+
+  &__label { @extend %figma-control-text-label; }
+}
+
+// ============================================================
+// Chip — Nodo Figma: 2373:11617 (default/selected × sm/md)
+// Construidas únicamente con --figma-chip-*.
+// ============================================================
+
+.figma-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--figma-chip-gap);
+  padding-top: var(--figma-chip-padding-y);
+  padding-bottom: var(--figma-chip-padding-y);
+  border-radius: var(--figma-chip-radius);
+  border: var(--figma-chip-border-width-default) solid var(--figma-chip-border-default);
+  background: var(--figma-chip-bg);
+  color: var(--figma-chip-text);
+  cursor: pointer;
+
+  font-family: var(--figma-btn-font-family);
+  white-space: nowrap;
+
+  &__notification {
+    width: var(--figma-chip-notification-size);
+    height: var(--figma-chip-notification-size);
+    border-radius: 9999px;
+    background: var(--figma-chip-notification-bg);
+    flex-shrink: 0;
+  }
+
+  &__close {
+    width: var(--figma-chip-close-icon-size);
+    height: var(--figma-chip-close-icon-size);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  // Indicador de severidad en el pill de tienda (● error / ▲ warning),
+  // Figma manual-cabrero punto 6. Icono 14px, color según severidad.
+  &__sev {
+    flex-shrink: 0;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+
+    &--error   { color: var(--p-red-700, #b42318); }
+    &--warning { color: var(--p-orange-700, #a14f0c); }
+  }
+
+  // Talla S (22px alto)
+  &--sm {
+    height: var(--figma-chip-height-sm);
+    padding-left: var(--figma-chip-padding-x-sm);
+    padding-right: var(--figma-chip-padding-x-sm);
+    font-size: var(--figma-chip-font-size-sm);
+    line-height: var(--figma-chip-line-height-sm);
+  }
+
+  // Talla M (32px alto)
+  &--md {
+    height: var(--figma-chip-height-md);
+    padding-left: var(--figma-chip-padding-x-md);
+    padding-right: var(--figma-chip-padding-x-md);
+    font-size: var(--figma-chip-font-size-md);
+    line-height: var(--figma-chip-line-height-md);
+    font-weight: var(--figma-btn-font-weight);
+  }
+
+  // Selected: borde azul más grueso
+  &--selected {
+    border-width: var(--figma-chip-border-width-selected);
+    border-color: var(--figma-chip-border-selected);
+    font-weight: var(--figma-btn-font-weight);
+  }
+}
+
+// Grupo de chips (Chip_group) — flex-wrap con gap asimétrico
+.figma-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  column-gap: var(--figma-chip-group-gap-x);
+  row-gap: var(--figma-chip-group-gap-y);
+}
+
+// ============================================================
+// Dropdown_menu — Símbolo Figma: 2133:8854
+// Panel desplegable; aloja N .figma-list-item apilados en columna.
+// ============================================================
+
+.figma-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden; // recorta el border-radius de los items internos
+  background: var(--figma-dropdown-menu-bg);
+  border: var(--figma-dropdown-menu-border-width) solid var(--figma-dropdown-menu-border);
+  border-radius: var(--figma-dropdown-menu-radius);
+  box-shadow: var(--figma-dropdown-menu-shadow);
+}
+
+// ============================================================
+// _Dropdown_list-item — Nodo Figma: 2357:10229
+// Estados: Default/Hover/Selected/Search/"add item"/"add item+tag"/delete
+// ============================================================
+
+.figma-list-item {
+  box-sizing: border-box;   // el padding no debe inflar la altura de la fila
+  display: flex;
+  align-items: center;
+  width: var(--figma-list-item-width);
+  height: var(--figma-list-item-height-default);
+  padding: var(--figma-list-item-padding-y) var(--figma-list-item-padding-x);
+  flex-shrink: 0;
+
+  font-family: var(--figma-btn-font-family);
+  font-size: var(--figma-list-item-font-size);
+  line-height: var(--figma-list-item-line-height);
+  color: var(--figma-list-item-text);
+  cursor: pointer;
+
+  &--hover    { background: var(--figma-list-item-bg-hover); }
+  &--selected { background: var(--figma-list-item-bg-selected); font-weight: var(--figma-btn-font-weight); }
+
+  // Fila de búsqueda embebida en el panel
+  &--search {
+    height: var(--figma-list-item-height-search);
+    padding: var(--figma-list-item-padding-compact);
+    background: var(--figma-list-item-bg-search);
+  }
+
+  &__search-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: var(--figma-list-item-search-input-height);
+    padding: var(--figma-list-item-padding-x) var(--figma-list-item-padding-y);
+    border-radius: var(--figma-list-item-search-input-radius);
+    border: var(--figma-list-item-search-input-border-width) solid var(--figma-list-item-search-input-border);
+    background: var(--figma-input-surface);
+    box-shadow: var(--figma-input-shadow);
+
+    .figma-list-item__search-icon {
+      width: var(--figma-list-item-search-icon-size);
+      height: var(--figma-list-item-search-icon-size);
+      flex-shrink: 0;
+    }
+  }
+
+  // Fila "añadir item" / "añadir item + tag"
+  &--add {
+    height: var(--figma-list-item-height-add);
+    padding: var(--figma-list-item-padding-add-y) var(--figma-list-item-padding-add-x);
+    border-bottom: 1px solid var(--figma-list-item-divider);
+    justify-content: space-between;
+    font-size: var(--figma-list-item-font-size-compact);
+    line-height: var(--figma-list-item-line-height-compact);
+  }
+
+  &--add-tag {
+    height: var(--figma-list-item-height-add-tag);
+  }
+
+  &__add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--figma-list-item-add-btn-size);
+    height: var(--figma-list-item-add-btn-size);
+    padding: var(--figma-list-item-add-btn-padding);
+    border-radius: var(--figma-list-item-add-btn-radius);
+    background: var(--figma-list-item-add-btn-bg);
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--figma-list-item-badge-padding-y) var(--figma-list-item-badge-padding-x);
+    border-radius: var(--figma-list-item-badge-radius);
+    background: var(--figma-list-item-badge-bg);
+    color: var(--figma-list-item-badge-text);
+    font-size: var(--figma-list-item-badge-font-size);
+    font-weight: 700;
+    letter-spacing: var(--figma-list-item-badge-letter-spacing);
+    text-transform: uppercase;
+  }
+
+  // Fila "Borrar"
+  &--delete {
+    padding: var(--figma-list-item-padding-compact);
+    background: var(--figma-list-item-bg-search);
+    border-top: 1px solid var(--figma-list-item-divider);
+    justify-content: space-between;
+    font-size: var(--figma-list-item-font-size-compact);
+    line-height: var(--figma-list-item-line-height-compact);
+  }
+}
+
+// ============================================================
+// Date picker — Nodo Figma: 2419:23828
+// Variantes: .figma-datepicker--whole-week / --free-range.
+// Construidas únicamente con --figma-datepicker-* y --figma-btn-*
+// (tipografía) / --figma-input-* (inputs de fecha).
+// ============================================================
+
+.figma-datepicker {
+  display: flex;
+  flex-direction: column;
+  width: var(--figma-datepicker-width);
+  background: var(--figma-datepicker-bg);
+  border-radius: var(--figma-datepicker-radius);
+  box-shadow: var(--figma-datepicker-shadow);
+  font-family: var(--figma-btn-font-family);
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--figma-datepicker-calendar-gap);
+    padding: var(--figma-datepicker-content-padding-y) var(--figma-datepicker-content-padding-x);
+  }
+
+  // Cabecera "‹ Junio 2026 ›"
+  &__month {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__month-label {
+    font-weight: var(--figma-btn-font-weight);
+    font-size: var(--figma-datepicker-month-font-size);
+    line-height: var(--figma-datepicker-month-line-height);
+    color: var(--figma-datepicker-day-text);
+    text-align: center;
+  }
+
+  &__nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--figma-datepicker-nav-btn-padding);
+    border-radius: var(--figma-btn-radius);
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    svg, img { width: var(--figma-datepicker-nav-icon-size); height: var(--figma-datepicker-nav-icon-size); }
+  }
+
+  // Fila de inputs "dd/mm/aaaa – dd/mm/aaaa"
+  &__input-row {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-datepicker-input-row-gap);
+    height: var(--figma-datepicker-input-row-height);
+  }
+
+  &__input-separator {
+    color: var(--figma-datepicker-input-separator-color);
+  }
+
+  // El input de fecha fin en whole-week está deshabilitado
+  // (se calcula automáticamente); en free-range es editable.
+  &--whole-week &__input-end {
+    background: var(--figma-datepicker-input-disabled-bg);
+    color: var(--figma-datepicker-input-disabled-text);
+    cursor: not-allowed;
+  }
+
+  // Cabecera de días de la semana (L M X J V S D)
+  &__weekday {
+    width: var(--figma-datepicker-cell-size);
+    height: var(--figma-datepicker-cell-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--figma-btn-font-weight);
+    font-size: var(--figma-datepicker-cell-font-size);
+    color: var(--figma-datepicker-day-text);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, var(--figma-datepicker-cell-size));
+  }
+
+  // Celda de día individual
+  &__cell {
+    width: var(--figma-datepicker-cell-size);
+    height: var(--figma-datepicker-cell-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--figma-datepicker-cell-radius);
+    font-size: var(--figma-datepicker-cell-font-size);
+    color: var(--figma-datepicker-day-text);
+    cursor: pointer;
+
+    &--outside { color: var(--figma-datepicker-day-text-outside); }
+
+    &--today {
+      border: 2px solid var(--figma-datepicker-day-today-border);
+      font-weight: var(--figma-btn-font-weight);
+    }
+  }
+
+  // whole-week: toda la semana seleccionada = un único color sólido
+  &--whole-week &__cell--selected {
+    background: var(--figma-datepicker-week-selected-bg);
+    color: var(--figma-datepicker-week-selected-text);
+    font-weight: var(--figma-btn-font-weight);
+    border-radius: 0; // el "Connection" SVG entre celdas rellena el hueco
+  }
+
+  // free-range: extremos con color fuerte, intermedios más suaves
+  &--free-range {
+    .figma-datepicker__cell--range-edge {
+      background: var(--figma-datepicker-range-edge-bg);
+      color: var(--figma-datepicker-range-edge-text);
+      font-weight: var(--figma-btn-font-weight);
+    }
+    .figma-datepicker__cell--range-middle {
+      background: var(--figma-datepicker-range-middle-bg);
+      color: var(--figma-datepicker-range-middle-text);
+      font-weight: var(--figma-btn-font-weight);
+      border-radius: 0; // celda cuadrada, sin redondeo, ver Figma
+    }
+  }
+
+  &__divider {
+    height: 1px;
+    background: var(--figma-datepicker-divider);
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: var(--figma-datepicker-footer-padding-y) var(--figma-datepicker-footer-padding-x);
+  }
+}
+
+// ============================================================
+// Time picker — Símbolo Figma: 2190:8895
+// Reutiliza --figma-datepicker-radius/-shadow/-bg (idénticos en
+// Figma) y las clases .figma-btn-outline/.figma-btn-primary para
+// el footer. Construidas con --figma-timepicker-* y --figma-ampm-*.
+// ============================================================
+
+.figma-timepicker {
+  display: flex;
+  flex-direction: column;
+  width: var(--figma-timepicker-width);
+  background: var(--figma-datepicker-bg);
+  border-radius: var(--figma-datepicker-radius);
+  box-shadow: var(--figma-datepicker-shadow);
+  font-family: var(--figma-btn-font-family);
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--figma-timepicker-content-gap);
+    padding: var(--figma-timepicker-content-padding-top) var(--figma-timepicker-content-padding-x) var(--figma-timepicker-content-padding-bottom);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-weight: var(--figma-btn-font-weight);
+    font-size: var(--figma-timepicker-title-font-size);
+    line-height: var(--figma-timepicker-title-line-height);
+    color: var(--figma-timepicker-title-color);
+  }
+
+  &__header-icons {
+    width: var(--figma-timepicker-header-icon-area);
+    height: var(--figma-timepicker-header-icon-area);
+  }
+
+  &__selection-display {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-timepicker-selection-gap);
+  }
+
+  &__grid {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--figma-timepicker-grid-gap);
+  }
+
+  &__separator {
+    font-weight: var(--figma-btn-font-weight);
+    font-size: var(--figma-timepicker-separator-font-size);
+    color: var(--figma-timepicker-value-text);
+  }
+
+  // Columna HORAS / MINUTOS
+  &__column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--figma-timepicker-controls-gap);
+  }
+
+  &__arrow-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--figma-timepicker-arrow-btn-padding);
+    border-radius: var(--figma-btn-radius);
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    svg, img { width: var(--figma-timepicker-arrow-icon-size); height: var(--figma-timepicker-arrow-icon-size); }
+  }
+
+  &__value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--figma-timepicker-value-padding);
+    border-radius: var(--figma-timepicker-value-radius);
+    background: var(--figma-timepicker-value-bg);
+    border: 1px solid var(--figma-timepicker-value-border);
+
+    font-weight: var(--figma-btn-font-weight);
+    font-size: var(--figma-timepicker-value-font-size);
+    line-height: var(--figma-timepicker-value-line-height);
+    color: var(--figma-timepicker-value-text);
+  }
+
+  &__column-label {
+    font-weight: var(--figma-btn-font-weight);
+    font-size: var(--figma-timepicker-label-font-size);
+    letter-spacing: var(--figma-timepicker-label-letter-spacing);
+    text-transform: uppercase;
+    color: var(--figma-timepicker-label-color);
+  }
+
+  &__divider {
+    height: 1px;
+    background: var(--figma-datepicker-divider);
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: var(--figma-datepicker-footer-padding-y) var(--figma-datepicker-footer-padding-x);
+  }
+}
+
+// ============================================================
+// AM/PM selector — Símbolo Figma: 2190:8753
+// Segmented control de 2 botones pegados formando una píldora.
+// ============================================================
+
+.figma-ampm {
+  display: inline-flex;
+  box-shadow: var(--figma-ampm-shadow);
+  border-radius: var(--figma-ampm-radius);
+
+  &__segment {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--figma-ampm-height);
+    padding: var(--figma-ampm-padding-y) var(--figma-ampm-padding-x);
+    background: var(--figma-ampm-bg);
+    cursor: pointer;
+
+    font-family: var(--figma-btn-font-family);
+    font-size: var(--figma-ampm-font-size);
+    line-height: var(--figma-ampm-line-height);
+
+    // Segmento activo (izquierda): borde 2px azul, esquinas
+    // redondeadas solo en el lado izquierdo
+    &--active {
+      width: var(--figma-ampm-width-active);
+      border: var(--figma-ampm-border-width-active) solid var(--figma-ampm-border-active);
+      border-radius: var(--figma-ampm-radius) 0 0 var(--figma-ampm-radius);
+      font-weight: var(--figma-btn-font-weight);
+      color: var(--figma-ampm-text-active);
+    }
+
+    // Segmento inactivo (derecha): fondo atenuado (embebido en el
+    // time picker), esquinas redondeadas solo en el lado derecho
+    &--inactive {
+      border: var(--figma-ampm-border-width-inactive) solid var(--figma-ampm-border-inactive);
+      border-radius: 0 var(--figma-ampm-radius) var(--figma-ampm-radius) 0;
+      background: var(--figma-ampm-bg-inactive);
+      color: var(--figma-ampm-text-inactive);
+    }
+  }
+}
+
+// ============================================================
+// Nav/Tabs — Nodo Figma: 2419:19321 (item: 2419:19331)
+// Construidas únicamente con --figma-navtabs-*.
+// ============================================================
+
+.figma-navtabs {
+  display: flex;
+  align-items: stretch;
+}
+
+.figma-navtabs-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: var(--figma-navtabs-item-height);
+  overflow: hidden;
+  cursor: pointer;
+
+  font-family: var(--figma-btn-font-family);
+  font-size: var(--figma-navtabs-font-size);
+  line-height: var(--figma-navtabs-line-height);
+  color: var(--figma-navtabs-text-inactive);
+  text-align: center;
+  white-space: nowrap;
+
+  // Estado default (inactivo): padding vertical propio, sin subrayado
+  padding: var(--figma-navtabs-item-padding-y-default) 0;
+
+  // Estado selected (activo): negrita, subrayado azul, sin el
+  // padding vertical (el borde inferior ocupa ese espacio)
+  &--active {
+    padding: 0;
+    font-weight: var(--figma-btn-font-weight);
+    color: var(--figma-navtabs-text-active);
+    border-bottom: var(--figma-navtabs-underline-width) solid var(--figma-navtabs-underline-color);
+  }
+}
+
+// ============================================================
+// Side-panel — Sección Figma: 2134:2818
+// _Header (título + cerrar opcional) + _sidepanel-actions (footer
+// con 3 variantes: --edit / --view / --edit-delete). Los botones
+// reutilizan .figma-btn-outline/.figma-btn-primary/.figma-btn-danger-
+// outlined + el modificador .figma-btn--lg definido arriba.
+// ============================================================
+
+.figma-sidepanel {
+  display: flex;
+  flex-direction: column;
+  width: var(--figma-sidepanel-width);
+  background: var(--figma-sidepanel-bg);
+  box-shadow: var(--figma-sidepanel-shadow);
+  font-family: var(--figma-btn-font-family);
+}
+
+.figma-sidepanel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-sidepanel-header-gap);
+  padding: var(--figma-sidepanel-header-padding-top) var(--figma-sidepanel-header-padding-right) var(--figma-sidepanel-header-padding-bottom) var(--figma-sidepanel-header-padding-left);
+  background: var(--figma-sidepanel-bg);
+
+  &-title {
+    flex: 1;
+    font-weight: var(--figma-btn-font-weight);
+    font-size: var(--figma-sidepanel-header-title-font-size);
+    line-height: var(--figma-sidepanel-header-title-line-height);
+    color: var(--figma-sidepanel-header-title-color);
+  }
+
+  &-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--figma-sidepanel-header-close-padding);
+    border-radius: var(--figma-sidepanel-header-close-radius);
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    svg, img { width: var(--figma-sidepanel-header-close-icon-size); height: var(--figma-sidepanel-header-close-icon-size); }
+  }
+}
+
+// Barra de acciones del footer, 3 variantes
+.figma-sidepanel__actions {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--figma-sidepanel-actions-padding-y) var(--figma-sidepanel-actions-padding-x);
+  border-top: 1px solid var(--figma-sidepanel-divider);
+
+  &--edit,
+  &--edit-delete {
+    justify-content: space-between;
+  }
+
+  &--view {
+    justify-content: flex-end;
+  }
+
+  &-left {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-sidepanel-actions-gap-left);
+  }
+
+  &-right {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-sidepanel-actions-gap-right);
+  }
+
+  // Iconos dentro de los botones "Eliminar" / "Editar"
+  &-delete-icon { width: var(--figma-sidepanel-delete-icon-size); height: var(--figma-sidepanel-delete-icon-size); }
+  &-edit-icon   { width: var(--figma-sidepanel-edit-icon-size);   height: var(--figma-sidepanel-edit-icon-size); }
+}
+
+// ============================================================
+// Modal — Sección Figma: 2134:15352
+// 4 tipos: --confirmation / --destructive / --save-changes /
+// --upload-file. Los botones del footer reutilizan .figma-btn-*
+// + el modificador .figma-btn--lg ya definido para Side-panel.
+// ============================================================
+
+.figma-modal-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--figma-modal-overlay-bg);
+  backdrop-filter: blur(var(--figma-modal-overlay-blur));
+}
+
+.figma-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--figma-modal-card-gap);
+  padding: var(--figma-modal-card-padding);
+  background: var(--figma-modal-card-bg);
+  border-radius: var(--figma-modal-card-radius);
+  box-shadow: var(--figma-modal-card-shadow);
+  overflow: hidden;
+  font-family: var(--figma-btn-font-family);
+
+  // confirmation / destructive-confirmation / save-changes: 400px
+  &--confirmation,
+  &--destructive,
+  &--save-changes {
+    width: var(--figma-modal-card-width-sm);
+  }
+
+  // upload-file: 480px
+  &--upload-file {
+    width: var(--figma-modal-card-width-lg);
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--figma-modal-content-gap);
+    width: 100%;
+
+    // upload-file alinea el contenido a la izquierda, el resto centrado
+    .figma-modal--upload-file & { align-items: flex-start; }
+  }
+
+  &__icon {
+    width: var(--figma-modal-icon-size);
+    height: var(--figma-modal-icon-size);
+    flex-shrink: 0;
+
+    .figma-modal--destructive & { color: var(--figma-modal-icon-color-error); }
+    .figma-modal--save-changes & { color: var(--figma-modal-icon-color-warning); }
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--figma-modal-content-gap-title);
+    width: 100%;
+    text-align: center;
+
+    .figma-modal--upload-file & { align-items: flex-start; text-align: left; }
+  }
+
+  &__title {
+    font-weight: var(--figma-btn-font-weight);
+    font-size: var(--figma-modal-title-font-size);
+    line-height: var(--figma-modal-title-line-height);
+    color: var(--figma-modal-title-color);
+  }
+
+  &__body {
+    font-size: var(--figma-modal-body-font-size);
+    line-height: var(--figma-modal-body-line-height);
+    color: var(--figma-modal-body-color);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+// ── File upload (dropzone + cola de archivos), tipo --upload-file ─
+
+.figma-modal-upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--figma-modal-upload-gap);
+  width: 100%;
+
+  &__zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--figma-modal-upload-zone-content-gap);
+    width: 100%;
+    padding: var(--figma-modal-upload-zone-padding-y) var(--figma-modal-upload-zone-padding-x);
+    background: var(--figma-modal-upload-zone-bg);
+    border: var(--figma-modal-upload-zone-border-width) solid var(--figma-modal-upload-zone-border);
+    border-radius: var(--figma-modal-upload-zone-radius);
+  }
+
+  &__icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--figma-modal-upload-icon-wrapper-size);
+    height: var(--figma-modal-upload-icon-wrapper-size);
+    border-radius: var(--figma-modal-upload-icon-wrapper-radius);
+    background: var(--figma-modal-upload-icon-wrapper-bg);
+
+    svg, img { width: var(--figma-modal-upload-icon-size); height: var(--figma-modal-upload-icon-size); }
+  }
+
+  &__action {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--figma-modal-upload-action-gap);
+    width: 100%;
+    font-size: var(--figma-modal-upload-cta-font-size);
+  }
+
+  &__cta {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: var(--figma-btn-font-weight);
+    color: var(--figma-modal-upload-cta-color);
+  }
+
+  &__drag-hint {
+    color: var(--figma-modal-upload-hint-color);
+  }
+
+  &__hint {
+    width: 100%;
+    text-align: center;
+    font-size: var(--figma-modal-upload-hint-font-size);
+    color: var(--figma-modal-upload-hint-color);
+  }
+
+  &__queue {
+    display: flex;
+    flex-direction: column;
+    gap: var(--figma-modal-upload-queue-gap);
+    width: 100%;
+  }
+}
+
+// Item individual de la cola de subida
+.figma-modal-upload-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--figma-modal-upload-item-gap);
+  width: 100%;
+  padding: var(--figma-modal-upload-item-padding);
+  background: var(--figma-modal-card-bg);
+  border: var(--figma-modal-upload-item-border-width) solid var(--figma-modal-upload-item-border);
+  border-radius: var(--figma-modal-upload-item-radius);
+
+  // Mientras el archivo está subiendo (progreso < 100%), el borde
+  // se resalta en azul (ver "Parte_DGA_12-12-25.pdf" en el mock)
+  &--active {
+    border-color: var(--figma-modal-upload-item-border-active);
+  }
+
+  &__content {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--figma-modal-upload-item-content-gap);
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--figma-modal-upload-item-text-gap);
+    flex: 1;
+    min-width: 0;
+    font-size: var(--figma-modal-upload-item-font-size);
+    line-height: var(--figma-modal-upload-item-line-height);
+  }
+
+  &__name { font-weight: var(--figma-btn-font-weight); color: var(--figma-modal-upload-item-name-color); }
+  &__meta { color: var(--figma-modal-upload-item-meta-color); }
+
+  &__progress {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-modal-upload-progress-gap);
+    width: 100%;
+  }
+
+  &__progress-bar {
+    flex: 1;
+    height: var(--figma-modal-upload-progress-height);
+    border-radius: var(--figma-modal-upload-progress-radius);
+    background: var(--figma-modal-upload-progress-track);
+    overflow: hidden;
+  }
+
+  &__progress-fill {
+    height: 100%;
+    background: var(--figma-modal-upload-progress-fill);
+    border-radius: var(--figma-modal-upload-progress-radius);
+  }
+
+  // Al completarse la subida, el fondo del track pasa a un gris
+  // más marcado (ver "Parte_DGA_18-12-25.pdf" al 40% vs. el de 100%)
+  &--done .figma-modal-upload-item__progress-bar {
+    background: var(--figma-modal-upload-progress-track-done);
+  }
+
+  &__progress-value {
+    font-size: var(--figma-modal-upload-item-font-size);
+    color: var(--figma-modal-upload-item-name-color);
+    white-space: nowrap;
+  }
+
+  // Checkbox de "completado" (siempre marcado, azul, en la cola)
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--figma-modal-upload-checkbox-size);
+    height: var(--figma-modal-upload-checkbox-size);
+    border-radius: var(--figma-modal-upload-checkbox-radius);
+    background: var(--figma-modal-upload-checkbox-bg);
+    flex-shrink: 0;
+
+    svg, img { width: var(--figma-modal-upload-checkbox-check-icon-size); height: var(--figma-modal-upload-checkbox-check-icon-size); }
+  }
+
+  // Botón "borrar" (aparece en la esquina superior derecha del item)
+  &__delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--figma-modal-upload-delete-btn-size);
+    height: var(--figma-modal-upload-delete-btn-size);
+    padding: var(--figma-modal-upload-delete-btn-padding);
+    border-radius: var(--figma-modal-upload-delete-btn-radius);
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+}
+
+// ============================================================
+// Side-menu — Símbolo Figma: 2085:4677
+// Construidas únicamente con --figma-sidemenu-*. Los botones del
+// footer/lista son enlaces de texto, no .figma-btn-* (estilo propio
+// del sidebar oscuro).
+// ============================================================
+
+.figma-sidemenu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: var(--figma-sidemenu-width);
+  background: var(--figma-sidemenu-bg);
+  border-right: var(--figma-sidemenu-border-width) solid var(--figma-sidemenu-border);
+  font-family: var(--figma-btn-font-family);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-sidemenu-header-gap);
+    width: 100%;
+    height: var(--figma-sidemenu-header-height);
+    padding: var(--figma-sidemenu-header-padding-top) var(--figma-sidemenu-header-padding-x) var(--figma-sidemenu-header-padding-bottom);
+    border-bottom: var(--figma-sidemenu-border-width) solid var(--figma-sidemenu-divider);
+
+    &-logo { width: var(--figma-sidemenu-header-logo-size); height: var(--figma-sidemenu-header-logo-size); flex-shrink: 0; }
+    &-brand { color: var(--figma-sidemenu-header-brand-color); font-weight: var(--figma-btn-font-weight); }
+    &-tagline { color: var(--figma-sidemenu-header-tagline-color); text-transform: uppercase; }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--figma-sidemenu-list-item-gap);
+    width: 100%;
+    padding: var(--figma-sidemenu-list-padding-y) var(--figma-sidemenu-list-padding-right) var(--figma-sidemenu-list-padding-y) var(--figma-sidemenu-list-padding-left);
+    flex: 1;
+  }
+
+  // Item de navegación (Inicio, Planificador, Vista por empleado...)
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-sidemenu-link-gap);
+    width: 100%;
+    padding: var(--figma-sidemenu-link-padding);
+    border-radius: var(--figma-sidemenu-link-radius);
+    color: var(--figma-sidemenu-link-text);
+    font-weight: var(--figma-btn-font-weight);
+    cursor: pointer;
+
+    &-icon { width: var(--figma-sidemenu-link-icon-size); height: var(--figma-sidemenu-link-icon-size); flex-shrink: 0; }
+  }
+
+  // Botón "Configuración" (con chevron, abre/cierra el submenú)
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-sidemenu-toggle-gap);
+    width: 100%;
+    padding: var(--figma-sidemenu-toggle-padding-y) var(--figma-sidemenu-toggle-padding-x);
+    border-radius: var(--figma-sidemenu-toggle-radius);
+    color: var(--figma-sidemenu-link-text);
+    font-weight: var(--figma-btn-font-weight);
+    cursor: pointer;
+    background: none;
+    border: none;
+
+    &-icon { width: var(--figma-sidemenu-link-icon-size); height: var(--figma-sidemenu-link-icon-size); flex-shrink: 0; }
+    &-chevron { width: var(--figma-sidemenu-toggle-chevron-size); height: var(--figma-sidemenu-toggle-chevron-size); flex-shrink: 0; margin-left: auto; }
+  }
+
+  // Submenú (Empleados/Roles/Turnos/Tiendas/Localidad/Zonas/Restricciones)
+  &__submenu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--figma-sidemenu-submenu-item-gap);
+    width: 100%;
+    padding-left: var(--figma-sidemenu-submenu-padding-left);
+  }
+
+  &__submenu-link {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-sidemenu-submenu-link-gap);
+    width: 100%;
+    padding: var(--figma-sidemenu-submenu-link-padding-y) var(--figma-sidemenu-submenu-link-padding-x);
+    border-radius: var(--figma-sidemenu-link-radius);
+    color: var(--figma-sidemenu-submenu-text);
+    font-weight: var(--figma-btn-font-weight);
+    cursor: pointer;
+  }
+
+  // Footer: Mi cuenta / Salir + Powered by
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--figma-sidemenu-footer-gap);
+    width: 100%;
+    padding: var(--figma-sidemenu-footer-padding-top) var(--figma-sidemenu-footer-padding-x) var(--figma-sidemenu-footer-padding-bottom);
+    border-top: var(--figma-sidemenu-border-width) solid var(--figma-sidemenu-divider);
+  }
+
+  &__footer-item {
+    display: flex;
+    align-items: center;
+    gap: var(--figma-sidemenu-footer-item-gap);
+    width: 100%;
+    padding: var(--figma-sidemenu-footer-item-padding-y) var(--figma-sidemenu-footer-item-padding-x);
+    border-radius: var(--figma-sidemenu-link-radius);
+    color: var(--figma-sidemenu-footer-item-text);
+    font-weight: var(--figma-btn-font-weight);
+    cursor: pointer;
+
+    &-icon { width: var(--figma-sidemenu-footer-item-icon-size); height: var(--figma-sidemenu-footer-item-icon-size); flex-shrink: 0; }
+  }
+
+  &__poweredby {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: var(--figma-sidemenu-poweredby-padding-y-top) 8px var(--figma-sidemenu-poweredby-padding-y-bottom);
+    border-top: var(--figma-sidemenu-border-width) solid var(--figma-sidemenu-divider);
+    opacity: var(--figma-sidemenu-poweredby-opacity);
+
+    svg, img { width: var(--figma-sidemenu-poweredby-width); height: var(--figma-sidemenu-poweredby-height); }
+  }
+}
+
+// Botón flotante de colapsar/expandir el sidebar (frame 2365:10326)
+.figma-sidemenu-collapse-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--figma-sidemenu-collapse-btn-width);
+  height: var(--figma-sidemenu-collapse-btn-height);
+  background: var(--figma-sidemenu-bg);
+  border: none;
+  cursor: pointer;
+}
+
+// ============================================================
+// Header (página) — Nodo Figma: 2294:11298
+// Título + selector de fecha (chip "Hoy" + flechas + input rango).
+// Construidas únicamente con --figma-pageheader-*.
+// ============================================================
+
+.figma-pageheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-family: var(--figma-btn-font-family);
+}
+
+.figma-pageheader__title {
+  font-weight: var(--figma-btn-font-weight);
+  font-size: var(--figma-pageheader-title-font-size);
+  line-height: var(--figma-pageheader-title-line-height);
+  color: var(--figma-pageheader-title-color);
+}
+
+.figma-pageheader__date-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.figma-pageheader__today-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--figma-pageheader-today-chip-padding-y) var(--figma-pageheader-today-chip-padding-x);
+  border-radius: var(--figma-pageheader-today-chip-radius);
+  border: 1px solid var(--figma-pageheader-today-chip-border);
+  color: var(--figma-pageheader-today-chip-text);
+  font-weight: var(--figma-btn-font-weight);
+  background: none;
+  cursor: pointer;
+}
+
+.figma-pageheader__nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--figma-pageheader-nav-padding); // box/inner/padding/XS
+  background: none;
+  border: none;
+  border-radius: var(--figma-btn-radius); // br-btn 9999px
+  cursor: pointer;
+  color: var(--figma-pageheader-nav-icon-color);
+
+  svg, img { width: var(--figma-pageheader-nav-icon-size); height: var(--figma-pageheader-nav-icon-size); }
+  .material-icons {
+    font-size: var(--figma-pageheader-nav-icon-size);
+    width: var(--figma-pageheader-nav-icon-size);
+    height: var(--figma-pageheader-nav-icon-size);
+  }
+
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.figma-pageheader__date-input {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--figma-pageheader-date-input-gap);
+  padding: var(--figma-pageheader-date-input-padding-y) var(--figma-pageheader-date-input-padding-x);
+  border-radius: var(--figma-pageheader-date-input-radius);
+  background: var(--figma-pageheader-date-input-bg);
+  border: 1px solid var(--figma-pageheader-date-input-border);
+  box-shadow: var(--figma-pageheader-date-input-shadow);
+
+  font-family: var(--figma-btn-font-family);
+  font-weight: 400; // Inter Regular (input text de Figma)
+  font-size: var(--figma-pageheader-date-input-font-size);
+  line-height: var(--figma-pageheader-date-input-line-height);
+  color: var(--figma-pageheader-date-input-text);
+  white-space: nowrap;
+
+  &__icon {
+    width: var(--figma-pageheader-date-input-icon-size);
+    height: var(--figma-pageheader-date-input-icon-size);
+    font-size: var(--figma-pageheader-date-input-icon-size); // glifo Material Icons
+    line-height: 1;
+    color: var(--figma-pageheader-date-input-icon-color);
+    flex-shrink: 0;
+  }
+}
+
+// ============================================================
+// worker — celdas de horario — Nodo Figma: 2236:3311
+// Celda de turno + badge de ocupación. Modificadores de estado:
+// --hover / --add-active / --skeleton / --warning / --error.
+// Tag opcional: --tag-ett.
+// ============================================================
+
+.figma-worker-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--figma-worker-badge-gap);
+  padding: var(--figma-worker-cell-padding-y) var(--figma-worker-cell-padding-x);
+  border-radius: var(--figma-worker-cell-radius);
+
+  font-family: var(--figma-btn-font-family);
+  font-size: var(--figma-worker-cell-font-size);
+  line-height: var(--figma-worker-cell-line-height);
+  color: var(--figma-worker-cell-text);
+  cursor: pointer;
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--figma-worker-badge-gap);
+    color: var(--figma-worker-cell-text-muted);
+  }
+
+  &__add-icon {
+    width: var(--figma-worker-badge-add-icon-size);
+    height: var(--figma-worker-badge-add-icon-size);
+    background: var(--figma-worker-cell-add-btn-bg);
+    border-radius: 9999px;
+  }
+
+  // Hover: fondo sutilmente resaltado
+  &--hover { background: var(--figma-worker-cell-bg-hover); }
+
+  // Add-active: fondo amarillo tenue (estado "añadiendo turno")
+  &--add-active { background: var(--figma-worker-cell-add-active-bg); }
+
+  // Skeleton loading: fondo gris plano, sin texto real
+  &--skeleton {
+    background: var(--figma-worker-cell-bg-skeleton);
+    color: transparent;
+  }
+
+  // Warning: fondo/texto/icono naranja
+  &--warning {
+    background: var(--figma-worker-warning-bg);
+    border: 1px solid var(--figma-worker-warning-border);
+    color: var(--figma-worker-warning-text);
+
+    .figma-worker-cell__icon { color: var(--figma-worker-warning-icon); }
+  }
+
+  // Error: fondo/texto/icono rojo
+  &--error {
+    background: var(--figma-worker-error-bg);
+    color: var(--figma-worker-error-text);
+
+    .figma-worker-cell__icon { color: var(--figma-worker-error-icon); }
+  }
+
+  &__icon {
+    width: var(--figma-worker-warning-icon-size);
+    height: var(--figma-worker-warning-icon-size);
+    flex-shrink: 0;
+  }
+
+  // Tag "ETT" opcional junto al nombre
+  &__tag {
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--figma-worker-tag-radius);
+    background: var(--figma-worker-tag-ett-bg);
+    color: var(--figma-worker-tag-ett-text);
+    font-weight: var(--figma-btn-font-weight);
+  }
+}
+
+// ============================================================
+// Dropdown de búsqueda de empleados — Nodo Figma: 2483:29781
+// Instancia de .figma-dropdown-menu con un .figma-search arriba y
+// filas de empleado (nombre + botón añadir circular).
+// ============================================================
+
+.figma-dropdown-search-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--figma-dropdown-search-row-padding-y) var(--figma-dropdown-search-row-padding-x);
+
+  font-family: var(--figma-btn-font-family);
+  font-size: var(--figma-dropdown-search-row-font-size);
+  color: var(--figma-list-item-text);
+
+  &__add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--figma-dropdown-search-add-btn-size);
+    height: var(--figma-dropdown-search-add-btn-size);
+    padding: var(--figma-dropdown-search-add-btn-padding);
+    border-radius: var(--figma-dropdown-search-add-btn-radius);
+    background: var(--figma-dropdown-search-add-btn-bg);
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  // Fila destacada (p.ej. nombre en amarillo, ver screenshot)
+  &--highlighted {
+    background: var(--figma-worker-cell-add-active-bg);
+  }
+}
+
+// ============================================================
+// Inicio - Dashboard — Nodo Figma: 2424:18371
+// Layout de secciones + patrón "Caja" (card blanca con borde,
+// 3 variantes: fila de planificación, fila de horas-extra, stat-card).
+// Construidas únicamente con --figma-dashboard-* (ver :root arriba).
+// ============================================================
+
+// Fila de secciones (Urgente/secondary/tertiary): 2 columnas lado a lado
+.figma-dashboard-row {
+  display: flex;
+  gap: var(--figma-dashboard-section-gap);
+  align-items: flex-start;
+  padding-bottom: var(--figma-dashboard-section-padding-bottom);
+  width: 100%;
+}
+
+// Columna dentro de una fila (título de sección + lista de cards)
+.figma-dashboard-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--figma-dashboard-column-gap);
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+  padding-bottom: var(--figma-dashboard-column-padding-bottom);
+}
+
+// Título de sección (icono + texto), p.ej. "Planificador", "Ausencias"
+.figma-dashboard-section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-dashboard-section-title-gap);
+  padding: var(--figma-dashboard-section-title-padding-y) 0;
+  width: 100%;
+
+  font-family: var(--figma-btn-font-family);
+  font-weight: var(--figma-btn-font-weight);
+  font-size: var(--figma-dashboard-section-title-font-size);
+  line-height: var(--figma-dashboard-section-title-line-height);
+  color: var(--figma-dashboard-section-title-color);
+
+  &__icon {
+    width: var(--figma-dashboard-section-title-icon-size);
+    height: var(--figma-dashboard-section-title-icon-size);
+    flex-shrink: 0;
+  }
+}
+
+// Lista de cards dentro de una columna
+.figma-dashboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--figma-dashboard-row-gap);
+  align-items: flex-start;
+  width: 100%;
+}
+
+// Card base ("Caja"): fondo blanco, borde, radio 8px
+.figma-dashboard-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--figma-dashboard-card-gap);
+  align-items: flex-start;
+  width: 100%;
+  padding: var(--figma-dashboard-card-padding);
+  background: var(--figma-dashboard-card-bg);
+  border: var(--figma-dashboard-card-border-width) solid var(--figma-dashboard-card-border);
+  border-radius: var(--figma-dashboard-card-radius);
+  overflow: hidden;
+}
+
+// Variante: fila de planificación (icono + fecha + texto + flecha)
+.figma-dashboard-planrow {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-dashboard-planrow-gap);
+  width: 100%;
+  color: var(--figma-dashboard-planrow-text);
+
+  &__icon,
+  &__arrow {
+    width: var(--figma-dashboard-planrow-icon-size);
+    height: var(--figma-dashboard-planrow-icon-size);
+    flex-shrink: 0;
+  }
+}
+
+// Variante: fila de horas-extra (con separador entre empleados)
+.figma-dashboard-hourrow {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-dashboard-hourrow-gap);
+  width: 100%;
+  padding: var(--figma-dashboard-hourrow-padding-y) 0;
+  color: var(--figma-dashboard-hourrow-text);
+
+  // Todas menos la última llevan separador inferior
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--figma-dashboard-hourrow-divider);
+  }
+
+  &__icon {
+    width: var(--figma-dashboard-hourrow-icon-size);
+    height: var(--figma-dashboard-hourrow-icon-size);
+    flex-shrink: 0;
+  }
+}
+
+// Título dentro de la card (p.ej. "Esta Semana" + "26/06 - 27/06")
+.figma-dashboard-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-dashboard-card-title-gap);
+  padding-bottom: var(--figma-dashboard-card-title-padding-bottom);
+
+  font-size: var(--figma-dashboard-card-title-font-size);
+  line-height: var(--figma-dashboard-card-title-line-height);
+
+  &__label {
+    font-weight: var(--figma-btn-font-weight);
+    letter-spacing: var(--figma-dashboard-card-title-letter-spacing);
+    text-transform: uppercase;
+    color: var(--figma-dashboard-card-title-text);
+  }
+
+  &__range {
+    color: var(--figma-dashboard-card-title-muted);
+  }
+}
+
+// Variante: stat-card (número grande + label), p.ej. Ausencias/Empleados ETT
+.figma-dashboard-stat-card {
+  @extend .figma-dashboard-card;
+  gap: var(--figma-dashboard-stat-gap);
+  align-items: flex-start;
+  justify-content: center;
+  width: var(--figma-dashboard-stat-width);
+
+  &--ett { width: var(--figma-dashboard-stat-width-ett); }
+}
+
+.figma-dashboard-stat-number {
+  font-weight: var(--figma-btn-font-weight);
+  font-size: var(--figma-dashboard-stat-number-font-size);
+  line-height: var(--figma-dashboard-stat-number-line-height);
+  color: var(--figma-dashboard-stat-number-color);
+}
+
+// ============================================================
+// Stat-card CON icono — implementación real Cabrero ("Panel General")
+// Sin mockup 1:1 en Figma (ver comentario en :root). Extiende
+// .figma-dashboard-card con un icon-wrapper cuadrado-redondeado.
+// Modificadores de color: --brand / --info / --warning.
+// ============================================================
+
+.figma-dashboard-stat-icon-card {
+  @extend .figma-dashboard-card;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--figma-dashboard-stat-gap);
+  width: auto;
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--figma-dashboard-stat-icon-wrapper-size);
+    height: var(--figma-dashboard-stat-icon-wrapper-size);
+    border-radius: var(--figma-dashboard-stat-icon-wrapper-radius);
+    flex-shrink: 0;
+
+    svg, img {
+      width: var(--figma-dashboard-stat-icon-size);
+      height: var(--figma-dashboard-stat-icon-size);
+    }
+  }
+
+  &--brand .figma-dashboard-stat-icon-card__icon {
+    background: var(--figma-dashboard-stat-icon-bg-brand);
+    color: var(--figma-dashboard-stat-icon-color-brand);
+  }
+
+  &--info .figma-dashboard-stat-icon-card__icon {
+    background: var(--figma-dashboard-stat-icon-bg-info);
+    color: var(--figma-dashboard-stat-icon-color-info);
+  }
+
+  &--warning .figma-dashboard-stat-icon-card__icon {
+    background: var(--figma-dashboard-stat-icon-bg-warning);
+    color: var(--figma-dashboard-stat-icon-color-warning);
+  }
+}
+
+// ============================================================
+// Calendario mensual grande — implementación real Cabrero
+// Sin mockup 1:1 en Figma. Reutiliza --figma-datepicker-radius/
+// -shadow/-bg (idénticos al Date picker ya construido) para el
+// contenedor; el resto es propio de esta vista de mes completo.
+// ============================================================
+
+.figma-monthcalendar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: var(--figma-datepicker-bg);
+  border-radius: var(--figma-datepicker-radius);
+  font-family: var(--figma-btn-font-family);
+}
+
+// Cabecera de días de la semana (LUN, MAR, MIÉ...)
+.figma-monthcalendar__weekday {
+  padding: var(--figma-monthcalendar-header-padding-y) var(--figma-dashboard-card-padding);
+  background: var(--figma-monthcalendar-header-bg);
+  border: var(--figma-monthcalendar-cell-border-width) solid var(--figma-monthcalendar-cell-border);
+
+  font-size: var(--figma-monthcalendar-header-font-size);
+  font-weight: var(--figma-btn-font-weight);
+  letter-spacing: var(--figma-input-label-letter-spacing);
+  text-transform: uppercase;
+  color: var(--figma-monthcalendar-header-text);
+}
+
+.figma-monthcalendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  width: 100%;
+}
+
+// Celda de día (rectangular, no circular como el Date picker pequeño)
+.figma-monthcalendar__cell {
+  min-height: var(--figma-monthcalendar-cell-min-height);
+  padding: var(--figma-monthcalendar-cell-padding);
+  border: var(--figma-monthcalendar-cell-border-width) solid var(--figma-monthcalendar-cell-border);
+
+  &--outside {
+    background: var(--figma-monthcalendar-cell-bg-outside);
+  }
+}
+
+.figma-monthcalendar__day-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--figma-monthcalendar-day-number-font-size);
+  color: var(--figma-monthcalendar-day-number-color);
+
+  .figma-monthcalendar__cell--outside & {
+    color: var(--figma-monthcalendar-day-number-color-outside);
+  }
+
+  // Día actual (badge circular resaltado)
+  &--today {
+    width: var(--figma-monthcalendar-today-badge-size);
+    height: var(--figma-monthcalendar-today-badge-size);
+    border-radius: var(--figma-monthcalendar-today-badge-radius);
+    background: var(--figma-monthcalendar-today-badge-bg);
+    color: var(--figma-monthcalendar-today-badge-text);
+    font-weight: var(--figma-btn-font-weight);
+  }
+}
+
+// ============================================================
+// Leyenda de turnos (círculo de color + etiqueta) — implementación
+// real Cabrero. Sin mockup 1:1 en Figma.
+// ============================================================
+
+.figma-shiftlegend {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-shiftlegend-gap);
+  font-family: var(--figma-btn-font-family);
+}
+
+.figma-shiftlegend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--figma-shiftlegend-item-gap);
+  font-size: var(--figma-shiftlegend-font-size);
+  color: var(--figma-shiftlegend-text);
+}
+
+.figma-shiftlegend__dot {
+  display: inline-block;
+  width: var(--figma-shiftlegend-dot-size);
+  height: var(--figma-shiftlegend-dot-size);
+  border-radius: 9999px;
+  flex-shrink: 0;
+
+  &--1 { background: var(--figma-shiftlegend-dot-color-1); }
+  &--2 { background: var(--figma-shiftlegend-dot-color-2); }
+  &--3 { background: var(--figma-shiftlegend-dot-color-3); }
+  &--4 { background: var(--figma-shiftlegend-dot-color-4); }
+}
+
+// ============================================================
+// Tabla de planificación — Nodo Figma: 2464:40401
+// Columnas de sección + filas día×turno + columna Ausencias amarilla.
+// Construida únicamente con --figma-plantable-*.
+// ============================================================
+
+.figma-plantable {
+  display: table;
+  table-layout: fixed;  // reparte el ancho según los anchos de columna
+  border-collapse: collapse;
+  font-family: var(--figma-btn-font-family);
+  color: var(--figma-plantable-text);
+  background: var(--p-neutral-0);
+  // Ocupa TODO el ancho disponible (pantallas grandes) manteniendo las
+  // proporciones de columna de Figma; los px de columna actúan como pesos
+  // relativos. Scroll en .schedule-scroll si por debajo del min-width no cabe.
+  width: 100%;
+  // SIN min-width: la tabla se adapta siempre al ancho disponible y nunca hay
+  // scroll horizontal. Los px de columna de Figma actúan como pesos relativos,
+  // así que las proporciones del diseño se mantienen a cualquier resolución.
+  //
+  // El espacio que queda por nombre depende entonces del ancho de pantalla; los
+  // nombres largos se truncan con "…" y el tooltip de la celda muestra el
+  // nombre completo.
+}
+
+// Anchos de columna: proporcionales al px de Figma (Día/Turnos
+// estrechas, Caja/Pescadería dobles). Con table-layout:fixed + width:100%
+// estos px actúan como pesos relativos y la tabla llena el contenedor.
+.figma-plantable__col--dia       { width: var(--figma-plantable-col-dia); }
+.figma-plantable__col--turnos    { width: var(--figma-plantable-col-turnos); }
+.figma-plantable__col--ausencias { width: var(--figma-plantable-col-ausencias); }
+.figma-plantable__col--section   { width: var(--figma-plantable-col-section); }
+.figma-plantable__col--section-wide   { width: var(--figma-plantable-col-section-wide); }
+.figma-plantable__col--section-narrow { width: var(--figma-plantable-col-section-narrow); }
+
+// Celda <th> que envuelve la cabecera de tienda (ocupa todo el ancho vía
+// colspan). Sin padding propio: el div interior gestiona el layout.
+.figma-plantable__th-tienda-cell {
+  padding: 0;
+  border-top: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+  border-left: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+  border-right: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+}
+
+// Cabecera de tienda (Hu T01 + badges error/warning)
+.figma-plantable__th-tienda {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-plantable-th-tienda-gap);
+  height: var(--figma-plantable-th-tienda-height);
+  padding: 0 var(--figma-plantable-th-tienda-padding-x);
+  background: var(--figma-plantable-th-tienda-bg);
+  border-bottom: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+  font-weight: 700;
+  font-size: var(--figma-plantable-th-tienda-font-size);
+  color: var(--figma-plantable-text);
+
+  // Nombre completo + zona junto al código de tienda. En secundario para que el
+  // código (que es el que se busca de un vistazo) siga siendo lo primero.
+  &__context {
+    font-weight: var(--fw-regular);
+    font-size: var(--figma-datatable-header-font-size);   // Caption 12
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+}
+
+.figma-plantable__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--figma-plantable-badge-gap);
+  padding: var(--figma-plantable-badge-padding);
+  border-radius: var(--figma-plantable-badge-radius);
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: var(--figma-plantable-badge-font-size);
+
+  &-icon {
+    width: var(--figma-plantable-badge-icon-size);
+    height: var(--figma-plantable-badge-icon-size);
+    // Como es un glifo material-icons (no SVG), el tamaño va por font-size.
+    font-size: var(--figma-plantable-badge-icon-size);
+    line-height: 1;
+  }
+
+  &--error {
+    background: var(--figma-plantable-badge-error-bg);
+    border-color: var(--figma-plantable-badge-error-border);
+    color: var(--figma-plantable-badge-error-text);
+    .figma-plantable__badge-icon { color: var(--figma-plantable-badge-error-icon); }
+  }
+  &--warning {
+    background: var(--figma-plantable-badge-warning-bg);
+    border-color: var(--figma-plantable-badge-warning-border);
+    color: var(--figma-plantable-badge-warning-text);
+    .figma-plantable__badge-icon { color: var(--figma-plantable-badge-warning-icon); }
+  }
+}
+
+// Cabecera de columna (DÍA / TURNOS / ENCARGADA / CAJA...)
+// NOTA: esta clase se reutiliza para la celda de la columna Turnos en el
+// CUERPO (Mañana/Tarde). En Figma esas celdas del cuerpo son BLANCAS; solo
+// la fila de cabecera (<thead>) es gris. Por eso el fondo gris y el marco
+// superior/izquierdo se acotan a `thead` más abajo, no aquí.
+.figma-plantable__header-cell {
+  height: var(--figma-plantable-header-cell-height);
+  padding: var(--figma-plantable-header-cell-padding-y) 0;
+  border-bottom: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+  border-right: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+  text-align: center;
+  vertical-align: middle;
+
+  font-weight: 700;
+  font-size: var(--figma-plantable-header-cell-font-size);
+  letter-spacing: var(--figma-plantable-header-cell-letter-spacing);
+  text-transform: uppercase;
+  color: var(--figma-plantable-text);
+}
+
+// Cabecera de sección: icono (12px) + texto, centrados con gap 4px (Figma).
+.figma-plantable__header-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px; // spacing/XS
+}
+
+.figma-plantable__header-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  // El SVG lleva su propio fill (#27292E, Icon/neutral de Figma). Cargado
+  // como <img> no hereda currentColor, por eso el color va dentro del SVG.
+}
+
+// Fondo gris #fafafa + marco superior/izquierdo SOLO en la fila de cabecera
+// real (<thead>). Las celdas de turno del cuerpo (Mañana/Tarde) quedan
+// blancas, como en Figma.
+.figma-plantable thead .figma-plantable__header-cell {
+  background: var(--figma-plantable-header-bg);
+  border-top: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+
+  &:first-child { border-left: var(--figma-plantable-border-width) solid var(--figma-plantable-border); }
+
+  // Cabecera de la columna Ausencias en amarillo
+  &.figma-plantable__header-cell--ausencias { background: var(--figma-plantable-ausencias-bg); }
+}
+
+// Celda de la columna Día (número + nombre)
+.figma-plantable__day-cell {
+  padding: var(--figma-plantable-day-cell-padding-y) var(--figma-plantable-day-cell-padding-x);
+  background: var(--figma-plantable-header-bg);
+  border-left: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+  border-bottom: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+  border-right: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+  text-align: center;
+  vertical-align: middle;
+  // La celda NO adopta el ancho de su contenido: es lo que impedía estrechar la
+  // columna Día. Con table-layout:fixed, un contenido más ancho que el peso de
+  // la columna la ensancha, y "MIÉRCOLES" pedía ~52px. Aquí se acota y el texto
+  // se comprime dentro (ver .figma-plantable__dayname).
+  min-width: 0;
+  overflow: hidden;
+}
+
+.figma-plantable__daynum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--figma-plantable-daynum-size);
+  height: var(--figma-plantable-daynum-size);
+  border-radius: 9999px;
+  font-weight: var(--figma-btn-font-weight);
+  font-size: var(--figma-plantable-daynum-font-size);
+  color: var(--figma-plantable-text-muted);
+
+  // Día "hoy": borde azul
+  &--today {
+    border: var(--figma-plantable-daynum-border-width) solid var(--figma-plantable-daynum-border-today);
+  }
+}
+
+.figma-plantable__dayname {
+  display: block;
+  margin-top: 2px;
+  font-weight: var(--figma-btn-font-weight);
+  font-size: var(--figma-plantable-dayname-font-size);
+  letter-spacing: var(--figma-plantable-dayname-letter-spacing);
+  text-transform: uppercase;
+  color: var(--figma-plantable-text);
+  // El nombre del día ocupa TODO el ancho disponible y va pegado a los lados,
+  // como en Figma (nodo 2464:34696: "Miercoles" mide los 50px completos del
+  // contenedor). Sin esto el texto imponía su propio ancho a la columna y ésta
+  // no bajaba de ~54px.
+  //
+  // Sin letter-spacing extra: eran 0,4px por letra, ~4px en "MIERCOLES".
+  letter-spacing: 0;
+  // El ancho de la columna lo fija el <colgroup> de la tabla, asi que aqui solo
+  // hace falta que el texto no lo desborde: "MIERCOLES" se trunca si no cabe.
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+// Celda de datos (una sección × día×turno)
+.figma-plantable__cell {
+  padding: var(--figma-plantable-cell-padding);
+  border-bottom: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+  border-right: var(--figma-plantable-border-width) solid var(--figma-plantable-border);
+  vertical-align: middle;
+
+  // La celda de datos de Ausencias es BLANCA en Figma; solo el chip
+  // (.figma-plantable__worker--yellow) lleva el fondo amarillo #fff9e9.
+  &--ausencias { background: transparent; }
+}
+
+// Contenedor de varios workers dentro de una celda
+.figma-plantable__cell-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--figma-plantable-cell-gap);
+  // `flex: 1 1 0`, no `flex: 1` (que es 1 1 auto): con base `auto` el ancho se
+  // reparte según el CONTENIDO de cada sub-columna, y la que llevaba el nombre
+  // más largo se comía el espacio de la otra.
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+// Sub-columnas dentro de una celda (Caja/Pescadería: 2 lado a lado,
+// como el "column group" col-1/col-2 de Figma)
+.figma-plantable__cell-cols {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--figma-plantable-cell-gap);
+  width: 100%;
+  // Sin min-width:0 este contenedor no baja del ancho de su contenido y las
+  // sub-columnas no llegan a encogerse (el reparto a partes iguales lo hace
+  // `flex: 1 1 0` de .figma-plantable__cell-stack).
+  min-width: 0;
+}
+
+// Chip de trabajador / horario dentro de una celda.
+// En modo vista muestra solo el horario (sin fondo, como Figma);
+// la variante --yellow (columna Ausencias) sí lleva fondo amarillo.
+.figma-plantable__worker {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-plantable-worker-gap);
+  min-height: var(--figma-plantable-worker-min-height);
+  padding: var(--figma-plantable-worker-padding-y) var(--figma-plantable-worker-padding-x);
+  border-radius: var(--figma-plantable-worker-radius);
+  // Ancla del asa de arrastre, que va absolute para no restar ancho al nombre.
+  position: relative;
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600; // Inter Semi Bold (nombre de trabajador)
+    font-size: var(--figma-plantable-worker-name-font-size);
+    color: var(--figma-plantable-text);
+  }
+
+  &__qty {
+    font-weight: 600;
+    font-size: var(--figma-plantable-worker-qty-font-size);
+    color: var(--figma-plantable-text-muted); // "2x" gris
+  }
+
+  &__time {
+    font-size: var(--figma-plantable-worker-time-font-size);
+    font-weight: 400; // Inter Regular (horario)
+    color: var(--figma-plantable-text);
+    white-space: nowrap;
+  }
+
+  // Variante amarilla (columna Ausencias — chip "Lucia Molina", Figma
+  // 2236:3308): fondo #fff9e9, altura fija 24px, nombre 10px semibold.
+  &--yellow {
+    height: var(--figma-plantable-chip-height);
+    background: var(--figma-plantable-worker-bg);
+    .figma-plantable__worker__name { flex: 1; }
+  }
+
+  // Variante NOMBRE en modo edición (Figma 2497:35588 / 2435:18950):
+  // cajita fondo indigo-100, borde sólido, nombre negro alineado a la
+  // izquierda. Ocupa el ancho de la celda.
+  &--name {
+    width: 100%;
+    height: auto;
+    min-height: var(--figma-plantable-chip-height);
+    justify-content: flex-start;
+    // Padding izquierdo de 17px: reserva el hueco del asa de arrastre (14px + 3
+    // de margen), que se dibuja en absolute dentro del chip. Así el nombre
+    // empieza a su derecha y el asa no lo tapa al aparecer en hover, sin que el
+    // texto se desplace. A la derecha se recorta a 4px para no perder ancho
+    // útil: es donde el nombre trunca, no hace falta tanto aire.
+    padding: var(--figma-plantable-worker-padding-y) 4px
+             var(--figma-plantable-worker-padding-y) 17px;
+    background: var(--figma-plantable-name-bg);
+    border-radius: var(--figma-plantable-worker-radius);
+
+    // Sin esto, un hijo flex no baja del ancho de su texto y el ellipsis del
+    // nombre no llega a aplicarse: la cajita se estiraba y desbordaba la
+    // columna, sobre todo con el turno partido en dos columnas.
+    min-width: 0;
+    // SIN overflow:hidden aquí: recortaba el asa de arrastre, que se dibuja
+    // pegada al borde izquierdo por fuera del chip. El texto ya trunca en su
+    // propio span (.figma-plantable__worker__name), que sí lleva overflow.
+
+    .figma-plantable__worker__name {
+      // Figma worker asignado (2497:35628): nombre 10px Semi Bold, no 14px.
+      font-weight: 600;
+      font-size: var(--figma-plantable-worker-name-font-size); // 10px
+      color: var(--figma-plantable-name-text);
+      // Nombre largo → "…". El tooltip de la celda muestra el nombre completo.
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+  }
+
+  // Icono de severidad (error/warning) delante del nombre. 12px como el
+  // worker con estado de Figma (2453:28513).
+  &__sev-icon {
+    flex-shrink: 0;
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    line-height: 12px;
+  }
+
+  // Cajita de nombre con WARNING (Figma "Marina Pérez"): fondo/borde
+  // ámbar, icono ▲ delante, texto ámbar oscuro.
+  &--name-warning {
+    background: var(--figma-plantable-name-warning-bg);
+    border: 1px solid var(--figma-plantable-name-warning-border);
+
+    .figma-plantable__worker__name { color: var(--figma-plantable-name-warning-text); }
+    .figma-plantable__worker__sev-icon { color: var(--figma-plantable-name-warning-icon); }
+  }
+
+  // Cajita de nombre con ERROR (Figma "Minerva Paños"): fondo/borde rojo,
+  // icono ● delante, texto rojo oscuro.
+  &--name-error {
+    background: var(--figma-plantable-name-error-bg);
+    border: 1px solid var(--figma-plantable-name-error-border);
+
+    .figma-plantable__worker__name { color: var(--figma-plantable-name-error-text); }
+    .figma-plantable__worker__sev-icon { color: var(--figma-plantable-name-error-icon); }
+  }
+
+  // Variante empty state (Figma nodo 2528:15258): horario base del turno
+  // mostrado como referencia cuando aún no hay nadie asignado. Cajita gris
+  // pálida (Surface/base #fafafa) con borde fino (Border/low #f1f2f3),
+  // radius 4px; el TEXTO es Text/primary (negro #080e14e0), NO azul/muted.
+  &--time-hint {
+    justify-content: center;
+    padding: var(--figma-plantable-worker-padding-y) var(--figma-plantable-worker-padding-x);
+    background: var(--p-neutral-50);            // Surface/base #fafafa
+    border: 1px solid var(--p-neutral-100);     // Border/low #f1f2f3
+    border-radius: var(--figma-plantable-worker-radius); // 4px
+
+    .figma-plantable__worker__time {
+      font-size: var(--figma-plantable-worker-time-font-size);
+      font-weight: 400; // Inter Regular
+      color: var(--figma-plantable-text); // Text/primary #080e14e0 (negro)
+    }
+  }
+
+  // Variante modo edición: cajita con borde punteado amarillo (Figma
+  // 2464:35688). El horario dentro va a 11px, "2x" gris delante.
+  &--dashed {
+    height: var(--figma-plantable-chip-height);
+    justify-content: center;
+    gap: var(--figma-plantable-chip-inner-gap);
+    padding: var(--figma-plantable-chip-padding-y) var(--figma-plantable-chip-padding-x);
+    border: var(--figma-plantable-chip-border-width) dashed var(--figma-plantable-chip-border);
+    border-radius: var(--figma-plantable-chip-radius);
+
+    .figma-plantable__worker__time { font-size: var(--figma-plantable-chip-font-size); }
+  }
+
+  // Slot vacío por turno, clicable (Figma empty state modo edición:
+  // "slots de trabajadores adicionales por turno"). Reset de <button>.
+  &--slot {
+    width: 100%;
+    cursor: pointer;
+    background: transparent;
+    font-family: inherit;
+  }
+
+  // Variante skeleton (generando con IA — Figma 2462:22723): chip gris
+  // con gradient ANIMADO (shimmer) mientras se generan los datos.
+  &--skeleton {
+    height: var(--figma-plantable-chip-height);
+    background: linear-gradient(90deg,
+      var(--p-neutral-100), var(--p-neutral-200), var(--p-neutral-100));
+    background-size: 200% 100%;
+    animation: figma-skeleton-shimmer 1.2s ease-in-out infinite;
+    border-radius: var(--figma-plantable-chip-radius);
+    width: 100%;
+  }
+}
+
+// Animación del gradient de los slots skeleton (Figma "Generando con IA")
+@keyframes figma-skeleton-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}

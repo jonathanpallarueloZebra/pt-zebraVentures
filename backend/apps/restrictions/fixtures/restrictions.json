@@ -1,0 +1,286 @@
+[
+  {
+    "model": "restrictions.restriction",
+    "pk": 68,
+    "fields": {
+      "name": "Máximo 1 turno por día por trabajador",
+      "description": "[CABRERO] Un trabajador no puede tener más de un turno asignado el mismo día.",
+      "engine": "count",
+      "config": {
+        "groupBy": "day_worker",
+        "subject": "shifts",
+        "operator": "lte",
+        "threshold": 1
+      },
+      "severity": "error",
+      "message": "{worker}: {count} turnos el mismo día (máx {limit})",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 69,
+    "fields": {
+      "name": "Elegibilidad por tienda y zona (plantilla / COMÚN / ETT)",
+      "description": "[CABRERO] Un trabajador de plantilla solo puede planificarse en su tienda. El personal COMÚN y ETT puede planificarse en cualquier tienda de su misma zona de movilidad.",
+      "engine": "condition",
+      "config": {
+        "scopeMatch": {
+          "rules": [
+            {
+              "matchType": "id",
+              "workerField": "tienda"
+            },
+            {
+              "gapField": "secciones",
+              "matchType": "field",
+              "scopeField": "zona",
+              "workerField": "zona",
+              "requireField": "tipo_contrato",
+              "requireValue": "comun"
+            },
+            {
+              "gapField": "secciones",
+              "matchType": "field",
+              "scopeField": "zona",
+              "workerField": "zona",
+              "requireField": "tipo_contrato",
+              "requireValue": "ett"
+            }
+          ]
+        }
+      },
+      "severity": "error",
+      "message": "{worker} no puede trabajar en esta tienda (fuera de su ámbito)",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 70,
+    "fields": {
+      "name": "Máximo 2 trabajadores ETT por turno",
+      "description": "[CABRERO] No concentrar más de 2 trabajadores de ETT en el mismo turno.",
+      "engine": "count",
+      "config": {
+        "groupBy": "shift",
+        "subject": "workers",
+        "operator": "lte",
+        "threshold": 2,
+        "filterField": "tipo_contrato",
+        "filterValue": "ett"
+      },
+      "severity": "warning",
+      "message": "{shift}: {count} trabajadores ETT (máx {limit})",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 71,
+    "fields": {
+      "name": "Régimen antiguo no trabaja sábado tarde",
+      "description": "[CABRERO] El régimen antiguo (Antigüedad = vacío) no incluye el sábado por la tarde en su jornada ordinaria; si trabaja ese turno, cuenta como hora extra y no debe asignarse por defecto.",
+      "engine": "condition",
+      "config": {
+        "scope": "per_week_worker_shift",
+        "filter": {
+          "op": "eq",
+          "field": "regimen",
+          "value": "antiguo"
+        },
+        "operator": "lte",
+        "threshold": 0,
+        "targetShift": "156"
+      },
+      "severity": "error",
+      "message": "{worker} (régimen antiguo) asignada a sábado tarde: sería HORA EXTRA",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 72,
+    "fields": {
+      "name": "Máximo 1 encargado por turno",
+      "description": "[CABRERO] No debería haber más de un encargado en el mismo turno de la misma tienda.",
+      "engine": "count",
+      "config": {
+        "groupBy": "shift_area",
+        "subject": "workers",
+        "operator": "lte",
+        "threshold": 1,
+        "filterAreaNames": [
+          "Encargado"
+        ]
+      },
+      "severity": "warning",
+      "message": "{area}: {count} (máx {limit}) en {shift}",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 73,
+    "fields": {
+      "name": "Mínimo 1 persona de Caja por turno",
+      "description": "[CABRERO] Cada turno abierto necesita al menos una persona de caja.",
+      "engine": "count",
+      "config": {
+        "groupBy": "shift_area",
+        "subject": "workers",
+        "operator": "gte",
+        "threshold": 1,
+        "filterAreaNames": [
+          "Caja"
+        ],
+        "skipEmptyShifts": true
+      },
+      "severity": "warning",
+      "message": "{area}: {count} (mín {limit}) en {shift}",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 74,
+    "fields": {
+      "name": "Tope de turnos semanales (jornada reducida)",
+      "description": "[CABRERO] Cada trabajador tiene un tope semanal de turnos; si tiene jornada reducida, su tope individual (campo turnos_max_semana) prevalece sobre el general.",
+      "engine": "condition",
+      "config": {
+        "scope": "per_week_worker",
+        "operator": "lte",
+        "threshold": 6,
+        "thresholdField": "turnos_max_semana"
+      },
+      "severity": "warning",
+      "message": "{worker}: {count} turnos en la semana (máx {limit})",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 75,
+    "fields": {
+      "name": "Tope de horas semanales por contrato",
+      "description": "[CABRERO] Un trabajador no debe superar en el plan las horas semanales de su contrato (30/35/40/45).",
+      "engine": "condition",
+      "config": {
+        "scope": "per_week_worker_hours",
+        "operator": "lte",
+        "threshold": 45,
+        "thresholdField": "horas_semanales"
+      },
+      "severity": "warning",
+      "message": "{worker}: {count}h esta semana (contrato: {limit}h)",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 76,
+    "fields": {
+      "name": "Respetar turno preferido del trabajador",
+      "description": "[CABRERO] Avisa cuando un trabajador es asignado a un turno que no es su preferido.",
+      "engine": "match",
+      "config": {
+        "matchType": "worker_preference"
+      },
+      "severity": "warning",
+      "message": "",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 77,
+    "fields": {
+      "name": "La sección asignada debe estar en la polivalencia del trabajador",
+      "description": "[CABRERO] Un trabajador solo puede asignarse a una sección/rol que tenga entre sus categorías (Cat1..4).",
+      "engine": "match",
+      "config": {
+        "matchType": "area_membership",
+        "workerField": "secciones"
+      },
+      "severity": "warning",
+      "message": "",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 78,
+    "fields": {
+      "name": "No asignar en días de cierre",
+      "description": "[CABRERO] Ningún trabajador puede tener un turno en una fecha marcada como cierre (festivo local o cierre puntual).",
+      "engine": "closed_day",
+      "config": {},
+      "severity": "error",
+      "message": "",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 79,
+    "fields": {
+      "name": "No asignar trabajadores en día de descanso oficial",
+      "description": "[CABRERO] Un trabajador marcado en descanso ese día no puede aparecer asignado en ningún turno.",
+      "engine": "exclusion",
+      "config": {
+        "exclusionType": "rest_conflict"
+      },
+      "severity": "error",
+      "message": "",
+      "active": true,
+      "scope_records": [],
+      "customizable": false
+    }
+  },
+  {
+    "model": "restrictions.restriction",
+    "pk": 80,
+    "fields": {
+      "name": "Ejemplo: trabajadores incompatibles (sustituir IDs)",
+      "description": "[CABRERO] Dos trabajadores concretos no pueden coincidir en el mismo turno.",
+      "engine": "exclusion",
+      "config": {
+        "workerPairs": [
+          [
+            2,
+            3
+          ]
+        ],
+        "exclusionType": "worker_pair"
+      },
+      "severity": "warning",
+      "message": "{worker1} y {worker2} son incompatibles en {shift}",
+      "active": false,
+      "scope_records": [],
+      "customizable": true
+    }
+  }
+]

@@ -1,0 +1,496 @@
+<div class="section-container">
+  <div class="section-header">
+    <div>
+      <h2>Entidades</h2>
+      <p class="subtitle">Crea entidades personalizadas con sus campos. Aparecen automaticamente en el sidebar.</p>
+    </div>
+    <div class="header-actions">
+      <button mat-stroked-button (click)="exportStructure()" matTooltip="Descarga todas las entidades y sus campos como JSON">
+        <mat-icon>download</mat-icon> Exportar estructura
+      </button>
+      <button mat-stroked-button (click)="importInput.click()" matTooltip="Importa entidades y campos desde un JSON exportado previamente" [disabled]="importing()">
+        <mat-icon>upload</mat-icon> Importar estructura
+      </button>
+      <input #importInput type="file" accept=".json,application/json" style="display:none" (change)="onImportStructure($event)">
+      @if (importing()) {
+        <mat-spinner diameter="20"></mat-spinner>
+      }
+      <button mat-flat-button color="primary" (click)="startCreateEntityType()">
+        <mat-icon>add</mat-icon> Nueva entidad
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container"><mat-spinner diameter="40"></mat-spinner></div>
+  } @else {
+    <div class="layout">
+
+      <!-- Left: entity type list -->
+      <div class="entity-list">
+        @for (et of entityTypes(); track et.slug) {
+          <div class="entity-item" [class.selected]="selectedSlug() === et.slug" (click)="selectType(et.slug)">
+            <mat-icon class="et-icon">{{ et.icon }}</mat-icon>
+            <div class="et-info">
+              <span class="et-name">{{ et.name }}</span>
+              <span class="et-meta">{{ et.record_count }} registros · {{ et.slug }}</span>
+            </div>
+            <div class="et-badges">
+              @if (et.is_system) {
+                <span class="badge-system" matTooltip="Entidad del sistema">sys</span>
+              }
+              @if (et.is_planning_scope) {
+                <mat-icon class="badge-planning" matTooltip="Ámbito de planificación">calendar_today</mat-icon>
+              }
+              @if (et.show_in_schedule) {
+                <mat-icon class="badge-schedule" matTooltip="Pills en horario">label</mat-icon>
+              }
+              @if (!et.show_in_sidebar) {
+                <mat-icon class="badge-hidden" matTooltip="Oculta en sidebar">visibility_off</mat-icon>
+              }
+            </div>
+            @if (!et.is_system) {
+              <button mat-icon-button class="et-action" matTooltip="Editar entidad"
+                      (click)="$event.stopPropagation(); startEditEntityType(et)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button class="et-action" color="warn" matTooltip="Eliminar entidad"
+                      (click)="$event.stopPropagation(); deleteEntityType(et)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+        } @empty {
+          <p class="empty-hint">Sin entidades. Crea una con el boton de arriba.</p>
+        }
+      </div>
+
+      <!-- Right: fields for selected entity -->
+      <div class="fields-panel">
+
+        <!-- Create entity type form -->
+        @if (creatingEntityType()) {
+          <mat-card class="form-card">
+            <mat-card-header><mat-card-title>Nueva entidad</mat-card-title></mat-card-header>
+            <mat-card-content>
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Nombre</mat-label>
+                  <input matInput [value]="etForm().name || ''" (input)="onEtNameChange($any($event.target).value)">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Slug</mat-label>
+                  <input matInput [value]="etForm().slug || ''" readonly>
+                  <mat-hint>Generado automaticamente</mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Icono (Material)</mat-label>
+                  <mat-select [value]="etForm().icon || 'category'" (selectionChange)="updateEtField('icon', $event.value)">
+                    @for (ic of materialIcons; track ic.icon) {
+                      <mat-option [value]="ic.icon">
+                        <mat-icon style="vertical-align:middle;margin-right:8px">{{ic.icon}}</mat-icon> {{ ic.label }}
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Orden</mat-label>
+                  <input matInput type="number" [value]="etForm().order ?? 0"
+                         (input)="updateEtField('order', +$any($event.target).value)">
+                </mat-form-field>
+              </div>
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Campo de visualizacion</mat-label>
+                  <input matInput [value]="etForm().display_field || 'name'" placeholder="name"
+                         (input)="updateEtField('display_field', $any($event.target).value)">
+                  <mat-hint>Clave del campo que se muestra como etiqueta en tablas y selectores</mat-hint>
+                </mat-form-field>
+              </div>
+              <mat-slide-toggle [checked]="etForm().show_in_sidebar ?? true"
+                                (change)="updateEtField('show_in_sidebar', $event.checked)">
+                Mostrar en sidebar
+              </mat-slide-toggle>
+              <mat-slide-toggle [checked]="etForm().use_as_filter ?? false"
+                                (change)="updateEtField('use_as_filter', $event.checked)">
+                Usar como filtro en el dashboard
+              </mat-slide-toggle>
+              <mat-slide-toggle [checked]="etForm().is_planning_scope ?? false"
+                                (change)="updateEtField('is_planning_scope', $event.checked)">
+                Usar como ámbito de planificación
+                <span class="toggle-hint">Los registros de esta entidad serán las ubicaciones del horario</span>
+              </mat-slide-toggle>
+              <mat-slide-toggle [checked]="etForm().show_in_schedule ?? false"
+                                (change)="updateEtField('show_in_schedule', $event.checked)">
+                Mostrar como pills en planificación
+                <span class="toggle-hint">Los registros aparecen como chips asignables dentro de cada turno (ej: roles, secciones)</span>
+              </mat-slide-toggle>
+            </mat-card-content>
+            <mat-card-actions align="end">
+              <button mat-button (click)="cancelCreateEntityType()">Cancelar</button>
+              <button mat-flat-button color="primary"
+                      [disabled]="!etForm().slug || !etForm().name"
+                      (click)="saveCreateEntityType()">Crear entidad</button>
+            </mat-card-actions>
+          </mat-card>
+        }
+
+        <!-- Edit entity type form -->
+        @if (editingEntityType()) {
+          <mat-card class="form-card edit-card">
+            <mat-card-header><mat-card-title>Editar: {{ editingEntityType()!.name }}</mat-card-title></mat-card-header>
+            <mat-card-content>
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Nombre</mat-label>
+                  <input matInput [value]="editingEntityType()!.name"
+                         (input)="updateEtField('name', $any($event.target).value)">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Icono (Material)</mat-label>
+                  <mat-select [value]="editingEntityType()!.icon" (selectionChange)="updateEtField('icon', $event.value)">
+                    @for (ic of materialIcons; track ic.icon) {
+                      <mat-option [value]="ic.icon">
+                        <mat-icon style="vertical-align:middle;margin-right:8px">{{ic.icon}}</mat-icon> {{ ic.label }}
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Orden</mat-label>
+                  <input matInput type="number" [value]="editingEntityType()!.order"
+                         (input)="updateEtField('order', +$any($event.target).value)">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Campo de visualizacion</mat-label>
+                  <input matInput [value]="editingEntityType()!.display_field || 'name'" placeholder="name"
+                         (input)="updateEtField('display_field', $any($event.target).value)">
+                  <mat-hint>Clave usada como etiqueta en tablas y selectores</mat-hint>
+                </mat-form-field>
+              </div>
+              <mat-slide-toggle [checked]="editingEntityType()!.show_in_sidebar"
+                                (change)="updateEtField('show_in_sidebar', $event.checked)">
+                Mostrar en sidebar
+              </mat-slide-toggle>
+              <mat-slide-toggle [checked]="editingEntityType()!.use_as_filter"
+                                (change)="updateEtField('use_as_filter', $event.checked)">
+                Usar como filtro en el dashboard
+              </mat-slide-toggle>
+              <mat-slide-toggle [checked]="editingEntityType()!.is_planning_scope"
+                                (change)="updateEtField('is_planning_scope', $event.checked)">
+                Usar como ámbito de planificación
+                <span class="toggle-hint">Los registros de esta entidad serán las ubicaciones del horario</span>
+              </mat-slide-toggle>
+              <mat-slide-toggle [checked]="editingEntityType()!.show_in_schedule"
+                                (change)="updateEtField('show_in_schedule', $event.checked)">
+                Mostrar como pills en planificación
+                <span class="toggle-hint">Los registros aparecen como chips asignables dentro de cada turno (ej: roles, secciones)</span>
+              </mat-slide-toggle>
+            </mat-card-content>
+            <mat-card-actions align="end">
+              <button mat-button (click)="cancelEditEntityType()">Cancelar</button>
+              <button mat-flat-button color="primary" (click)="saveEditEntityType()">Guardar</button>
+            </mat-card-actions>
+          </mat-card>
+        }
+
+        @if (selectedEntityType()) {
+          <div class="fields-header">
+            <div class="fields-title-row">
+              <mat-icon>{{ selectedEntityType()!.icon }}</mat-icon>
+              <h3>{{ selectedEntityType()!.name }}</h3>
+              <span class="field-count">{{ filteredFields().length }} campos</span>
+            </div>
+          </div>
+
+          <!-- Fields table -->
+          @if (filteredFields().length > 0) {
+            <div class="zb-table-card">
+              <div class="zb-table-scroll">
+            <table mat-table [dataSource]="filteredFields()" class="full-width fields-table zb-data-table">
+              <ng-container matColumnDef="label">
+                <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                <td mat-cell *matCellDef="let f"><span class="field-label">{{ f.label }}</span></td>
+              </ng-container>
+              <ng-container matColumnDef="key">
+                <th mat-header-cell *matHeaderCellDef>Clave</th>
+                <td mat-cell *matCellDef="let f"><code class="field-key">{{ f.key }}</code></td>
+              </ng-container>
+              <ng-container matColumnDef="field_type">
+                <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                <td mat-cell *matCellDef="let f">
+                  {{ getFieldTypeLabel(f.field_type) }}
+                  @if (f.allow_priority) {
+                    <span class="priority-chip" matTooltip="Con prioridad/preferencia">★ prio</span>
+                  }
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="show_in_list">
+                <th mat-header-cell *matHeaderCellDef>En tabla</th>
+                <td mat-cell *matCellDef="let f">
+                  <mat-icon [class.text-green]="f.show_in_list">{{ f.show_in_list ? 'check_circle' : 'cancel' }}</mat-icon>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="show_as_filter">
+                <th mat-header-cell *matHeaderCellDef>Filtro</th>
+                <td mat-cell *matCellDef="let f">
+                  <mat-icon [class.text-green]="f.show_as_filter">{{ f.show_as_filter ? 'filter_alt' : 'filter_alt_off' }}</mat-icon>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="active">
+                <th mat-header-cell *matHeaderCellDef>Activo</th>
+                <td mat-cell *matCellDef="let f">
+                  <mat-icon [class.text-green]="f.active">{{ f.active ? 'check_circle' : 'cancel' }}</mat-icon>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let f" class="actions-cell">
+                  <button type="button" class="zb-action" aria-label="Editar" title="Editar" (click)="startEdit(f)">
+                    <svg class="zb-action__icon" viewBox="-2.5 -2.5 20 20" fill="none" aria-hidden="true">
+                      <path d="M0 11.8771V15.0021H3.125L12.3417 5.78542L9.21667 2.66042L0 11.8771ZM14.7583 3.36875C15.0833 3.04375 15.0833 2.51875 14.7583 2.19375L12.8083 0.24375C12.4833 -0.08125 11.9583 -0.08125 11.6333 0.24375L10.1083 1.76875L13.2333 4.89375L14.7583 3.36875Z" fill="currentColor"/>
+                    </svg>
+                  </button>
+                  <zb-button variant="icon-only" size="sm" icon="delete" ariaLabel="Eliminar" matTooltip="Eliminar" (click)="deleteField(f)"></zb-button>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns; let odd = odd"
+                  [class.zb-row--alt]="odd"></tr>
+            </table>
+              </div>
+            </div>
+          } @else {
+            <div class="empty-state">
+              <mat-icon>dashboard_customize</mat-icon>
+              <p>Sin campos para esta entidad</p>
+            </div>
+          }
+
+          @if (!creating()) {
+            <button mat-stroked-button class="add-btn" (click)="startCreate()">
+              <mat-icon>add</mat-icon> Anadir campo
+            </button>
+          }
+
+          <!-- Create field form -->
+          @if (creating()) {
+            <mat-card class="form-card" id="field-create-card">
+              <mat-card-header><mat-card-title>Nuevo campo</mat-card-title></mat-card-header>
+              <mat-card-content>
+                <ng-container *ngTemplateOutlet="fieldForm; context: { $implicit: createForm(), isCreate: true }"></ng-container>
+              </mat-card-content>
+              <mat-card-actions align="end">
+                <button mat-button (click)="cancelCreate()">Cancelar</button>
+                <button mat-flat-button color="primary"
+                        [disabled]="!createForm().key || !createForm().label"
+                        (click)="saveCreate()">Guardar</button>
+              </mat-card-actions>
+            </mat-card>
+          }
+
+          <!-- Edit field form -->
+          @if (editing()) {
+            <mat-card class="form-card edit-card" id="field-edit-card">
+              <mat-card-header><mat-card-title>Editar: {{ editing()!.label }}</mat-card-title></mat-card-header>
+              <mat-card-content>
+                <ng-container *ngTemplateOutlet="fieldForm; context: { $implicit: editing()!, isCreate: false }"></ng-container>
+              </mat-card-content>
+              <mat-card-actions align="end">
+                <button mat-button (click)="cancelEdit()">Cancelar</button>
+                <button mat-flat-button color="primary" (click)="saveEdit()">Guardar</button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        } @else if (!creatingEntityType()) {
+          <div class="empty-state">
+            <mat-icon>arrow_back</mat-icon>
+            <p>Selecciona una entidad de la izquierda</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Reusable field form template -->
+<ng-template #fieldForm let-form let-isCreate="isCreate">
+  <div class="form-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      @if (isCreate) {
+        <input matInput [value]="form.label || ''" (input)="onCreateLabelChange($any($event.target).value)">
+      } @else {
+        <input matInput [value]="form.label || ''" (input)="updateField(false, 'label', $any($event.target).value)">
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Clave</mat-label>
+      <input matInput [value]="form.key || ''" [readonly]="!isCreate"
+             (input)="isCreate ? updateField(true, 'key', $any($event.target).value) : null">
+      <mat-hint>Identificador interno (snake_case)</mat-hint>
+    </mat-form-field>
+  </div>
+  <div class="form-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo de campo</mat-label>
+      <mat-select [value]="form.field_type || 'text'" (selectionChange)="updateField(isCreate, 'field_type', $event.value)">
+        @for (ft of fieldTypes; track ft.value) {
+          <mat-option [value]="ft.value">{{ ft.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Orden</mat-label>
+      <input matInput type="number" [value]="form.order ?? 0"
+             (input)="updateField(isCreate, 'order', +$any($event.target).value)">
+    </mat-form-field>
+  </div>
+  <mat-form-field appearance="outline" class="full-width-field">
+    <mat-label>Texto de ayuda</mat-label>
+    <input matInput [value]="form.help_text || ''" placeholder="Descripcion que vera el usuario bajo el campo"
+           (input)="updateField(isCreate, 'help_text', $any($event.target).value)">
+    <mat-hint>Opcional. Se muestra bajo el campo al crear/editar.</mat-hint>
+  </mat-form-field>
+  <div class="form-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Valor por defecto</mat-label>
+      <input matInput [value]="form.default_value || ''" (input)="updateField(isCreate, 'default_value', $any($event.target).value)">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Placeholder</mat-label>
+      <input matInput [value]="form.placeholder || ''" (input)="updateField(isCreate, 'placeholder', $any($event.target).value)">
+    </mat-form-field>
+  </div>
+  <div class="toggle-row">
+    <mat-slide-toggle [checked]="form.required" (change)="updateField(isCreate, 'required', $event.checked)">Obligatorio</mat-slide-toggle>
+    <mat-slide-toggle [checked]="form.show_in_list" (change)="updateField(isCreate, 'show_in_list', $event.checked)">Mostrar en tabla</mat-slide-toggle>
+    <mat-slide-toggle [checked]="form.show_as_filter ?? false" (change)="updateField(isCreate, 'show_as_filter', $event.checked)" matTooltip="Muestra un desplegable para filtrar por este campo en la vista de registros">Filtro desplegable</mat-slide-toggle>
+    <mat-slide-toggle [checked]="form.active ?? true" (change)="updateField(isCreate, 'active', $event.checked)">Activo</mat-slide-toggle>
+  </div>
+
+  <!-- "Sin asignar": solo tiene sentido si el campo se muestra como filtro, asi
+       que el toggle aparece unicamente cuando "Filtro desplegable" esta puesto.
+       Es por campo (no un ajuste global): cada filtro lo activa por separado. -->
+  @if (form.show_as_filter) {
+    <div class="toggle-row">
+      <mat-slide-toggle [checked]="form.allow_unassigned_filter ?? false"
+                        (change)="updateField(isCreate, 'allow_unassigned_filter', $event.checked)"
+                        matTooltip="Anade la opcion &quot;Sin asignar&quot; al desplegable, para localizar los registros que no tienen ningun valor en este campo">
+        Permitir "Sin asignar" en el filtro
+      </mat-slide-toggle>
+    </div>
+  }
+
+  <!-- Priority option for multi-select types -->
+  @if (form.field_type === 'multi_entity_select' || form.field_type === 'multi_catalog_select') {
+    <div class="priority-toggle-row">
+      <mat-slide-toggle [checked]="form.allow_priority ?? false"
+                        (change)="updateField(isCreate, 'allow_priority', $event.checked)">
+        Permitir prioridad / preferencia
+      </mat-slide-toggle>
+      <span class="priority-hint">
+        Al activar, el empleado podra ordenar sus selecciones por preferencia (1.ª opcion, 2.ª opcion…)
+      </span>
+    </div>
+  }
+
+  <!-- Fixed select options -->
+  @if (form.field_type === 'select') {
+    <div class="options-section">
+      <label class="options-label">Opciones</label>
+      <div class="options-list">
+        @for (opt of form.options || []; track $index) {
+          <span class="option-chip">
+            {{ opt }}
+            <button mat-icon-button class="chip-remove" (click)="removeOption(isCreate, $index)"><mat-icon>close</mat-icon></button>
+          </span>
+        }
+      </div>
+      <div class="add-option-row">
+        <mat-form-field appearance="outline" class="option-input">
+          <mat-label>Nueva opcion</mat-label>
+          <input matInput #optInput (keyup.enter)="addOption(isCreate, optInput.value); optInput.value = ''">
+        </mat-form-field>
+        <button mat-stroked-button (click)="addOption(isCreate, optInput.value); optInput.value = ''"><mat-icon>add</mat-icon></button>
+      </div>
+    </div>
+  }
+
+  <!-- Catalog select -->
+  @if (form.field_type === 'catalog_select' || form.field_type === 'multi_catalog_select') {
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Categoria del catalogo</mat-label>
+        <mat-select [value]="form.kind_code || ''" (selectionChange)="updateField(isCreate, 'kind_code', $event.value)">
+          @for (k of kinds(); track k.code) {
+            <mat-option [value]="k.code">{{ k.name }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Categoria cuyos valores apareceran como opciones</mat-hint>
+      </mat-form-field>
+    </div>
+  }
+
+  <!-- Entity select -->
+  @if (form.field_type === 'entity_select' || form.field_type === 'multi_entity_select') {
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Entidad relacionada</mat-label>
+        <mat-select [value]="form.target_entity || ''" (selectionChange)="updateField(isCreate, 'target_entity', $event.value)">
+          @for (et of otherEntities(); track et.slug) {
+            <mat-option [value]="et.slug">
+              <mat-icon style="vertical-align:middle;margin-right:8px">{{ et.icon }}</mat-icon>{{ et.name }}
+            </mat-option>
+          }
+        </mat-select>
+        <mat-hint>Registros de esta entidad apareceran como opciones</mat-hint>
+      </mat-form-field>
+    </div>
+    @if (form.target_entity && targetFields().length) {
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Campo a mostrar en tabla</mat-label>
+          <mat-select [value]="form.display_key || ''" (selectionChange)="updateField(isCreate, 'display_key', $event.value)">
+            <mat-option value="">Por defecto (campo de visualizacion de la entidad)</mat-option>
+            @for (tf of targetFields(); track tf.key) {
+              <mat-option [value]="tf.key">{{ tf.label }} ({{ tf.key }})</mat-option>
+            }
+          </mat-select>
+          <mat-hint>Que campo del registro relacionado se muestra en la columna de la tabla</mat-hint>
+        </mat-form-field>
+      </div>
+    }
+  }
+
+  <!-- Conditional visibility -->
+  <div class="form-row" style="margin-top: 12px;">
+    <mat-form-field appearance="outline">
+      <mat-label>Visible cuando campo</mat-label>
+      <mat-select [value]="form.visible_when_field || ''" (selectionChange)="updateField(isCreate, 'visible_when_field', $event.value)">
+        <mat-option value="">Siempre visible</mat-option>
+        @for (f of filteredFields(); track f.key) {
+          @if (f.key !== form.key) {
+            <mat-option [value]="f.key">{{ f.label }} ({{ f.key }})</mat-option>
+          }
+        }
+      </mat-select>
+      <mat-hint>Solo mostrar este campo si otro campo tiene un valor concreto</mat-hint>
+    </mat-form-field>
+    @if (form.visible_when_field) {
+      <mat-form-field appearance="outline">
+        <mat-label>tiene valor</mat-label>
+        <mat-select [value]="form.visible_when_value || ''" (selectionChange)="updateField(isCreate, 'visible_when_value', $event.value)">
+          @for (opt of getVisibleWhenOptions(form.visible_when_field); track opt.value) {
+            <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Valor que activa la visibilidad</mat-hint>
+      </mat-form-field>
+    }
+  </div>
+</ng-template>

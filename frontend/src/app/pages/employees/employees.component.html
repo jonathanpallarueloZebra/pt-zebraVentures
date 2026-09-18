@@ -1,0 +1,314 @@
+<zb-page-header
+  [title]="'Empleados'"
+  [subtitle]="totalWorkers() + ' empleados · ' + activeWorkers() + ' activos'"
+  [showSidebarToggle]="true"
+  [sidebarCollapsed]="false">
+</zb-page-header>
+
+<div class="page-container">
+
+  @if (loading()) {
+    <div class="sk-page">
+      <div class="sk-form-card">
+        <div class="sk-form-row">
+          @for (_ of [0,1,2,3]; track $index) {
+            <div class="sk-form-field">
+              <zb-skeleton height="12px" width="40%"></zb-skeleton>
+              <zb-skeleton height="38px"></zb-skeleton>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="sk-toolbar">
+        <div class="sk-toolbar__left">
+          <zb-skeleton width="130px" height="38px" radius="4px"></zb-skeleton>
+          <zb-skeleton width="120px" height="38px" radius="4px"></zb-skeleton>
+        </div>
+        <div class="sk-toolbar__right">
+          @for (_ of [0,1,2,3]; track $index) {
+            <zb-skeleton width="130px" height="36px" radius="8px"></zb-skeleton>
+          }
+        </div>
+      </div>
+      <div class="sk-table-card">
+        <div class="sk-table-row sk-table-row--header">
+          <div class="sk-table-cell sk-table-cell--wide"><zb-skeleton width="50%" height="13px"></zb-skeleton></div>
+          <div class="sk-table-cell"><zb-skeleton width="55%" height="13px"></zb-skeleton></div>
+          <div class="sk-table-cell"><zb-skeleton width="45%" height="13px"></zb-skeleton></div>
+          <div class="sk-table-cell"><zb-skeleton width="60%" height="13px"></zb-skeleton></div>
+          <div class="sk-table-cell sk-table-cell--tight"><zb-skeleton width="70%" height="13px"></zb-skeleton></div>
+          <div class="sk-table-cell sk-table-cell--icon"></div>
+        </div>
+        @for (_ of skRows; track $index) {
+          <div class="sk-table-row">
+            <div class="sk-table-cell sk-table-cell--wide">
+              <zb-skeleton [height]="'14px'" [width]="$index % 2 === 0 ? '70%' : '55%'"></zb-skeleton>
+            </div>
+            <div class="sk-table-cell">
+              <zb-skeleton height="14px" [width]="$index % 3 === 0 ? '60%' : ($index % 3 === 1 ? '45%' : '70%')"></zb-skeleton>
+            </div>
+            <div class="sk-table-cell">
+              <zb-skeleton height="14px" [width]="$index % 2 === 0 ? '50%' : '65%'"></zb-skeleton>
+            </div>
+            <div class="sk-table-cell">
+              <zb-skeleton height="14px" [width]="$index % 3 === 0 ? '65%' : ($index % 3 === 1 ? '50%' : '40%')"></zb-skeleton>
+            </div>
+            <div class="sk-table-cell sk-table-cell--tight">
+              <zb-skeleton width="36px" height="20px" radius="10px"></zb-skeleton>
+            </div>
+            <div class="sk-table-cell sk-table-cell--icon">
+              <zb-skeleton width="32px" height="32px" radius="8px"></zb-skeleton>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+
+    @if (workers().length > 0) {
+
+      <!-- Fila 1: botones de acción arriba-derecha (misma jerarquía que
+           /entities/*: .page-actions separado del toolbar). -->
+      <div class="page-actions">
+        <!-- size="sm" = 28px, la altura del Figma para la barra (2368:10501). -->
+        <zb-button variant="secondary" size="sm" iconLeft="upload_file" (click)="showImport = true">Importar Excel</zb-button>
+        <zb-button variant="secondary" size="sm" iconRight="download" (click)="downloadExcel()">Descargar Excel</zb-button>
+        <zb-button variant="primary" size="sm" iconLeft="add" (click)="openAddForm()">Nuevo empleado</zb-button>
+      </div>
+
+      <!-- Fila 2: toolbar de tabla (Mostrar · Columnas · Filtros), a la izquierda. -->
+      <zb-table-toolbar
+        class="employees-toolbar"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="pageSizeOptions"
+        [showPageSize]="false"
+        [showColumnsToggle]="false"
+        (pageSizeChange)="onPageSizeChange($event)"
+      >
+        <zb-column-menu
+          toolbar-left
+          [columns]="candidateColumns()"
+          [visibleKeys]="visibleColumns()"
+          (visibleKeysChange)="onColumnsChange($event)"
+          (reset)="onColumnsReset()"
+        ></zb-column-menu>
+
+        <!-- Filtros: un solo botón "Filtros ▾" (con contador) que abre un panel
+             con los selects dentro. Mantiene el toolbar compacto.
+             Sin @if: el menú siempre tiene al menos el select de Estado, aunque
+             la entidad no tuviera ningún campo marcado como filtrable. -->
+        <zb-filter-menu
+          toolbar-left
+          [filters]="filterMenuDefs()"
+          [values]="filterMenuValues()"
+          [uncountedKeys]="[ESTADO_KEY]"
+          (valuesChange)="onFiltersChange($event)"
+          (reset)="clearFilters()"
+        ></zb-filter-menu>
+
+        <!-- Búsqueda por nombre o código: con 272 fichas, zona y tienda no
+             bastan para llegar a una persona concreta. -->
+        <zb-search-input
+          toolbar-left
+          class="employees-search"
+          placeholder="Buscar por nombre o código"
+          [ngModel]="search()"
+          (ngModelChange)="onSearchChange($event)"
+        ></zb-search-input>
+      </zb-table-toolbar>
+
+      <div class="zb-table-card">
+        <div class="zb-table-scroll">
+          <table mat-table [dataSource]="pagedWorkers()" class="employees-table zb-data-table">
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nombre</th>
+              <td mat-cell *matCellDef="let w" class="name-cell">
+                <span [class.editing-name]="editingId === w.id">{{ w.name }}</span>
+              </td>
+            </ng-container>
+
+            @for (field of fieldSchema(); track field.key) {
+              <ng-container [matColumnDef]="'cd_' + field.key">
+                <th mat-header-cell *matHeaderCellDef>{{ field.label }}</th>
+                <td mat-cell *matCellDef="let w"
+                    class="custom-cell"
+                    [matTooltip]="tooltipSiSeCorta(customFieldDisplay(w.custom_data?.[field.key], field.key))"
+                    matTooltipShowDelay="400">
+                  <span class="cell-truncate">{{ customFieldDisplay(w.custom_data?.[field.key], field.key) }}</span>
+                </td>
+              </ng-container>
+            }
+
+            <ng-container matColumnDef="active">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let w">
+                <zb-toggle [ngModel]="w.active" (ngModelChange)="toggleActive(w)"></zb-toggle>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let w" class="actions-cell">
+                <!-- Editar: mismo botón/SVG exacto de Figma (nodo 2374:17894, edit
+                     20x20, Icon/link #026aa2) que entity-records/absences. -->
+                <button type="button" class="zb-action" aria-label="Editar" (click)="startEdit(w)">
+                  <svg class="zb-action__icon" viewBox="-2.5 -2.5 20 20" fill="none" aria-hidden="true">
+                    <path d="M0 11.8771V15.0021H3.125L12.3417 5.78542L9.21667 2.66042L0 11.8771ZM14.7583 3.36875C15.0833 3.04375 15.0833 2.51875 14.7583 2.19375L12.8083 0.24375C12.4833 -0.08125 11.9583 -0.08125 11.6333 0.24375L10.1083 1.76875L13.2333 4.89375L14.7583 3.36875Z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns(); let odd = odd"
+                [class.editing-row]="editingId === row.id"
+                [class.zb-row--alt]="odd"></tr>
+          </table>
+
+          <!-- La tabla puede quedar vacia por los filtros (p.ej. "Inactivos" sin
+               ninguno) aunque haya 272 fichas cargadas: sin este aviso pareceria
+               que algo se ha roto. -->
+          @if (!pagedWorkers().length) {
+            <p class="employees-sin-resultados">
+              No hay empleados {{ estadoLabel() }} con estos filtros.
+            </p>
+          }
+        </div>
+
+        <zb-paginator
+          class="zb-table-card__pager"
+          [currentPage]="page() + 1"
+          [totalPages]="totalPages()"
+          (pageChange)="page.set($event - 1)"
+        ></zb-paginator>
+      </div>
+
+    } @else {
+      <div class="empty-center">
+        <zb-empty-state
+          illustration="person_outline"
+          title="Añade empleados para empezar"
+          subtitle="Puedes importarlos usando la plantilla excel o añadirlos uno a uno"
+        >
+          <zb-button variant="secondary" iconRight="download" (click)="downloadTemplate()">Descargar plantilla Excel</zb-button>
+          <zb-button variant="primary" iconLeft="add" (click)="openAddForm()">Nuevo empleado</zb-button>
+        </zb-empty-state>
+      </div>
+    }
+  }
+
+  <!-- ── Create sidepanel ── -->
+  <zb-sidepanel
+    [open]="showAddForm"
+    (openChange)="showAddForm = $event"
+    title="Nuevo empleado"
+    [showClose]="false"
+    mode="create"
+    [saveDisabled]="camposObligatoriosQueFaltan().length > 0"
+    [saving]="saving()"
+    [preventClose]="isCreateDirty"
+    [closeOnScrim]="!isCreateDirty"
+    [closeOnEscape]="!isCreateDirty"
+    (save)="saveNew()"
+    (cancel)="onCreateCancel()"
+  >
+    @if (showAddForm) {
+      <!-- El nombre siempre es obligatorio: es columna del Worker, no un
+           EntityField, asi que su * va aqui a mano. -->
+      <zb-input label="Nombre *" [(ngModel)]="newForm.name"
+        [error]="mostrarErroresObligatorios && !newForm.name.trim() ? 'Este campo es obligatorio' : undefined"></zb-input>
+      <zb-input label="Email" type="email" placeholder="nombre@empresa.com"
+        hint="Recibirá un email para establecer su contraseña"
+        [(ngModel)]="newForm.email"></zb-input>
+      <!-- markRequired: el * y los errores salen del `required` del field_schema,
+           la misma configuracion que valida el backend. -->
+      <app-dynamic-fields
+        [fields]="fieldSchema()"
+        [values]="newCustomData"
+        appearance="outline"
+        [markRequired]="true"
+        [showRequiredErrors]="mostrarErroresObligatorios"
+        (valuesChange)="newCustomData = $event">
+      </app-dynamic-fields>
+    }
+  </zb-sidepanel>
+
+  <!-- ── Edit sidepanel ── -->
+  <zb-sidepanel
+    [open]="editingId !== null"
+    (openChange)="!$event && cancelEdit()"
+    [title]="editForm.name || 'Editar empleado'"
+    [showClose]="false"
+    mode="edit"
+    [saving]="saving()"
+    [preventClose]="isEditDirty"
+    [closeOnScrim]="!isEditDirty"
+    [closeOnEscape]="!isEditDirty"
+    (save)="saveEdit(getEditingWorker())"
+    (cancel)="onEditCancel()"
+    (delete)="deleteEditing()"
+  >
+    @if (editingId !== null) {
+      <zb-input label="Nombre" [(ngModel)]="editForm.name"></zb-input>
+      <app-dynamic-fields
+        [fields]="fieldSchema()"
+        [values]="editCustomData"
+        appearance="outline"
+        (valuesChange)="editCustomData = $event">
+      </app-dynamic-fields>
+    }
+  </zb-sidepanel>
+
+  <!-- ── Unsaved changes warning ── -->
+  <zb-dialog
+    [(open)]="showUnsavedConfirm"
+    title="¿Abandonar los cambios?"
+    message="Los cambios que hiciste no se guardarán."
+    mode="warning"
+    confirmLabel="Abandonar"
+    cancelLabel="Seguir editando"
+    (confirm)="confirmUnsavedClose()"
+  ></zb-dialog>
+
+  <!-- ── Import file upload ── -->
+  <zb-file-upload
+    [(open)]="showImport"
+    title="Importar empleados"
+    hint="Excel (.xlsx, .xls)"
+    accept=".xlsx,.xls"
+    [multiple]="false"
+    confirmLabel="Importar"
+    (confirm)="onFilesFromUpload($event)"
+  ></zb-file-upload>
+
+  <!-- ── Delete confirm dialog ── -->
+  <zb-dialog
+    [(open)]="showDeleteConfirm"
+    [title]="deleteConfirmTitle"
+    message="Esta acción no se puede deshacer."
+    mode="danger"
+    confirmLabel="Eliminar"
+    cancelLabel="Cancelar"
+    (confirm)="confirmDeleteWorker()"
+  ></zb-dialog>
+
+  <!-- ── Import result dialog ── -->
+  <zb-dialog
+    [(open)]="importResultVisible"
+    [title]="importResultTitle"
+    [message]="importResultMessage"
+    [mode]="importResultMode"
+    confirmLabel="Entendido"
+    cancelLabel="Cerrar"
+    (confirm)="importResultVisible = false"
+  ></zb-dialog>
+
+</div>
+
+<!-- ── Save feedback toast (fixed top-right) ── -->
+@if (saveAlert) {
+  <div class="save-toast">
+    <zb-alert [type]="saveAlert.type" [title]="saveAlert.title" [dismissible]="true" (dismissed)="saveAlert = null"></zb-alert>
+  </div>
+}

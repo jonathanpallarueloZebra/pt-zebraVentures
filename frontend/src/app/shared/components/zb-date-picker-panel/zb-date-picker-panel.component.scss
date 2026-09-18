@@ -1,0 +1,221 @@
+:host { display: inline-block; }
+
+.dp-root {
+  width: 328px;
+  background: var(--surface-raised);
+  border-radius: 8px;
+  box-shadow:
+    0px 8px 8px -4px rgba(10, 13, 18, 0.03),
+    0px 20px 24px -4px rgba(10, 13, 18, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--ff-body);
+}
+
+// ── Month navigation ──────────────────────────────────────────
+.dp-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 6px 0;
+}
+
+.dp-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--accent-high);
+  transition: background var(--transition-fast);
+
+  &:hover { background: var(--accent-alpha-low); }
+
+  .material-icons { font-size: 24px; }
+}
+
+.dp-month-label {
+  color: var(--text-primary);
+  font-size: var(--fs-16);
+  font-weight: var(--fw-semibold);
+  line-height: 24px;
+}
+
+// ── Range date inputs ─────────────────────────────────────────
+.dp-range-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+}
+
+.dp-range-input {
+  flex: 1;
+  padding: 8px 14px;
+  background: var(--input-surface);
+  border-radius: 4px;
+  outline: 1px solid var(--input-border);
+  outline-offset: -1px;
+  box-shadow: 0px 1px 2px rgba(10, 13, 18, 0.05);
+  color: var(--input-text);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-regular);
+  line-height: 21px;
+
+  &--focus { outline: 2px solid var(--input-border-active); }
+}
+
+.dp-range-sep {
+  color: var(--text-secondary);
+  font-size: var(--fs-16);
+  flex-shrink: 0;
+}
+
+// ── Calendar grid ─────────────────────────────────────────────
+.dp-grid {
+  padding: 0 24px 16px;
+}
+
+.dp-dow-row {
+  display: flex;
+}
+
+.dp-dow {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  line-height: 21px;
+}
+
+.dp-week {
+  display: flex;
+}
+
+// ── Day cell ──────────────────────────────────────────────────
+.cal-day {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+
+  // Range band — behind the circle (z-index: 0)
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    background: transparent;
+    z-index: 0;
+  }
+
+  &--in-range::before   { background: var(--accent-low); }
+  &--range-start::before { left: 50%;  background: var(--accent-low); }
+  &--range-end::before   { right: 50%; background: var(--accent-low); }
+}
+
+// Day number / circle
+.cal-day__num {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--text-primary);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-regular);
+  line-height: 21px;
+  transition: background var(--transition-fast), color var(--transition-fast);
+
+  .cal-day--outside & { color: var(--text-secondary); }
+
+  // Hover (only non-selected cells)
+  .cal-day:not(.cal-day--selected):hover & {
+    background: var(--accent-alpha-low);
+  }
+
+  // Today indicator (outline ring, only when not selected)
+  .cal-day--today & {
+    outline: 2px solid var(--accent-base);
+    outline-offset: -2px;
+    font-weight: var(--fw-semibold);
+  }
+
+  // Days inside range: accent text
+  .cal-day--in-range & {
+    color: var(--accent-highest);
+    font-weight: var(--fw-semibold);
+  }
+
+  // Selected (start / end): dark blue filled circle
+  .cal-day--selected & {
+    background: var(--accent-high);
+    color: var(--text-inverted);
+    font-weight: var(--fw-semibold);
+  }
+}
+
+// ── Footer ────────────────────────────────────────────────────
+.dp-divider {
+  height: 1px;
+  background: var(--divider-default);
+  flex-shrink: 0;
+}
+
+.dp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+}
+
+.dp-btn {
+  height: 38px;
+  padding: 8px 24px;
+  border-radius: 9999px;
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  line-height: 14px;
+  cursor: pointer;
+  transition: background var(--transition-fast), opacity var(--transition-fast);
+
+  &--outline {
+    background: transparent;
+    border: none;
+    outline: 1px solid var(--border-highest);
+    color: var(--text-primary);
+
+    &:hover { background: var(--surface-subtle); }
+  }
+
+  &--primary {
+    background: var(--btn-surface-primary);
+    border: none;
+    color: var(--btn-text-on-brand);
+
+    &:hover { background: var(--btn-surface-primary-hover); }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+}

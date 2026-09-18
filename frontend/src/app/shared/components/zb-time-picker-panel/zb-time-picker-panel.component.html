@@ -1,0 +1,62 @@
+<div class="tp-root">
+  <div class="tp-body">
+
+    <!-- ── Header ──────────────────────────────────────── -->
+    <div class="tp-header-row">
+      <span class="tp-title">Seleccionar Hora</span>
+    </div>
+
+    <!-- ── Preview + AM/PM ─────────────────────────────── -->
+    <div class="tp-preview-row">
+      <div class="tp-preview">{{ timeDisplay }}</div>
+      <div class="tp-period-group">
+        <button
+          class="tp-period-btn"
+          [class.tp-period-btn--active]="period === 'AM'"
+          (click)="setPeriod('AM')"
+        >AM</button>
+        <button
+          class="tp-period-btn"
+          [class.tp-period-btn--active]="period === 'PM'"
+          (click)="setPeriod('PM')"
+        >PM</button>
+      </div>
+    </div>
+
+    <!-- ── Spinners ─────────────────────────────────────── -->
+    <div class="tp-spinners">
+
+      <div class="tp-spinner">
+        <button class="tp-arrow" (click)="incrHours()" aria-label="Incrementar horas">
+          <span class="material-icons">expand_less</span>
+        </button>
+        <div class="tp-digit">{{ hoursDisplay }}</div>
+        <button class="tp-arrow" (click)="decrHours()" aria-label="Decrementar horas">
+          <span class="material-icons">expand_more</span>
+        </button>
+        <span class="tp-label">HORAS</span>
+      </div>
+
+      <div class="tp-colon">:</div>
+
+      <div class="tp-spinner">
+        <button class="tp-arrow" (click)="incrMinutes()" aria-label="Incrementar minutos">
+          <span class="material-icons">expand_less</span>
+        </button>
+        <div class="tp-digit">{{ minutesDisplay }}</div>
+        <button class="tp-arrow" (click)="decrMinutes()" aria-label="Decrementar minutos">
+          <span class="material-icons">expand_more</span>
+        </button>
+        <span class="tp-label">MINUTOS</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Footer ───────────────────────────────────────── -->
+  <div class="tp-divider"></div>
+  <div class="tp-footer">
+    <button class="tp-btn tp-btn--outline" (click)="onCancel()">CANCELAR</button>
+    <button class="tp-btn tp-btn--primary" (click)="onApply()">APLICAR</button>
+  </div>
+</div>

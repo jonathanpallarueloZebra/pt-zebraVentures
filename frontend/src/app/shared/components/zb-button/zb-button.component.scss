@@ -1,0 +1,297 @@
+// ── Host ──────────────────────────────────────────────────────
+:host {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+// ── Base inner button ─────────────────────────────────────────
+.btn-inner {
+  // Reset
+  appearance: none;
+  margin: 0;
+  cursor: pointer;
+
+  // Layout
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+  width: 100%;
+
+  // Shape — always pill per design spec (radius/btn de stylesJPfigma)
+  border-radius: var(--figma-btn-radius);
+  overflow: hidden;
+
+  // Typography (Button de stylesJPfigma: Inter 600, MAYÚS)
+  font-family: var(--figma-btn-font-family);
+  font-weight: var(--figma-btn-font-weight);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+
+  // Border placeholder (outlined variants override)
+  border: none;
+  outline: 1.5px solid transparent;
+  outline-offset: -1.5px;
+
+  // Transitions
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    outline-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  // Focus ring
+  &:focus-visible {
+    box-shadow: 0 0 0 3px var(--focus-ring);
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// ── Tallas (Button de stylesJPfigma) ─────────────────────────
+//  sm  = small : h 28, pad 0 14, fs 12
+//  md  = medium: h 34, pad 0 20, fs 14
+//  lg  = big   : h 40, pad 0 28, fs 16
+// (height fija + padding horizontal = --figma-btn-padding-*)
+
+:host(.zb-btn--sm) .btn-inner {
+  height: var(--figma-btn-height-sm);
+  padding: 0 var(--figma-btn-padding-sm);
+  font-size: var(--figma-btn-font-size-sm);
+  line-height: 1;
+}
+
+:host(.zb-btn--md) .btn-inner {
+  height: var(--figma-btn-height-md);
+  padding: 0 var(--figma-btn-padding-md);
+  font-size: var(--figma-btn-font-size-md);
+  line-height: 1;
+}
+
+:host(.zb-btn--lg) .btn-inner {
+  height: var(--figma-btn-height-lg);
+  padding: 0 var(--figma-btn-padding-lg);
+  font-size: var(--figma-btn-font-size-lg);
+  line-height: 1;
+}
+
+// ── Icon sizing per size ──────────────────────────────────────
+:host(.zb-btn--sm) .btn-icon  { --icon-sz: 18px; }
+:host(.zb-btn--md) .btn-icon  { --icon-sz: 20px; }
+:host(.zb-btn--lg) .btn-icon  { --icon-sz: 24px; }
+
+// Tamaño de la fuente material-icons (fallback). Los zb-icon quedan fuera:
+// su caja la fija el propio componente con `size`, ver más abajo.
+.btn-icon:not(zb-icon) {
+  font-size: var(--icon-sz, 20px);
+  width:     var(--icon-sz, 20px);
+  height:    var(--icon-sz, 20px);
+  line-height: 1;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon {
+
+  // Variante SVG (zb-icon): NO se le impone --icon-sz. Ese token dimensiona
+  // la fuente material-icons, cuyo glifo ocupa solo una parte de su caja; un
+  // SVG con el mismo valor se ve bastante más grande. El tamaño del SVG lo
+  // fija el propio zb-icon vía `size` (16px = medida del icono en Figma).
+  &:is(zb-icon) { font-size: 0; }
+}
+
+// ── Variant: primary (Button/primary de stylesJPfigma) ────────
+:host(.zb-btn--primary) .btn-inner {
+  background: var(--figma-btn-primary-bg);
+  color:      var(--figma-btn-primary-text);
+
+  &:hover:not([disabled]) {
+    background: var(--figma-btn-primary-bg-hover);
+  }
+  &:active:not([disabled]) {
+    background: var(--figma-btn-primary-bg-active);
+  }
+  &[disabled] {
+    background: var(--figma-btn-disabled-bg);
+    color:      var(--figma-btn-disabled-text);
+  }
+}
+
+// ── Variant: secondary (neutral outlined, light bg) ───────────
+:host(.zb-btn--secondary) .btn-inner {
+  background:    transparent;
+  color:         var(--figma-btn-secondary-text);
+  outline-color: var(--figma-btn-secondary-border);
+
+  &:hover:not([disabled]) {
+    background: var(--figma-btn-secondary-bg-hover);
+  }
+  &:active:not([disabled]) {
+    background: var(--figma-btn-secondary-bg-active);
+  }
+  &[disabled] {
+    background:    var(--figma-btn-disabled-bg);
+    color:         var(--figma-btn-disabled-text);
+    outline-color: var(--figma-btn-disabled-bg);
+  }
+}
+
+// ── Variant: danger (filled) ──────────────────────────────────
+:host(.zb-btn--danger) .btn-inner {
+  background: var(--figma-btn-danger-bg);
+  color:      var(--figma-btn-danger-text);
+
+  &:hover:not([disabled]) {
+    background: var(--figma-btn-danger-bg-hover);
+  }
+  &:active:not([disabled]) {
+    background: var(--figma-btn-danger-bg-active);
+  }
+  &[disabled] {
+    background: var(--figma-btn-disabled-bg);
+    color:      var(--figma-btn-disabled-text);
+  }
+}
+
+// ── Variant: danger-outlined ──────────────────────────────────
+:host(.zb-btn--danger-outlined) .btn-inner {
+  background:    transparent;
+  color:         var(--figma-btn-danger-outlined-text);
+  outline-color: var(--figma-btn-danger-outlined-border);
+
+  &:hover:not([disabled]) {
+    background: var(--figma-btn-danger-outlined-bg-hover);
+  }
+  &:active:not([disabled]) {
+    background: var(--figma-btn-danger-outlined-bg-active);
+  }
+  &[disabled] {
+    background:    var(--figma-btn-disabled-bg);
+    color:         var(--figma-btn-disabled-text);
+    outline-color: var(--figma-btn-disabled-bg);
+  }
+}
+
+// ── Variant: icon-only ────────────────────────────────────────
+// Circular, equal padding, single icon. Heights match filled button sizes.
+// sm: 8px pad + 18px icon = 34px  ↔  md: 9px + 20px = 38px  ↔  lg: 9px + 24px = 42px
+
+:host(.zb-btn--icon-only.zb-btn--sm) .btn-inner {
+  height: auto;
+  padding: 8px;
+  --icon-sz: 18px;
+}
+:host(.zb-btn--icon-only.zb-btn--md) .btn-inner {
+  height: auto;
+  padding: 9px;
+  --icon-sz: 20px;
+}
+:host(.zb-btn--icon-only.zb-btn--lg) .btn-inner {
+  height: auto;
+  padding: 9px;
+  --icon-sz: 24px;
+}
+
+:host(.zb-btn--icon-only) .btn-inner {
+  background:    transparent;
+  color:         var(--figma-btn-text-color);   // Icon/link #026aa2
+  outline-color: transparent;
+
+  &:hover:not([disabled]) {
+    background: var(--figma-btn-text-bg-tinted);  // Accent/alpha/low
+  }
+  &:active:not([disabled]) {
+    background: var(--accent-alpha-high);
+  }
+  &[disabled] {
+    color: var(--figma-btn-disabled-text);
+  }
+}
+
+// ── Variant: text / link ──────────────────────────────────────
+// Overrides the fixed-height size rules — uses natural padding + line-height.
+// Specs: sm fs12/lh22/ls.46, md fs14/lh24/ls.40, lg fs16/lh26/ls.46
+
+:host(.zb-btn--text.zb-btn--sm) .btn-inner {
+  height: auto;
+  padding: 4px 8px;
+  font-size: var(--figma-btn-font-size-sm);
+  line-height: 22px;
+  letter-spacing: 0.46px;
+}
+
+:host(.zb-btn--text.zb-btn--md) .btn-inner {
+  height: auto;
+  padding: 6px 8px;
+  font-size: var(--figma-btn-font-size-md);
+  line-height: 24px;
+  letter-spacing: 0.40px;
+}
+
+:host(.zb-btn--text.zb-btn--lg) .btn-inner {
+  height: auto;
+  padding: 8px 8px;
+  font-size: var(--figma-btn-font-size-lg);
+  line-height: 26px;
+  letter-spacing: 0.46px;
+}
+
+:host(.zb-btn--text) .btn-inner {
+  background:    transparent;
+  color:         var(--figma-btn-text-color);   // Text/link #026aa2
+  outline-color: transparent;
+
+  &:hover:not([disabled]) {
+    background: var(--figma-btn-text-bg-tinted);  // Accent/alpha/low
+  }
+  &:active:not([disabled]) {
+    background: var(--accent-alpha-high);
+  }
+  &[disabled] {
+    color: var(--figma-btn-disabled-text);
+  }
+}
+
+// ── Variant: outline-dark (secondary on dark surface) ─────────
+:host(.zb-btn--outline-dark) .btn-inner {
+  background:    transparent;
+  color:         var(--figma-btn-danger-text);   // Button/text/on-dark #fafafa
+  outline-color: var(--btn-border-on-dark);
+
+  &:hover:not([disabled]) {
+    background: var(--figma-btn-secondary-bg-hover);
+  }
+  &:active:not([disabled]) {
+    background: var(--figma-btn-secondary-bg-active);
+  }
+  &[disabled] {
+    opacity: 0.4;
+  }
+}
+
+// ── Spinner ───────────────────────────────────────────────────
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--r-full);
+  animation: zb-spin 0.65s linear infinite;
+  flex-shrink: 0;
+
+  :host(.zb-btn--lg) & {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@keyframes zb-spin {
+  to { transform: rotate(360deg); }
+}

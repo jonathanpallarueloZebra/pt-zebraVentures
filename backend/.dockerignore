@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+# `.env` solo excluye ese nombre exacto: sin esta linea un `.env.dev` o
+# `.env.prod` del portatil acaba dentro de la imagen publicada, con sus secretos
+# y con DEBUG=True pisando lo que pase el despliegue.
+.env.*
+.git/
+.vscode/
+.idea/

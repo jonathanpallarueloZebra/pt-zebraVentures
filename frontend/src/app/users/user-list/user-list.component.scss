@@ -1,0 +1,59 @@
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.loading-text {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem;
+}
+
+// ── Estado (badge) ─ tokens Figma de alert (--figma-alert-*), igual que
+//    restrictions/entity-records. Chip Figma + variante dark. ──
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--figma-chip-padding-y) var(--figma-chip-padding-x-sm);
+  border-radius: var(--figma-chip-radius);          // radius/btn 9999
+  font-size: var(--figma-chip-font-size-sm);         // 12px (caption)
+  font-weight: var(--fw-semibold);
+  line-height: var(--figma-chip-line-height-sm);
+  white-space: nowrap;
+
+  &--active {
+    background: var(--figma-alert-success-surface);
+    color: var(--figma-alert-success-text);
+    border: var(--figma-datatable-border-width) solid var(--figma-alert-success-border);
+  }
+  &--inactive {
+    background: var(--figma-alert-error-surface);
+    color: var(--figma-alert-error-text);
+    border: var(--figma-datatable-border-width) solid var(--figma-alert-error-border);
+  }
+}
+
+// Dark theme del badge de estado (superficie invertida, como Alert dark de Figma).
+:host-context(.dark-theme) .status-badge {
+  &--active {
+    background: var(--figma-alert-dark-success-surface);
+    color: var(--figma-alert-dark-success-text);
+    border-color: var(--figma-alert-dark-success-border);
+  }
+  &--inactive {
+    background: var(--figma-alert-dark-error-surface);
+    color: var(--figma-alert-dark-error-text);
+    border-color: var(--figma-alert-dark-error-border);
+  }
+}
+
+// ── Columna de acciones ──
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}

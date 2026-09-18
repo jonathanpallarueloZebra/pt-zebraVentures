@@ -1,0 +1,356 @@
+<zb-page-header [title]="'Restricciones'" [showSidebarToggle]="true" [sidebarCollapsed]="false"></zb-page-header>
+<div class="page-container">
+
+  @if (loading()) {
+    <!-- Sin indicador de carga (ni skeleton ni spinner): la tabla aparece al
+         llegar los datos. -->
+  } @else if (restrictions().length === 0) {
+    <zb-empty-state
+      icon="policy"
+      title="Sin restricciones definidas"
+      subtitle="Las restricciones se crean automáticamente desde el planificador mediante lenguaje natural">
+    </zb-empty-state>
+  } @else {
+
+    <!-- Toolbar: solo Filtros (Fijas / Personalizables). Sin "Mostrar": son
+         pocas restricciones y caben todas, el selector no aportaba nada. -->
+    <zb-table-toolbar
+      class="records-toolbar"
+      [showPageSize]="false"
+      [showColumnsToggle]="false">
+      <zb-filter-menu toolbar-left
+        [filters]="filters()"
+        [values]="filterValues()"
+        (valuesChange)="onFiltersChange($event)"
+        (reset)="resetFilters()">
+      </zb-filter-menu>
+    </zb-table-toolbar>
+
+    @if (filteredRestrictions().length === 0) {
+      <zb-empty-state
+        icon="filter_alt"
+        title="Sin resultados"
+        subtitle="Ninguna restricción coincide con el filtro seleccionado">
+      </zb-empty-state>
+    } @else {
+    <div class="zb-table-card">
+      <div class="zb-table-scroll">
+        <table mat-table [dataSource]="pagedRestrictions()" class="zb-data-table restrictions-table">
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Restricción</th>
+            <td mat-cell *matCellDef="let r">
+              <div class="cell-stack">
+                <span class="cell-primary">{{ r.name }}</span>
+                <span class="cell-secondary">{{ r.description }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="engine">
+            <th mat-header-cell *matHeaderCellDef>Motor</th>
+            <td mat-cell *matCellDef="let r">
+              <span class="engine-label">{{ getEngineLabel(r.engine) }}</span>
+              <span class="config-text">{{ getConfigSummary(r) }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="kind">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let r">
+              <span class="kind-badge" [class.kind-badge--custom]="r.customizable"
+                    [title]="r.customizable
+                      ? 'Puedes editar sus valores, duplicarla y asignarla a ' + scopeEntityName().toLowerCase()
+                      : 'Restricción fija: solo puedes activarla o desactivarla'">
+                {{ r.customizable ? 'Personalizable' : 'Fija' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="severity">
+            <th mat-header-cell *matHeaderCellDef>Severidad</th>
+            <td mat-cell *matCellDef="let r">
+              <span class="severity-badge" [class]="'severity-' + r.severity">
+                {{ r.severity === 'warning' ? 'Aviso' : 'Error' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="scope">
+            <th mat-header-cell *matHeaderCellDef>{{ scopeEntityName() }}</th>
+            <td mat-cell *matCellDef="let r">
+              <span class="scope-text">{{ getScopeLabel(r) }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="active">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let r">
+              <zb-toggle [ngModel]="r.active" (ngModelChange)="toggleActive(r)" [ngModelOptions]="{standalone: true}"></zb-toggle>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let r" class="actions-cell">
+              <!-- Mismos botones .zb-action que /entities/* y Ausencias: SVG
+                   inline de Figma (edit 20x20), 20px y color Icon/link. Las
+                   fijas no tienen acciones: solo el toggle de Estado. -->
+              @if (r.customizable) {
+                <button type="button" class="zb-action" aria-label="Editar parámetros"
+                        title="Editar parámetros" (click)="openEdit(r)">
+                  <svg class="zb-action__icon" viewBox="-2.5 -2.5 20 20" fill="none" aria-hidden="true">
+                    <path d="M0 11.8771V15.0021H3.125L12.3417 5.78542L9.21667 2.66042L0 11.8771ZM14.7583 3.36875C15.0833 3.04375 15.0833 2.51875 14.7583 2.19375L12.8083 0.24375C12.4833 -0.08125 11.9583 -0.08125 11.6333 0.24375L10.1083 1.76875L13.2333 4.89375L14.7583 3.36875Z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button type="button" class="zb-action" aria-label="Duplicar"
+                        title="Duplicar y asignar a {{ scopeEntityName().toLowerCase() }}"
+                        (click)="openDuplicate(r)">
+                  <zb-icon class="zb-action__icon" name="content_copy" size="20"></zb-icon>
+                </button>
+                <!-- Eliminar NO va en la tabla: está en el pie del sidepanel de
+                     edición (botón rojo abajo a la izquierda), como en el resto
+                     de la aplicación. -->
+              }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns; let odd = odd"
+              [class.zb-row--alt]="odd"></tr>
+        </table>
+      </div>
+      @if (totalPages() > 1) {
+        <zb-paginator class="zb-table-card__pager"
+          [currentPage]="currentPage() + 1"
+          [totalPages]="totalPages()"
+          (pageChange)="page.set($event - 1)">
+        </zb-paginator>
+      }
+    </div>
+    }
+  }
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SIDEPANEL: EDITAR PARÁMETROS (solo personalizables)                     -->
+<!-- El motor y el tipo de regla se muestran en solo lectura: el cliente     -->
+<!-- únicamente edita valores.                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<zb-sidepanel
+    [open]="showEdit()"
+    (openChange)="showEdit.set($event)"
+    [showClose]="false"
+    [title]="'Editar restricción'"
+    mode="edit"
+    width="620px"
+    [saving]="saving()"
+    [saveDisabled]="saveDisabled()"
+    saveLabel="Guardar"
+    deleteLabel="Eliminar"
+    [showDelete]="canDeleteEditing()"
+    (save)="saveEdit()"
+    (delete)="askDeleteFromPanel()"
+    (cancel)="closeEdit()">
+
+    <div class="panel-fields">
+
+      <!-- Motor y tipo de regla: solo lectura (los define Zebra) -->
+      <div class="readonly-block">
+        <div class="readonly-row">
+          <span class="readonly-label">Motor</span>
+          <span class="readonly-value">{{ getEngineLabel(editForm().engine || 'count') }}</span>
+        </div>
+        <div class="readonly-row">
+          <span class="readonly-label">Tipo de regla</span>
+          <span class="readonly-value">{{ getRuleTypeLabel(editForm()) }}</span>
+        </div>
+      </div>
+
+      <zb-input
+        label="Nombre"
+        [ngModel]="editForm().name || ''"
+        (ngModelChange)="updateForm('name', $event)"
+        [ngModelOptions]="{standalone: true}"
+        [error]="!editForm().name?.trim() ? 'El nombre es obligatorio' : undefined">
+      </zb-input>
+
+      <zb-input
+        label="Descripción"
+        [ngModel]="editForm().description || ''"
+        (ngModelChange)="updateForm('description', $event)"
+        [ngModelOptions]="{standalone: true}">
+      </zb-input>
+
+      <!-- Umbral + condición (motores count y condition) -->
+      @if (hasThreshold()) {
+        <div class="panel-row">
+          <zb-select
+            label="Condición"
+            [options]="[
+              { value: 'lte', label: 'Máximo (no puede superar)' },
+              { value: 'gte', label: 'Mínimo (debe alcanzar)' },
+              { value: 'eq', label: 'Exactamente' }
+            ]"
+            [ngModel]="getConfig('operator', 'lte')"
+            (ngModelChange)="updateConfig('operator', $event)"
+            [ngModelOptions]="{standalone: true}">
+          </zb-select>
+          <zb-input
+            label="Cantidad"
+            type="number"
+            [ngModel]="getConfig('threshold', 0)"
+            (ngModelChange)="updateConfig('threshold', $event)"
+            [ngModelOptions]="{standalone: true}">
+          </zb-input>
+        </div>
+      }
+
+      <!-- Parejas de trabajadores incompatibles -->
+      @if (hasWorkerPairs()) {
+        <div class="pairs-block">
+          <div class="pairs-header">
+            <span class="pairs-title">Parejas incompatibles</span>
+            <zb-button variant="secondary" size="sm" iconLeft="add" (click)="addWorkerPair()">
+              Añadir pareja
+            </zb-button>
+          </div>
+          <span class="pairs-hint">
+            Los dos trabajadores de cada pareja no podrán coincidir en el mismo turno y día.
+          </span>
+
+          @if (workerPairs().length === 0) {
+            <span class="pairs-empty">Sin parejas definidas todavía.</span>
+          }
+
+          @for (pair of workerPairs(); track $index) {
+            <div class="pair-row">
+              <zb-select
+                [options]="workerOptions()"
+                [searchable]="true"
+                placeholder="Trabajador 1"
+                [ngModel]="pair[0]"
+                (ngModelChange)="updateWorkerPair($index, 0, $event)"
+                [ngModelOptions]="{standalone: true}">
+              </zb-select>
+              <span class="pair-sep">y</span>
+              <zb-select
+                [options]="workerOptions()"
+                [searchable]="true"
+                placeholder="Trabajador 2"
+                [ngModel]="pair[1]"
+                (ngModelChange)="updateWorkerPair($index, 1, $event)"
+                [ngModelOptions]="{standalone: true}">
+              </zb-select>
+              <zb-button variant="icon-only" size="sm" icon="delete"
+                ariaLabel="Quitar pareja" title="Quitar pareja"
+                (click)="removeWorkerPair($index)"></zb-button>
+            </div>
+          }
+
+          @if (hasIncompletePairs()) {
+            <span class="pairs-error">Completa los dos trabajadores de cada pareja.</span>
+          }
+          @if (hasSelfPairs()) {
+            <span class="pairs-error">Una pareja no puede tener dos veces el mismo trabajador.</span>
+          }
+        </div>
+      }
+
+      <zb-input
+        label="Mensaje personalizado"
+        placeholder="Ej: {worker} no puede estar con {worker2}"
+        hint="Placeholders: {worker} {count} {limit} {area} {shift} {worker1} {worker2}"
+        [ngModel]="editForm().message || ''"
+        (ngModelChange)="updateForm('message', $event)"
+        [ngModelOptions]="{standalone: true}">
+      </zb-input>
+
+      <!-- Ámbito: a qué tiendas aplica -->
+      @if (scopeRecordsList().length) {
+        <div class="scope-block">
+          <span class="scope-title">Aplica a ({{ scopeEntityName() }})</span>
+          <span class="scope-hint">
+            Sin ninguna marcada, la restricción aplica a todas.
+          </span>
+          <div class="scope-list">
+            @for (rec of scopeRecordsList(); track rec.id) {
+              <zb-checkbox
+                [label]="recordLabel(rec)"
+                [ngModel]="isScopeChecked(rec.id)"
+                (ngModelChange)="toggleScope(rec.id, $event)"
+                [ngModelOptions]="{standalone: true}">
+              </zb-checkbox>
+            }
+          </div>
+        </div>
+      }
+    </div>
+</zb-sidepanel>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SIDEPANEL: DUPLICAR Y ASIGNAR A TIENDAS                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<zb-sidepanel
+    [open]="showDuplicate()"
+    (openChange)="showDuplicate.set($event)"
+    [showClose]="false"
+    [title]="'Duplicar restricción'"
+    mode="create"
+    width="560px"
+    [saving]="saving()"
+    [saveDisabled]="!duplicateName().trim()"
+    saveLabel="Duplicar"
+    (save)="confirmDuplicate()"
+    (cancel)="closeDuplicate()">
+
+    <div class="panel-fields">
+      <p class="dup-intro">
+        Se creará una copia independiente de <strong>{{ duplicating()?.name }}</strong>.
+        Podrás editar sus valores sin afectar a la original.
+      </p>
+
+      <zb-input
+        label="Nombre de la copia"
+        [ngModel]="duplicateName()"
+        (ngModelChange)="duplicateName.set($event)"
+        [ngModelOptions]="{standalone: true}"
+        [error]="!duplicateName().trim() ? 'El nombre es obligatorio' : undefined">
+      </zb-input>
+
+      @if (scopeRecordsList().length) {
+        <div class="scope-block">
+          <span class="scope-title">Asignar a ({{ scopeEntityName() }})</span>
+          <span class="scope-hint">
+            Sin ninguna marcada, la copia aplicará a todas.
+          </span>
+          <div class="scope-list">
+            @for (rec of scopeRecordsList(); track rec.id) {
+              <zb-checkbox
+                [label]="recordLabel(rec)"
+                [ngModel]="isDuplicateScopeChecked(rec.id)"
+                (ngModelChange)="toggleDuplicateScope(rec.id, $event)"
+                [ngModelOptions]="{standalone: true}">
+              </zb-checkbox>
+            }
+          </div>
+        </div>
+      }
+    </div>
+</zb-sidepanel>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- DIALOG: ELIMINAR COPIA                                                  -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<zb-dialog
+  [open]="showDeleteConfirm()"
+  (openChange)="showDeleteConfirm.set($event)"
+  title="¿Eliminar restricción?"
+  [message]="'Se eliminará la copia «' + (deleting()?.name || '') + '». Esta acción no se puede deshacer.'"
+  mode="danger"
+  confirmLabel="Eliminar"
+  cancelLabel="Cancelar"
+  [saving]="saving()"
+  (confirm)="confirmDelete()"
+  (cancel)="closeDelete()">
+</zb-dialog>

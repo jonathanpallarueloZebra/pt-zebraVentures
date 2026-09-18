@@ -1,0 +1,96 @@
+// ════════════════════════════════════════════════════════════
+// Días de cierre — estilos del sistema (stylesJPfigma). Reutilizado en el panel
+// de cliente (/closed-days) y en adminZebra. Inputs = patrón Input/text
+// (--figma-input-*), tabla = zb-data-table.
+// ════════════════════════════════════════════════════════════
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-l, 24px);
+}
+
+// Hint bajo la lista de ámbitos (dentro del .cd-field, separado del último check).
+.cd-hint {
+  margin: 4px 0 0;
+  font-size: var(--fs-12, 12px);
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+// ── Barra de acciones (botón "Añadir", alineado a la derecha) ──
+// Mismo respiro que .page-actions del sistema (12px arriba): separa el botón
+// de la cabecera (page-container/tab-body van con padding-top:0). El padding
+// LATERAL ya lo da el contenedor padre, no se duplica aquí.
+.cd-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 12px;
+}
+
+// ── Formulario dentro del side-panel (columna, gap 24 = spacing/L,
+//    igual que el resto de forms del sidepanel del sistema) ──────
+.cd-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-l, 24px);
+}
+
+// Lista de checkboxes de ámbito (Global + una por tienda) — selección múltiple.
+.cd-scopes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-s, 8px);
+}
+
+.cd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;                // Input/label gap de Figma
+
+  &--select { width: 100%; }
+}
+
+// Label Overline (igual que el resto de campos del sistema).
+.cd-field__label {
+  display: block;
+  font-family: var(--ff-display, Inter);
+  font-size: var(--fs-12, 12px);
+  line-height: 1.2;
+  font-weight: var(--fw-semibold, 600);
+  letter-spacing: 0.12px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+// Input = patrón Input/text de Figma (borde en el input, appearance:none,
+// tokens --figma-input-*, foco azul, calendar-picker nativo).
+.cd-field__input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--figma-input-padding);
+  background: var(--figma-input-surface);
+  border: var(--figma-input-border-width) solid var(--figma-input-border);
+  border-radius: var(--figma-input-radius);
+  box-shadow: var(--figma-input-shadow);
+  font-family: var(--ff-display, Inter);
+  font-size: var(--figma-input-value-font-size);
+  line-height: var(--figma-input-value-line-height);
+  color: var(--figma-input-text);
+  transition: border-color var(--transition-fast);
+
+  &:focus { outline: none; border-color: var(--figma-input-border-active); }
+  &::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; }
+  &::placeholder { color: var(--figma-input-placeholder); }
+}
+
+// El zb-select del ámbito alinea su base con los inputs de la fila.
+.cd-field--select { justify-content: flex-end; }
+
+.cd-empty {
+  padding: var(--sp-m, 16px) 0;
+  font-size: var(--fs-14, 14px);
+  color: var(--text-secondary);
+}

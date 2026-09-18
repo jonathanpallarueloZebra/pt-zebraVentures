@@ -1,0 +1,337 @@
+<zb-page-header [title]="'Catálogo de configuración'" [showSidebarToggle]="true" [sidebarCollapsed]="false"></zb-page-header>
+<div class="page-container">
+  <div class="page-actions">
+    <zb-button variant="primary" iconLeft="add" (click)="creatingKind = true; editingKindId = null">Nueva categoría</zb-button>
+  </div>
+
+  <p class="text-secondary" style="margin-bottom: var(--sp-l);">
+    Configura los valores disponibles en el sistema. Cada categoria agrupa opciones reutilizables
+    que puedes personalizar para tu empresa.
+  </p>
+
+  <!-- Create Kind form -->
+  @if (creatingKind) {
+    <div class="kind-form-card">
+      <h3 class="kind-form-title">Nueva categoria</h3>
+      <div class="kind-form-row">
+        <zb-input label="Nombre" [ngModel]="newKind.name" (ngModelChange)="onNewKindNameChange($event)" placeholder="Ej: Tipo de contrato" [ngModelOptions]="{standalone: true}"></zb-input>
+        <div class="field-with-hint">
+          <zb-input label="Codigo" [ngModel]="newKind.code" disabled [ngModelOptions]="{standalone: true}"></zb-input>
+          <small class="field-hint">Generado automaticamente</small>
+        </div>
+        <zb-input label="Descripcion" [(ngModel)]="newKind.description" placeholder="Opcional" [ngModelOptions]="{standalone: true}"></zb-input>
+      </div>
+      <div class="kind-form-actions">
+        <zb-toggle [(ngModel)]="newKind.editable" label="Editable por admin" [ngModelOptions]="{standalone: true}"></zb-toggle>
+        <span style="flex:1"></span>
+        <zb-button variant="text" (click)="creatingKind = false">Cancelar</zb-button>
+        <zb-button variant="primary"
+                [disabled]="!newKind.code || !newKind.name || saving()"
+                (click)="saveNewKind()">
+          {{ saving() ? 'Guardando...' : 'Crear categoria' }}
+        </zb-button>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="sk-page">
+      <div class="sk-toolbar">
+        <div class="sk-toolbar__left">
+          <zb-skeleton width="200px" height="20px" radius="4px"></zb-skeleton>
+        </div>
+        <div class="sk-toolbar__right">
+          <zb-skeleton width="160px" height="36px" radius="8px"></zb-skeleton>
+        </div>
+      </div>
+      <div class="sk-accordion">
+        @for (_ of [0,1,2,3,4]; track $index) {
+          <div class="sk-accordion-panel">
+            <zb-skeleton width="36px" height="36px" radius="8px"></zb-skeleton>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+              <zb-skeleton [width]="$index % 2 === 0 ? '35%' : '25%'" height="16px"></zb-skeleton>
+              <zb-skeleton [width]="$index % 2 === 0 ? '55%' : '45%'" height="12px"></zb-skeleton>
+            </div>
+            <zb-skeleton width="60px" height="22px" radius="12px"></zb-skeleton>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    @if (!kinds().length && !creatingKind) {
+      <div class="empty-state">
+        <mat-icon>tune</mat-icon>
+        <p>Sin categorias. Crea una con el boton de arriba.</p>
+      </div>
+    }
+    <mat-accordion multi>
+      @for (kind of kinds(); track kind.id) {
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              @if (kind.icon) {
+                <mat-icon class="kind-icon">{{ kind.icon }}</mat-icon>
+              }
+              @if (editingKindId === kind.id) {
+                <div class="kind-edit-name" (click)="$event.stopPropagation()">
+                  <zb-input [ngModel]="editKind['name']" (ngModelChange)="editKind['name'] = $event" placeholder="Nombre" [ngModelOptions]="{standalone: true}"></zb-input>
+                </div>
+              } @else {
+                <span>{{ kind.name }}</span>
+              }
+              <span class="value-count">{{ kind.values.length }} valores</span>
+            </mat-panel-title>
+            <mat-panel-description class="kind-desc-row">
+              @if (editingKindId !== kind.id) {
+                <span class="kind-desc-text">{{ kind.description }}</span>
+                @if (!kind.editable) { <span class="chip-system">Sistema</span> }
+              }
+              <span style="flex:1"></span>
+              @if (editingKindId === kind.id) {
+                <div class="kind-edit-desc" (click)="$event.stopPropagation()">
+                  <zb-input [ngModel]="editKind['description']" (ngModelChange)="editKind['description'] = $event" placeholder="Descripcion" [ngModelOptions]="{standalone: true}"></zb-input>
+                </div>
+                <zb-button variant="icon-only" icon="check" matTooltip="Guardar" (click)="$event.stopPropagation(); saveEditKind(kind)"></zb-button>
+                <zb-button variant="icon-only" icon="close" matTooltip="Cancelar" (click)="$event.stopPropagation(); editingKindId = null"></zb-button>
+              } @else {
+                <zb-button variant="icon-only" icon="edit" matTooltip="Editar categoria" (click)="$event.stopPropagation(); startEditKind(kind)"></zb-button>
+                <zb-button variant="icon-only" icon="delete" matTooltip="Eliminar categoria" (click)="$event.stopPropagation(); deleteKind(kind)"></zb-button>
+              }
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <!-- Values list -->
+          <div class="values-grid">
+            @for (val of kind.values; track val.id) {
+              <div class="value-card" [class.inactive]="!val.active">
+
+                <!-- VIEW mode -->
+                @if (editingValueId !== val.id) {
+                  <div class="value-header">
+                    @if (val.icon) {
+                      <mat-icon [style.color]="val.color || 'inherit'">{{ val.icon }}</mat-icon>
+                    } @else if (val.color) {
+                      <span class="color-dot" [style.background]="val.color"></span>
+                    }
+                    <div class="value-info">
+                      <span class="value-label">{{ val.label }}</span>
+                      <span class="value-code">{{ val.code }}</span>
+                    </div>
+                    <div class="value-actions">
+                      <zb-toggle [ngModel]="val.active" (ngModelChange)="toggleValueActive(kind.code, val)" [ngModelOptions]="{standalone: true}"></zb-toggle>
+                      @if (kind.editable) {
+                        <zb-button variant="icon-only" icon="edit" (click)="startEditValue(kind, val)" matTooltip="Editar"></zb-button>
+                        <zb-button variant="icon-only" icon="delete" (click)="deleteValue(kind.code, val.id)" matTooltip="Eliminar"></zb-button>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Extra typed attributes (display) -->
+                  @if (kind.attributes.length) {
+                    <div class="attr-display">
+                      @for (attr of kind.attributes; track attr.id) {
+                        <span class="attr-chip">
+                          <span class="attr-chip-label">{{ attr.label }}:</span>
+                          @if (attr.field_type === 'color') {
+                            <span class="attr-color-swatch"
+                              [style.background]="getAttrValue(val, attr.key)"></span>
+                          }
+                          {{ formatAttrDisplay(attr, val) }}
+                        </span>
+                      }
+                    </div>
+                  }
+
+                <!-- EDIT mode -->
+                } @else {
+                  <div class="edit-form">
+                    <div class="form-row">
+                      <zb-input label="Nombre" [(ngModel)]="editValueBase['label']" class="field-sm" [ngModelOptions]="{standalone: true}"></zb-input>
+                      <div class="color-field">
+                        <label>Color</label>
+                        <input type="color" [(ngModel)]="editValueBase['color']" [ngModelOptions]="{standalone: true}">
+                      </div>
+                    </div>
+
+                    @if (kind.attributes.length) {
+                      <mat-divider style="margin: var(--sp-s) 0;"></mat-divider>
+                      <div class="form-row">
+                        @for (attr of kind.attributes; track attr.id) {
+                          @if (attr.field_type === 'boolean') {
+                            <div class="toggle-field">
+                              <zb-toggle [(ngModel)]="editValueAttrs[attr.key]" [label]="attr.label" [ngModelOptions]="{standalone: true}"></zb-toggle>
+                            </div>
+                          } @else if (attr.field_type === 'color') {
+                            <div class="color-field">
+                              <label>{{ attr.label }}</label>
+                              <input type="color" [(ngModel)]="editValueAttrs[attr.key]" [ngModelOptions]="{standalone: true}">
+                            </div>
+                          } @else if (attr.field_type === 'time') {
+                            <div class="native-field field-sm">
+                              <label class="native-label">{{ attr.label }}</label>
+                              <div class="native-shell">
+                                <input type="time" class="native-input" [(ngModel)]="editValueAttrs[attr.key]" [ngModelOptions]="{standalone: true}" [placeholder]="attr.placeholder">
+                              </div>
+                            </div>
+                          } @else {
+                            <zb-input [label]="attr.label" [type]="attr.field_type === 'number' ? 'number' : 'text'" [(ngModel)]="editValueAttrs[attr.key]" [ngModelOptions]="{standalone: true}" [placeholder]="attr.placeholder" class="field-sm"></zb-input>
+                          }
+                        }
+                      </div>
+                    }
+
+                    <div class="form-actions">
+                      <zb-button variant="text" (click)="cancelEditValue()">Cancelar</zb-button>
+                      <zb-button variant="primary" (click)="saveEditValue(kind, val)" [disabled]="saving()">
+                        {{ saving() ? 'Guardando...' : 'Guardar' }}
+                      </zb-button>
+                    </div>
+                  </div>
+                }
+
+              </div>
+            }
+          </div>
+
+          <!-- Add new values (batch) -->
+          @if (kind.editable) {
+            @if (addingValueTo === kind.id) {
+              <div class="add-value-form">
+                <h4 class="form-section-title">Nuevos valores</h4>
+
+                @for (pv of pendingValues; track $index) {
+                  <div class="pending-value-row">
+                    <div class="form-row">
+                      <zb-input label="Nombre visible" [ngModel]="pv.label" (ngModelChange)="onPendingLabelChange($index, $event)" placeholder="Ej: Lunes" class="field-sm" [ngModelOptions]="{standalone: true}"></zb-input>
+                      <div class="field-with-hint field-xs">
+                        <zb-input label="Codigo interno" [ngModel]="pv.code" disabled [ngModelOptions]="{standalone: true}"></zb-input>
+                        <small class="field-hint">Generado</small>
+                      </div>
+                      <div class="color-field">
+                        <label>Color</label>
+                        <input type="color" [(ngModel)]="pv.color" [ngModelOptions]="{standalone: true}">
+                      </div>
+                      @if (pendingValues.length > 1) {
+                        <zb-button variant="icon-only" icon="close" matTooltip="Quitar" (click)="removePendingValue($index)"></zb-button>
+                      }
+                    </div>
+
+                    @if (kind.attributes.length) {
+                      <div class="form-row attr-row-indent">
+                        @for (attr of kind.attributes; track attr.id) {
+                          @if (attr.field_type === 'boolean') {
+                            <div class="toggle-field">
+                              <zb-toggle [(ngModel)]="pv.attrs[attr.key]" [label]="attr.label" [ngModelOptions]="{standalone: true}"></zb-toggle>
+                            </div>
+                          } @else if (attr.field_type === 'color') {
+                            <div class="color-field">
+                              <label>{{ attr.label }}</label>
+                              <input type="color" [(ngModel)]="pv.attrs[attr.key]" [ngModelOptions]="{standalone: true}">
+                            </div>
+                          } @else if (attr.field_type === 'time') {
+                            <div class="native-field field-sm">
+                              <label class="native-label">{{ attr.label }}</label>
+                              <div class="native-shell">
+                                <input type="time" class="native-input" [(ngModel)]="pv.attrs[attr.key]" [ngModelOptions]="{standalone: true}" [placeholder]="attr.placeholder">
+                              </div>
+                            </div>
+                          } @else {
+                            <zb-input [label]="attr.label" [type]="attr.field_type === 'number' ? 'number' : 'text'" [(ngModel)]="pv.attrs[attr.key]" [ngModelOptions]="{standalone: true}" [placeholder]="attr.placeholder" class="field-sm"></zb-input>
+                          }
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+
+                <zb-button variant="secondary" iconLeft="add" class="add-another-btn" (click)="addAnotherValue(kind)">Otro valor</zb-button>
+
+                <div class="form-actions">
+                  <zb-button variant="text" (click)="cancelAddValue()">Cancelar</zb-button>
+                  <zb-button variant="primary" (click)="saveAllPendingValues(kind)"
+                    [disabled]="!pendingValues.length || saving()">
+                    {{ saving() ? 'Guardando...' : 'Guardar ' + pendingValues.length + (pendingValues.length === 1 ? ' valor' : ' valores') }}
+                  </zb-button>
+                </div>
+              </div>
+            } @else {
+              <zb-button variant="secondary" iconLeft="add" (click)="startAddValue(kind)" class="add-btn">Agregar valor</zb-button>
+            }
+          }
+
+          <!-- Attribute management -->
+          <mat-divider style="margin: var(--sp-m) 0;"></mat-divider>
+          <div class="attr-management">
+            <div class="attr-management-header">
+              <span class="attr-management-title">Campos extra por valor</span>
+              @if (addingAttrTo !== kind.id) {
+                <zb-button variant="secondary" iconLeft="add" (click)="startAddAttr(kind)">Añadir campo</zb-button>
+              }
+            </div>
+
+            @if (!kind.attributes.length && addingAttrTo !== kind.id) {
+              <p class="attr-empty">Sin campos extra. Los valores solo tienen nombre y codigo.</p>
+            }
+
+            @for (attr of kind.attributes; track attr.id) {
+              @if (editingAttrId !== attr.id) {
+                <div class="attr-row">
+                  <mat-icon class="attr-type-icon">{{ attrTypeIcon(attr.field_type) }}</mat-icon>
+                  <span class="attr-label">{{ attr.label }}</span>
+                  <span class="attr-key">{{ attr.key }}</span>
+                  <span class="attr-type-badge">{{ attr.field_type_display }}</span>
+                  @if (attr.required) { <span class="attr-required">*</span> }
+                  <span style="flex:1"></span>
+                  <zb-button variant="icon-only" icon="edit" (click)="startEditAttr(attr)" matTooltip="Editar campo"></zb-button>
+                  <zb-button variant="icon-only" icon="delete" (click)="deleteAttr(kind, attr.id)" matTooltip="Eliminar campo"></zb-button>
+                </div>
+              } @else {
+                <div class="attr-edit-form">
+                  <div class="form-row">
+                    <zb-input label="Nombre visible" [(ngModel)]="editAttr['label']" class="field-sm" [ngModelOptions]="{standalone: true}"></zb-input>
+                    <zb-input label="Clave" [(ngModel)]="editAttr['key']" class="field-xs" [ngModelOptions]="{standalone: true}"></zb-input>
+                    <zb-select label="Tipo de dato" [options]="fieldTypeOptions" [(ngModel)]="editAttr['field_type']" class="field-xs" [ngModelOptions]="{standalone: true}"></zb-select>
+                    <zb-input label="Placeholder" [(ngModel)]="editAttr['placeholder']" class="field-sm" [ngModelOptions]="{standalone: true}"></zb-input>
+                  </div>
+                  <div class="form-actions">
+                    <zb-toggle [(ngModel)]="editAttr['required']" label="Requerido" [ngModelOptions]="{standalone: true}"></zb-toggle>
+                    <span style="flex:1"></span>
+                    <zb-button variant="text" (click)="editingAttrId = null">Cancelar</zb-button>
+                    <zb-button variant="primary" (click)="saveEditAttr(kind, attr)" [disabled]="saving()">
+                      {{ saving() ? 'Guardando...' : 'Guardar' }}
+                    </zb-button>
+                  </div>
+                </div>
+              }
+            }
+
+            @if (addingAttrTo === kind.id) {
+              <div class="attr-edit-form">
+                <h4 class="form-section-title">Nuevo campo</h4>
+                <div class="form-row">
+                  <zb-input label="Nombre visible" [ngModel]="newAttr.label || ''" (ngModelChange)="onNewAttrLabelChange($event)" placeholder="Ej: Hora inicio" class="field-sm" [ngModelOptions]="{standalone: true}"></zb-input>
+                  <div class="field-with-hint field-xs">
+                    <zb-input label="Clave" [(ngModel)]="newAttr.key" placeholder="start_time" [ngModelOptions]="{standalone: true}"></zb-input>
+                    <small class="field-hint">Auto-generada</small>
+                  </div>
+                  <zb-select label="Tipo de dato" [options]="fieldTypeOptions" [(ngModel)]="newAttr.field_type" class="field-xs" [ngModelOptions]="{standalone: true}"></zb-select>
+                  <zb-input label="Placeholder" [(ngModel)]="newAttr.placeholder" placeholder="Opcional" class="field-sm" [ngModelOptions]="{standalone: true}"></zb-input>
+                </div>
+                <div class="form-actions">
+                  <zb-toggle [(ngModel)]="newAttr.required" label="Requerido" [ngModelOptions]="{standalone: true}"></zb-toggle>
+                  <span style="flex:1"></span>
+                  <zb-button variant="text" (click)="cancelAddAttr()">Cancelar</zb-button>
+                  <zb-button variant="primary" (click)="saveNewAttr(kind)"
+                    [disabled]="!newAttr.key || !newAttr.label || saving()">
+                    {{ saving() ? 'Guardando...' : 'Añadir campo' }}
+                  </zb-button>
+                </div>
+              </div>
+            }
+          </div>
+
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+  }
+</div>

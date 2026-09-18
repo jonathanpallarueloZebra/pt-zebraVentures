@@ -1,0 +1,48 @@
+<div class="input-wrapper">
+
+  <!-- ── Label ── -->
+  @if (label) {
+    <label
+      class="input-label"
+      [class.input-label--error]="!!error"
+      [for]="id"
+    >{{ label }}</label>
+  }
+
+  <!-- ── Shell (visual box) ── -->
+  <div
+    class="input-shell"
+    [class.input-shell--error]="!!error"
+    [class.input-shell--disabled]="isDisabled"
+  >
+    @if (iconLeft) {
+      <span class="input-icon input-icon--left material-icons" aria-hidden="true">{{ iconLeft }}</span>
+    }
+
+    <input
+      #nativo
+      class="input-native"
+      [id]="id"
+      [type]="type"
+      [attr.step]="step ?? null"
+      [attr.inputmode]="inputmode ?? null"
+      [placeholder]="placeholder"
+      [disabled]="isDisabled"
+      [autocomplete]="autocomplete || 'off'"
+      (input)="handleInput($event)"
+      (blur)="handleBlur()"
+    />
+
+    @if (iconRight) {
+      <span class="input-icon input-icon--right material-icons" aria-hidden="true">{{ iconRight }}</span>
+    }
+  </div>
+
+  <!-- ── Sub-text: error or hint ── -->
+  @if (error) {
+    <span class="input-sub input-sub--error" role="alert">{{ error }}</span>
+  } @else if (hint) {
+    <span class="input-sub input-sub--hint">{{ hint }}</span>
+  }
+
+</div>

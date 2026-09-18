@@ -1,0 +1,10 @@
+[
+  {"model": "workers.workerpreference", "pk": 1, "fields": {"worker": 1, "shift_type": "morning"}},
+  {"model": "workers.workerpreference", "pk": 2, "fields": {"worker": 1, "shift_type": "afternoon"}},
+  {"model": "workers.workerpreference", "pk": 3, "fields": {"worker": 2, "shift_type": "morning"}},
+  {"model": "workers.workerpreference", "pk": 4, "fields": {"worker": 3, "shift_type": "night"}},
+  {"model": "workers.workerpreference", "pk": 5, "fields": {"worker": 4, "shift_type": "morning"}},
+  {"model": "workers.workerpreference", "pk": 6, "fields": {"worker": 4, "shift_type": "afternoon"}},
+  {"model": "workers.workerpreference", "pk": 7, "fields": {"worker": 5, "shift_type": "morning"}},
+  {"model": "workers.workerpreference", "pk": 8, "fields": {"worker": 6, "shift_type": "afternoon"}}
+]

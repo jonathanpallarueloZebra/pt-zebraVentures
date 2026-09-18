@@ -1,0 +1,13 @@
+<label class="cbx-root" [class.cbx-root--disabled]="isDisabled">
+  <input
+    class="cbx-native"
+    type="checkbox"
+    [checked]="checked"
+    [disabled]="isDisabled"
+    (change)="handleChange($event)"
+    (blur)="handleBlur()"
+  />
+  @if (label) {
+    <span class="cbx-label">{{ label }}</span>
+  }
+</label>

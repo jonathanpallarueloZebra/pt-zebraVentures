@@ -1,0 +1,27 @@
+<div class="zb-empty-state" [class.zb-empty-state--figma]="illustration">
+  @if (illustration) {
+    <!-- Ilustración compuesta de Figma (2138:7849): blob orgánico + glifo
+         central + "ring" blanco con el plus encima. Las capas van en % sobre
+         una caja de 200×200, igual que en el diseño. -->
+    <div class="zb-illus" aria-hidden="true">
+      <img class="zb-illus__blob" src="icons/empty-states/base-shadow.svg" alt="">
+      <img class="zb-illus__glyph zb-illus__glyph--{{ illustration }}"
+           src="icons/empty-states/{{ illustration }}.svg" alt="">
+      <img class="zb-illus__ring" src="icons/empty-states/ring.svg" alt="">
+      <img class="zb-illus__plus" src="icons/empty-states/plus-add.svg" alt="">
+    </div>
+  } @else {
+    <div class="zb-empty-state__icon" aria-hidden="true">
+      @if (iconSvg) {
+        <span class="zb-empty-state__svg" [innerHTML]="iconSvg"></span>
+      } @else {
+        <mat-icon>{{ icon }}</mat-icon>
+      }
+    </div>
+  }
+
+  @if (title) { <h3 class="zb-empty-state__title">{{ title }}</h3> }
+  @if (subtitle) { <p class="zb-empty-state__subtitle">{{ subtitle }}</p> }
+
+  <div class="zb-empty-state__actions"><ng-content></ng-content></div>
+</div>

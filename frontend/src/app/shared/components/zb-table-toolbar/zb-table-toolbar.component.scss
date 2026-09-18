@@ -1,0 +1,164 @@
+// ── Root ──────────────────────────────────────────────────────
+.toolbar-root {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-radius: 8px;
+}
+
+// ── Left group ────────────────────────────────────────────────
+// Puede ENVOLVER sus propios controles (Mostrar/Columnas/filtros) y encoger
+// (min-width:0 + flex:1) para ceder el ancho sobrante. Los botones de la
+// derecha NUNCA se mueven de su sitio: si no cabe todo, son los FILTROS de la
+// izquierda los que bajan de línea, no los botones.
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+// ── Right group ───────────────────────────────────────────────
+// Fijo arriba-derecha, en una sola línea, sin encoger (igual que el resto de
+// vistas). Es la referencia estable del toolbar.
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+
+  &:empty {
+    display: none;
+  }
+}
+
+// ── "Mostrar N" wrapper ───────────────────────────────────────
+.toolbar-show {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-show__label {
+  color: var(--text-primary);
+  font-family: var(--ff-body);
+  font-size: var(--fs-16);
+  font-weight: var(--fw-regular);
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+// ── Shared control shell (select wrapper + columns button) ────
+// Figma: padding 8px 14px, bg white, shadow, radius 4px, outline 1px #B3B6BD
+.toolbar-ctrl {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--surface-raised);
+  box-shadow: 0px 1px 2px rgba(10, 13, 18, 0.05);
+  border-radius: 4px;
+  outline: 1px solid var(--border-high);
+  outline-offset: -1px;
+  transition: outline-color var(--transition-fast);
+
+  &:hover {
+    outline-color: var(--border-highest);
+  }
+
+  // ── Select variant ──────────────────────────────────────────
+  &--select {
+    cursor: pointer;
+    padding: 5px 15px; // chevron sits inside
+  }
+
+  // ── Button variant ──────────────────────────────────────────
+  &--btn {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--ff-body);
+
+    &:focus-visible {
+      outline-color: var(--accent-base);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+  }
+}
+
+// ── Custom select: current value ─────────────────────────────
+.toolbar-ctrl__select-value {
+  color: var(--text-primary);
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  line-height: 24px;
+  user-select: none;
+}
+
+// ── Dropdown panel ─────────────────────────────────────────────
+.toolbar-ctrl--select { position: relative; cursor: pointer; }
+
+.toolbar-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 100%;
+  background: var(--fondo-card);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -2px rgba(10,13,18,0.03), 0 12px 16px -4px rgba(10,13,18,0.08);
+  outline: 1px solid var(--borde-general);
+  outline-offset: -1px;
+  overflow: hidden;
+  z-index: 200;
+  padding: 4px 0;
+}
+
+.toolbar-dropdown__item {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-regular);
+  color: var(--texto-principal);
+  text-align: left;
+  transition: background var(--transition-fast);
+
+  &:hover { background: var(--c-grey-50); }
+
+  &--active {
+    font-weight: var(--fw-semibold);
+    color: var(--color-acento);
+  }
+}
+
+// ── Chevron icon ──────────────────────────────────────────────
+// Iconos = zb-icon (SVG exacto de Figma). El tamaño lo fija el propio
+// componente vía `size`; aquí solo el color, que hereda por currentColor.
+.toolbar-ctrl__chevron {
+  color: var(--icon-neutral-high);
+  pointer-events: none;
+}
+
+// ── Left icon (columns button) ────────────────────────────────
+.toolbar-ctrl__icon {
+  color: var(--icon-neutral-highest);
+}
+
+// ── Columns label text ────────────────────────────────────────
+.toolbar-ctrl__text {
+  color: var(--text-primary);
+  font-family: var(--ff-body);
+  font-size: var(--fs-16);
+  font-weight: var(--fw-semibold);
+  line-height: 24px;
+  white-space: nowrap;
+}

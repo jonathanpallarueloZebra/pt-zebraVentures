@@ -1,0 +1,89 @@
+:host { display: inline-block; }
+
+// ── Root label ────────────────────────────────────────────────
+.cbx-root {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+
+  &--disabled {
+    cursor: not-allowed;
+    .cbx-label { color: var(--text-disabled); }
+  }
+}
+
+// ── Label text ────────────────────────────────────────────────
+// Figma: *_text (Checkbox_text) = Body/2-emphasis → 14px SemiBold 600, lh 1.4.
+// Tokens --figma-control-text-* (nodo 2112:5843), compartidos con radio/toggle.
+.cbx-label {
+  color: var(--figma-control-text-color, var(--text-primary));
+  font-family: var(--ff-body);
+  font-size: var(--figma-control-text-font-size); // 14px (body/2)
+  font-weight: var(--figma-control-text-font-weight); // 600 (emphasis)
+  line-height: var(--figma-control-text-line-height); // 1.4
+}
+
+// ── Native input — styled directly ────────────────────────────
+// Figma: 20×20px box, radius 4px, grey border unchecked, blue filled checked
+.cbx-native {
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1.5px solid var(--input-border);
+  background: var(--input-check-surface);
+  cursor: pointer;
+
+  // Center checkmark pseudo-element
+  display: grid;
+  place-content: center;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  // ── Checkmark (hidden by default) ─────────────────────────
+  &::before {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border: 2px solid white;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) translate(-1px, -1px) scale(0);
+    transition: transform 0.1s ease;
+    transform-origin: center;
+  }
+
+  // ── Checked ───────────────────────────────────────────────
+  &:checked {
+    background: var(--input-check-checked);
+    border-color: var(--input-check-checked);
+
+    &::before { transform: rotate(45deg) translate(-1px, -1px) scale(1); }
+  }
+
+  // ── Focus ─────────────────────────────────────────────────
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--surface-base), 0 0 0 5px var(--input-check-checked);
+  }
+
+  // ── Disabled ──────────────────────────────────────────────
+  &:disabled {
+    cursor: not-allowed;
+    border-color: var(--input-border);
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  // ── Hover (not disabled) ──────────────────────────────────
+  &:not(:disabled):not(:checked):hover {
+    border-color: var(--input-check-hover);
+  }
+}

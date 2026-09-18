@@ -1,0 +1,892 @@
+﻿<zb-page-header
+  [title]="'Planificación de turnos'"
+  [showSidebarToggle]="true"
+  [sidebarCollapsed]="false">
+
+  <!-- Selector de fecha en el header (Figma: Header/right-contents) —
+       usa solo clases de stylesJPfigma (.figma-pageheader__* + .figma-chip) -->
+  <div class="figma-pageheader__date-selector">
+    <!-- Chip "Hoy": seleccionado SOLO si la semana mostrada es la actual
+         (igual que los chips de tienda). Al navegar a otra semana se apaga. -->
+    <button type="button" class="figma-chip figma-chip--sm"
+            [class.figma-chip--selected]="isCurrentWeek()"
+            (click)="goToday()" matTooltip="Ir a la semana actual">
+      Hoy
+    </button>
+    <button type="button" class="figma-pageheader__nav-btn" (click)="prevWeek()" [disabled]="loading()" matTooltip="Semana anterior">
+      <span class="material-icons" aria-hidden="true">chevron_left</span>
+    </button>
+
+    <!-- Input de fecha: abre el calendario desplegable al pulsar -->
+    <div class="figma-pageheader__date-wrap">
+      <button type="button" class="figma-pageheader__date-input" (click)="toggleDatePicker()" matTooltip="Elegir semana">
+        <span class="material-icons figma-pageheader__date-input__icon" aria-hidden="true">calendar_today</span>
+        {{ getWeekRangeLabel() }}
+      </button>
+
+      @if (showDatePicker()) {
+        <div class="figma-pageheader__date-overlay" (click)="showDatePicker.set(false)"></div>
+        <div class="figma-pageheader__date-popover">
+          <zb-date-picker-panel
+            [startDate]="startDate()"
+            [endDate]="weekEndDate()"
+            [mode]="datePickerMode()"
+            (apply)="onDatePickerApply($event)"
+            (cancel)="showDatePicker.set(false)">
+          </zb-date-picker-panel>
+        </div>
+      }
+    </div>
+
+    <button type="button" class="figma-pageheader__nav-btn" (click)="nextWeek()" [disabled]="loading()" matTooltip="Semana siguiente">
+      <span class="material-icons" aria-hidden="true">chevron_right</span>
+    </button>
+  </div>
+</zb-page-header>
+<div class="page-container">
+
+  <!-- ── Header actions (estilo Figma 2440:24572) ─────────────────── -->
+  <div class="figma-planbar">
+
+    <!-- 1er nivel: título (rango fechas) + selector fecha + Generar/Editar -->
+    <div class="figma-planbar__level">
+      <div class="figma-planbar__title-group">
+        <span class="figma-planbar__title">{{ getWeekRangeLabel() }}</span>
+        <!-- Alert de ERRORES del plan (violaciones de severidad error): lo que
+             BLOQUEA el guardado, p.ej. "máximo 1 turno por día por trabajador".
+             Va primero porque es lo más urgente; el de vacantes también es rojo
+             (decisión del cliente) pero ese sí deja guardar. -->
+        <!-- Los avisos de errores y de "N avisos a solucionar" se movieron
+             DEBAJO del selector de tiendas (3er nivel): se refieren a la tienda
+             seleccionada, así que el usuario los busca junto a su chip, no
+             pegados a la fecha. -->
+        <!-- Los AVISOS del motor de restricciones (p.ej. "la sección asignada
+             debe estar en la polivalencia") NO tienen chip: la celda del
+             trabajador ya se marca en ámbar y su tooltip dice el motivo, así que
+             un modal con la misma lista era redundante. Los ERRORES sí lo
+             tienen, porque bloquean el guardado. -->
+      </div>
+
+      <div class="figma-planbar__right">
+        @if (editMode()) {
+          <!-- Modo EDICIÓN (Figma Planning-actions mode=edit):
+               Borrar · Generar · Cancelar · Guardar -->
+          <button type="button" class="figma-btn-danger-outlined" (click)="clearWeek()"
+            [disabled]="isCurrentScopeGenerating() || generatingAll()"
+            matTooltip="Borrar toda la semana">
+            <span class="material-icons figma-btn-danger-outlined__icon" aria-hidden="true">delete_outline</span>
+            Borrar
+          </button>
+          <!-- Split button: "Generar" (esta tienda) + ▾ "Generar todas". -->
+          <div class="gen-split">
+            <button type="button" class="figma-btn-outline gen-split__main" (click)="generate()"
+              [disabled]="isCurrentScopeGenerating() || generatingAll()"
+              matTooltip="Generar automaticamente con IA">
+              @if (isCurrentScopeGenerating()) {
+                <span class="btn-spinner" aria-hidden="true"></span>
+                Generando
+              } @else {
+                <span class="material-icons figma-btn-outline__icon" aria-hidden="true">auto_fix_high</span>
+                Generar
+              }
+            </button>
+            @if (scopeRecords().length > 1) {
+              <button type="button" class="figma-btn-outline gen-split__toggle"
+                (click)="toggleGenerateMenu($event)"
+                [disabled]="isCurrentScopeGenerating() || generatingAll()"
+                [attr.aria-expanded]="generateMenuOpen()" aria-haspopup="true"
+                matTooltip="Más opciones de generación">
+                <span class="material-icons gen-split__chevron" aria-hidden="true">expand_more</span>
+              </button>
+              @if (generateMenuOpen()) {
+                <div class="gen-split__panel" role="menu">
+                  <!-- Ámbito intermedio: las tiendas de la zona de la tienda
+                       seleccionada. Solo si la zona tiene más de una, porque con
+                       una sola haría lo mismo que el botón "Generar" de al lado.
+                       El contador se recalcula al cambiar de tienda. -->
+                  @if (zoneScopes().length > 1) {
+                    <button type="button" class="gen-split__item" role="menuitem"
+                      (click)="generateZoneFromMenu()">
+                      <span class="material-icons" aria-hidden="true">travel_explore</span>
+                      <span>
+                        Generar esta zona ({{ zoneScopes().length }})
+                        <small>{{ scopeEntityName() }}s de {{ zoneLabel() }} en esta semana</small>
+                      </span>
+                    </button>
+                  }
+                  <button type="button" class="gen-split__item" role="menuitem"
+                    (click)="generateAllFromMenu()">
+                    <span class="material-icons" aria-hidden="true">auto_awesome_motion</span>
+                    <span>
+                      Generar todas ({{ scopeRecords().length }})
+                      <small>Todas las {{ scopeEntityName().toLowerCase() }}s de esta semana</small>
+                    </span>
+                  </button>
+                </div>
+              }
+            }
+          </div>
+          <button type="button" class="figma-btn-outline" (click)="cancelEdit()"
+            [disabled]="isCurrentScopeGenerating() || generatingAll()"
+            matTooltip="Salir sin guardar">
+            Cancelar
+          </button>
+          <!-- GUARDAR: bloqueado mientras se guarda, se valida o se está
+               generando con IA (no se puede guardar una planificación a medio
+               generar). -->
+          <button type="button" class="figma-btn-primary" (click)="save()"
+            [disabled]="saving() || validating() || isCurrentScopeGenerating() || generatingAll() || getWeekErrorCount() > 0"
+            [matTooltip]="getWeekErrorCount() > 0
+              ? 'No se puede guardar con errores. Los avisos sí permiten guardar.'
+              : 'Guardar planificación'">
+            @if (saving()) {
+              <span class="btn-spinner" aria-hidden="true"></span>
+            } @else {
+              <span class="material-icons figma-btn-primary__icon" aria-hidden="true">save</span>
+            }
+            Guardar
+          </button>
+        } @else {
+          <!-- Modo VISTA. Si YA hay plan guardado con contenido → Descargar
+               PDF (Figma Vista por Día 2440:35871). Si NO → Generar con IA
+               (empty state). Editar siempre disponible. -->
+          @if (hasSavedPlan()) {
+            <button type="button" class="figma-btn-outline" (click)="downloadPdf()"
+              matTooltip="Descargar la planificación en PDF">
+              <span class="material-icons figma-btn-outline__icon" aria-hidden="true">download</span>
+              Descargar PDF
+            </button>
+          } @else {
+            <div class="gen-split">
+              <button type="button" class="figma-btn-outline gen-split__main" (click)="generate()"
+                [disabled]="isCurrentScopeGenerating() || generatingAll()"
+                matTooltip="Generar automaticamente con IA">
+                @if (isCurrentScopeGenerating()) {
+                  <span class="btn-spinner" aria-hidden="true"></span>
+                  Generando
+                } @else {
+                  <span class="material-icons figma-btn-outline__icon" aria-hidden="true">auto_fix_high</span>
+                  Generar
+                }
+              </button>
+              @if (scopeRecords().length > 1) {
+                <button type="button" class="figma-btn-outline gen-split__toggle"
+                  (click)="toggleGenerateMenu($event)"
+                  [disabled]="isCurrentScopeGenerating() || generatingAll()"
+                  [attr.aria-expanded]="generateMenuOpen()" aria-haspopup="true"
+                  matTooltip="Más opciones de generación">
+                  <span class="material-icons gen-split__chevron" aria-hidden="true">expand_more</span>
+                </button>
+                @if (generateMenuOpen()) {
+                  <div class="gen-split__panel" role="menu">
+                    <!-- Mismo ámbito de zona que el desplegable del modo
+                         edición: este menú es el de la vista sin plan guardado y
+                         debe ofrecer las mismas tres opciones. -->
+                    @if (zoneScopes().length > 1) {
+                      <button type="button" class="gen-split__item" role="menuitem"
+                        (click)="generateZoneFromMenu()">
+                        <span class="material-icons" aria-hidden="true">travel_explore</span>
+                        <span>
+                          Generar esta zona ({{ zoneScopes().length }})
+                          <small>{{ scopeEntityName() }}s de {{ zoneLabel() }} en esta semana</small>
+                        </span>
+                      </button>
+                    }
+                    <button type="button" class="gen-split__item" role="menuitem"
+                      (click)="generateAllFromMenu()">
+                      <span class="material-icons" aria-hidden="true">auto_awesome_motion</span>
+                      <span>
+                        Generar todas ({{ scopeRecords().length }})
+                        <small>Todas las {{ scopeEntityName().toLowerCase() }}s de esta semana</small>
+                      </span>
+                    </button>
+                  </div>
+                }
+              }
+            </div>
+          }
+          <!-- Editar solo tiene sentido si ya hay algo que editar: sin plan
+               generado la parrilla está vacía y no hay nada que retocar. -->
+          <button type="button" class="figma-btn-primary" (click)="editMode.set(true)"
+            [disabled]="getTotalAssignments() === 0 || isCurrentScopeGenerating() || generatingAll()"
+            [matTooltip]="getTotalAssignments() === 0
+              ? 'Genera primero la planificación de esta ' + scopeEntityName().toLowerCase()
+              : 'Editar planificación'">
+            <span class="material-icons figma-btn-primary__icon" aria-hidden="true">edit</span>
+            Editar
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- 2º nivel: chips de tienda (selector de scope) -->
+    @if (scopeRecords().length > 0) {
+      <div class="figma-chip-group figma-planbar__chips">
+        @for (r of scopeRecords(); track r.id) {
+          <button type="button"
+                  class="figma-chip figma-chip--sm"
+                  [class.figma-chip--selected]="r.id === selectedScopeId()"
+                  (click)="onScopeChange(r.id)">
+            {{ r.name }}
+            <!-- Mientras se genera, el chip lleva su propio spinner: con
+                 "Generar todas" se ve de un vistazo qué tiendas están en curso.
+                 La severidad no se pinta aún porque el plan no está listo. -->
+            @if (isScopeGenerating(r.id)) {
+              <span class="chip-spinner" aria-hidden="true"></span>
+            } @else if (scopeSeverity(r.id) === 'error') {
+              <!-- Indicador de severidad (Figma manual-cabrero punto 6):
+                   ● rojo si la tienda tiene errores, ▲ ámbar si solo avisos.
+                   Sin número: el chip solo señala QUÉ tienda hay que mirar; el
+                   desglose está en el modal. El recuento va en el tooltip. -->
+              <span class="material-icons figma-chip__sev figma-chip__sev--error"
+                    [matTooltip]="scopeSeverityCount(r.id) + ' ' + (scopeSeverityCount(r.id) === 1 ? 'error' : 'errores') + ' en esta tienda'"
+                    aria-hidden="true">error</span>
+            } @else if (scopeSeverity(r.id) === 'warning') {
+              <span class="material-icons figma-chip__sev figma-chip__sev--warning"
+                    [matTooltip]="scopeSeverityCount(r.id) + ' ' + (scopeSeverityCount(r.id) === 1 ? 'aviso' : 'avisos') + ' en esta tienda'"
+                    aria-hidden="true">warning</span>
+            }
+          </button>
+        }
+      </div>
+    }
+
+    <!-- 3er nivel: avisos de la tienda SELECCIONADA, debajo de su selector.
+         Antes iban arriba junto a la fecha, lejos del chip al que se refieren.
+         El contenido y el formato no cambian: solo la posición.
+         Mientras se genera no se muestran: contarían sobre el plan anterior. -->
+    @if (editMode() && !anyGenerating()
+         && (getWeekErrorCount() > 0 || getIssueCount() > 0)) {
+      <div class="figma-planbar__scope-alerts">
+        <!-- ERRORES: lo que BLOQUEA el guardado (p.ej. "máximo 1 turno por día
+             por trabajador"). Va primero porque es lo más urgente. -->
+        @if (getWeekErrorCount() > 0) {
+          <div class="figma-alert figma-alert--error figma-alert--compact figma-alert--clickable"
+               role="status" (click)="showViolationsDetail('error')">
+            <div class="figma-alert__content">
+              <img class="figma-alert__icon" src="icons/alerts/error.svg" alt="" aria-hidden="true" />
+              <div class="figma-alert__text">
+                <span class="figma-alert__title">
+                  {{ getWeekErrorCount() }} {{ getWeekErrorCount() === 1 ? 'error' : 'errores' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+        <!-- AVISOS: lo que hay que revisar pero no bloquea el guardado —
+             vacantes, secciones sin cubrir y avisos de la generación. Aquí va el
+             NÚMERO; el chip de cada tienda solo lleva el ▲ para señalar dónde
+             mirar. Al pulsarlo se abre el desglose. -->
+        @if (getIssueCount() > 0) {
+          <div class="figma-alert figma-alert--warning figma-alert--compact figma-alert--clickable"
+               role="status" (click)="showIssuesDetail()">
+            <div class="figma-alert__content">
+              <img class="figma-alert__icon" src="icons/alerts/warning.svg" alt="" aria-hidden="true" />
+              <div class="figma-alert__text">
+                <span class="figma-alert__title">{{ getIssueLabel() }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+    @if (!loading()) {
+      <div class="toolbar-status">
+        @if (hasDraft()) {
+          <span class="status-chip unsaved" matTooltip="Esta planificación es un borrador — guárdala para confirmarla">
+            <mat-icon>edit_note</mat-icon> Borrador
+          </span>
+        } @else if (hasUnsavedChanges()) {
+          <span class="status-chip unsaved"><mat-icon>circle</mat-icon> Sin guardar</span>
+        } @else if (lastSavedAt()) {
+          <span class="status-chip saved"><mat-icon>check_circle</mat-icon> Guardado {{ lastSavedAt() }}</span>
+        }
+        <!-- Los chips de ERRORES y AVISOS se quitaron de aquí: ya salen en la
+             barra de título ("N errores" en rojo y "N problemas a solucionar"
+             en ámbar, este último con los avisos y las vacantes juntos).
+             Tenerlos en los dos sitios repetía el mismo dato.
+             Aquí se queda solo el estado de guardado. -->
+      </div>
+    }
+
+  <!-- Loading: MISMO skeleton que al generar turnos (Figma 2462:22723) —
+       la estructura de la tabla plantable con las celdas en shimmer, en vez
+       de un skeleton genérico distinto. -->
+  @if (loading()) {
+    <div class="schedule-scroll">
+      <table class="figma-plantable">
+        <thead>
+          <tr>
+            <th class="figma-plantable__header-cell figma-plantable__col--dia">Día</th>
+            <th class="figma-plantable__header-cell figma-plantable__col--turnos">Turnos</th>
+            @for (_ of skSections; track $index) {
+              <th class="figma-plantable__header-cell">
+                <span class="figma-plantable__header-label">
+                  <span class="figma-plantable__worker figma-plantable__worker--skeleton" style="width:80px"></span>
+                </span>
+              </th>
+            }
+            <th class="figma-plantable__header-cell figma-plantable__header-cell--ausencias figma-plantable__col--ausencias">Ausencias</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (_ of skRows; track $index) {
+            <tr>
+              <td class="figma-plantable__day-cell">
+                <span class="figma-plantable__daynum"></span>
+              </td>
+              <td class="figma-plantable__header-cell"></td>
+              @for (_ of skSections; track $index) {
+                <td class="figma-plantable__cell">
+                  <div class="figma-plantable__worker figma-plantable__worker--skeleton"></div>
+                </td>
+              }
+              <td class="figma-plantable__cell figma-plantable__cell--ausencias">
+                <div class="figma-plantable__worker figma-plantable__worker--skeleton"></div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+
+    <!-- ── PLAN TABLE (Figma: cols = sección, filas = día×turno) ────────── -->
+    <div class="schedule-scroll" cdkDropListGroup [class.is-dragging]="isDragging()">
+      <table class="figma-plantable">
+        <!-- COLGROUP: es lo UNICO que fija los anchos de columna aqui.
+             Con table-layout:fixed los anchos los define la PRIMERA fila, y la
+             primera fila de este thead es la cabecera de tienda con un solo
+             <th colspan>: por eso los <th> de Dia/Turnos (que van en la 2a fila)
+             se ignoraban y todas las columnas salian iguales. -->
+        <colgroup>
+          <col class="figma-plantable__col--dia" />
+          <col class="figma-plantable__col--turnos" />
+          @for (section of planSections(); track section.id) {
+            <col [class]="sectionColClass(section.name)" />
+          }
+          <col class="figma-plantable__col--ausencias" />
+        </colgroup>
+        <thead>
+          <!-- Cabecera de tienda (Figma th-tienda 2464:40607): banda gris
+               #f1f2f3 con el nombre de la tienda + badges error/aviso. -->
+          @if (selectedScopeName()) {
+            <tr>
+              <th class="figma-plantable__th-tienda-cell" [attr.colspan]="totalColumns()">
+                <div class="figma-plantable__th-tienda">
+                  <span>{{ selectedScopeName() }}</span>
+                  <!-- Nombre completo y zona: el código ("T01") por sí solo no
+                       dice qué tienda es ni a qué zona pertenece. -->
+                  @if (selectedScopeContext()) {
+                    <span class="figma-plantable__th-tienda__context">
+                      {{ selectedScopeContext() }}
+                    </span>
+                  }
+                  @if (getWeekErrorCount() > 0) {
+                    <span class="figma-plantable__badge figma-plantable__badge--error">
+                      <span class="material-icons figma-plantable__badge-icon">error</span>
+                      {{ getWeekErrorCount() }}
+                    </span>
+                  }
+                  @if (getWeekWarningCount() > 0) {
+                    <span class="figma-plantable__badge figma-plantable__badge--warning">
+                      <span class="material-icons figma-plantable__badge-icon">warning</span>
+                      {{ getWeekWarningCount() }}
+                    </span>
+                  }
+                </div>
+              </th>
+            </tr>
+          }
+          <tr>
+            <th class="figma-plantable__header-cell figma-plantable__col--dia">Día</th>
+            <th class="figma-plantable__header-cell figma-plantable__col--turnos">Turnos</th>
+            @for (section of planSections(); track section.id) {
+              <th [class]="'figma-plantable__header-cell ' + sectionColClass(section.name)">
+                <span class="figma-plantable__header-label">
+                  @if (sectionIcon(section.name); as icon) {
+                    <img class="figma-plantable__header-icon" [src]="icon" alt="" aria-hidden="true" />
+                  }
+                  {{ section.name }}
+                </span>
+              </th>
+            }
+            <th class="figma-plantable__header-cell figma-plantable__header-cell--ausencias figma-plantable__col--ausencias">Ausencias</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of planTableRows(); track row.day.date + '-' + row.slot.code) {
+            <tr [class.figma-plantable__row--closed]="isDayClosed(row.day.date)">
+              <!-- Columna Día (una vez por día, rowspan = nº turnos) -->
+              @if (row.isFirstOfDay) {
+                <td class="figma-plantable__day-cell" [attr.rowspan]="row.dayRowSpan">
+                  <span class="figma-plantable__daynum" [class.figma-plantable__daynum--today]="isToday(row.day)">
+                    {{ row.day.date | slice:8 }}
+                  </span>
+                  <span class="figma-plantable__dayname">{{ row.day.dayName }}</span>
+                </td>
+              }
+
+              <!-- Columna Turnos (Mañana / Tarde...) -->
+              <td class="figma-plantable__header-cell">{{ slotLabel(row.slot) }}</td>
+
+              <!-- Columnas de sección: horarios agrupados (Nx + rango),
+                   en 2 sub-columnas para Caja/Pescadería (como Figma) -->
+              @for (section of planSections(); track section.id) {
+                <td class="figma-plantable__cell">
+                  @if (isDayClosed(row.day.date)) {
+                    <!-- Día de cierre/festivo: no se trabaja → celda vacía, sin
+                         horarios y sin posibilidad de asignar (tampoco en modo
+                         edición). El fondo gris de la fila ya lo distingue. -->
+                  } @else if (isCurrentScopeGenerating()) {
+                    <!-- Generando con IA: skeleton (Figma 2462:22723) -->
+                    <div class="figma-plantable__worker figma-plantable__worker--skeleton"></div>
+                  } @else if (editMode()) {
+                    <!-- Modo edición (Figma 2435:18950): empleado asignado →
+                         cajita indigo con nombre; slot por cubrir → cajita
+                         punteada con el horario. Drop-list para drag&drop. -->
+                    <!-- cdkDropListDisabled: si la sección no abre ese día
+                         (pescadería los lunes) no se puede soltar a nadie —
+                         ese día no hay horario que cubrir. Ocultar la cajita no
+                         bastaba: la celda seguía aceptando el arrastre. -->
+                    <div class="figma-plantable__cell-cols figma-plantable__cell-cols--droplist"
+                         cdkDropList
+                         cdkDropListSortingDisabled
+                         [cdkDropListDisabled]="isSectionClosedToday(section.name, row.day.date)"
+                         [cdkDropListData]="{ day: row.day, slot: row.slot.code, section: section.name }"
+                         (cdkDropListDropped)="onWorkerDrop(row.day, row.slot.code, section.name, $event)"
+                         (cdkDropListEntered)="dropHover.set(cellKey(row.day, row.slot.code, section.name))"
+                         (cdkDropListExited)="dropHover.set(null)"
+                         [class.figma-plantable__cell-cols--drop-active]="dropHover() === cellKey(row.day, row.slot.code, section.name)">
+                      <!-- Sección que ese día NO abre (pescadería los lunes): la
+                           celda queda vacía, sin cajita de horario ni botón de
+                           añadir. No hay turno que cubrir. -->
+                      @if (cellEditEmpty(row.day, row.slot.code, section.name)
+                           && !isSectionClosedToday(section.name, row.day.date)
+                           && !isCellAtCap(row.day, row.slot.code, section.name)) {
+                        <!-- Celda VACÍA en edición (Figma 2435:18950): UNA sola
+                             cajita punteada con el horario, que ES la zona de
+                             drop y el botón de añadir. Sin caja extra debajo. -->
+                        @if (slotTimeLabel(row.slot)) {
+                          <button type="button"
+                                  class="figma-plantable__worker figma-plantable__worker--dashed figma-plantable__worker--slot"
+                                  (click)="togglePicker(row.day, row.slot.code, section.name)"
+                                  matTooltip="Añadir empleado">
+                            <span class="figma-plantable__worker__time">{{ slotTimeLabel(row.slot) }}</span>
+                          </button>
+                        } @else {
+                          <button class="add-btn cell-add"
+                                  (click)="togglePicker(row.day, row.slot.code, section.name)"
+                                  matTooltip="Añadir empleado">
+                            <mat-icon>add</mat-icon>
+                          </button>
+                        }
+                      }
+                      @for (col of cellEditColumns(row.day, row.slot.code, section.name); track $index; let ci = $index) {
+                        <div class="figma-plantable__cell-stack">
+                          @for (it of col; track $index; let ii = $index) {
+                            @if (it.filled) {
+                              <!-- Worker asignado: clicar abre menú sustituir/borrar (Figma 2435:18950) -->
+                              <div class="worker-menu-wrap"
+                                   cdkDrag
+                                   [cdkDragData]="it.assignment"
+                                   (cdkDragStarted)="onDragStarted(row.day, row.slot.code, section.name, it.assignment)"
+                                   (cdkDragEnded)="onDragEnded()">
+                                <button type="button"
+                                     class="figma-plantable__worker figma-plantable__worker--name"
+                                     [class.figma-plantable__worker--name-error]="workerSeverity(it.assignment, row.day, row.slot.code, section.name) === 'error'"
+                                     [class.figma-plantable__worker--name-warning]="workerSeverity(it.assignment, row.day, row.slot.code, section.name) === 'warning'"
+                                     (click)="toggleWorkerMenu(row.day, row.slot.code, section.name, ci * 100 + ii)"
+                                     [matTooltip]="workerCellTooltip(it.assignment, row.day, row.slot.code, section.name)"
+                                     matTooltipClass="multiline-tooltip">
+                                  <span class="figma-plantable__worker__drag material-icons" aria-hidden="true">drag_indicator</span>
+                                  @if (workerSeverity(it.assignment, row.day, row.slot.code, section.name) === 'error') {
+                                    <span class="material-icons figma-plantable__worker__sev-icon" aria-hidden="true">error</span>
+                                  } @else if (workerSeverity(it.assignment, row.day, row.slot.code, section.name) === 'warning') {
+                                    <span class="material-icons figma-plantable__worker__sev-icon" aria-hidden="true">warning</span>
+                                  }
+                                  <span class="figma-plantable__worker__name">{{ formatWorkerName(it.label) }}</span>
+                                </button>
+
+                                <!-- Preview personalizado que viaja con el cursor
+                                     (pastilla indigo limpia: grip + nombre, sin
+                                     estado de error ni menú, para no duplicar). -->
+                                <div class="figma-plantable__worker figma-plantable__worker--name drag-preview-pill" *cdkDragPreview>
+                                  <span class="figma-plantable__worker__drag material-icons" aria-hidden="true">drag_indicator</span>
+                                  <span class="figma-plantable__worker__name">{{ formatWorkerName(it.label) }}</span>
+                                </div>
+
+                                <!-- Dropdown sustituir / borrar (slot lleno, Figma 2435:18950) -->
+                                @if (isWorkerMenuOpen(row.day, row.slot.code, section.name, ci * 100 + ii)) {
+                                  <div class="emp-picker worker-menu" appDropdownFlip>
+                                    <div class="emp-picker__search">
+                                      <div class="emp-picker__search-box">
+                                        <mat-icon class="emp-picker__search-icon">search</mat-icon>
+                                        <input type="text" placeholder="Sustituir por…" class="emp-picker__search-field"
+                                               [value]="pickerSearch()"
+                                               (input)="pickerSearch.set($any($event.target).value)"
+                                               (click)="$event.stopPropagation()" />
+                                        <button type="button" class="emp-picker__search-clear"
+                                                (click)="closePickers(); $event.stopPropagation()"
+                                                aria-label="Cerrar">
+                                          <mat-icon class="emp-picker__search-icon">close</mat-icon>
+                                        </button>
+                                      </div>
+                                    </div>
+                                    @for (opt of pickerWorkers(row.day, row.slot.code); track opt.worker.id) {
+                                      <div class="emp-picker__row"
+                                           [class.emp-picker__row--absent]="opt.blocked"
+                                           [title]="opt.blocked ? absenceTitle(opt.worker.id, row.day.date) : ''">
+                                        <span class="emp-picker__name">
+                                          <span class="emp-picker__name-text">{{ formatWorkerName(opt.worker.name) }}</span>
+                                          @if (isEttWorker(opt.worker)) {
+                                            <span class="emp-picker__badge">ETT</span>
+                                          }
+                                        </span>
+                                        @if (!opt.blocked) {
+                                          <button class="emp-picker__add-btn"
+                                                  (click)="replaceWorkerInCell(row.day, row.slot.code, section.name, it.assignment, opt.worker)">
+                                            <mat-icon>swap_horiz</mat-icon>
+                                          </button>
+                                        }
+                                      </div>
+                                    }
+                                    <button class="emp-picker__delete"
+                                            (click)="removeWorkerFromCell(row.day, row.slot.code, it.assignment)">
+                                      <span>Borrar</span>
+                                      <svg class="emp-picker__delete-icon" viewBox="0 0 11.6667 15" fill="none" aria-hidden="true">
+                                        <path d="M0.833333 13.3333C0.833333 14.25 1.58333 15 2.5 15H9.16667C10.0833 15 10.8333 14.25 10.8333 13.3333V5C10.8333 4.08333 10.0833 3.33333 9.16667 3.33333H2.5C1.58333 3.33333 0.833333 4.08333 0.833333 5V13.3333ZM10.8333 0.833333H8.75L8.15833 0.241667C8.00833 0.0916666 7.79167 0 7.575 0H4.09167C3.875 0 3.65833 0.0916666 3.50833 0.241667L2.91667 0.833333H0.833333C0.375 0.833333 0 1.20833 0 1.66667C0 2.125 0.375 2.5 0.833333 2.5H10.8333C11.2917 2.5 11.6667 2.125 11.6667 1.66667C11.6667 1.20833 11.2917 0.833333 10.8333 0.833333Z" fill="currentColor"/>
+                                      </svg>
+                                    </button>
+                                  </div>
+                                }
+                              </div>
+                            } @else {
+                              <div class="figma-plantable__worker figma-plantable__worker--dashed">
+                                <span class="figma-plantable__worker__time">{{ it.label }}</span>
+                              </div>
+                            }
+                          }
+                        </div>
+                      }
+                    </div>
+                    <div class="cell-add-wrap">
+                      <!-- Celda con workers: botón "+" para añadir OTRO. La
+                           celda vacía ya muestra su cajita arriba (dentro del
+                           drop-list), así que aquí no se duplica nada.
+                           Si la sección llegó a su TOPE no se ofrece: añadir
+                           más marcaría violación nada más hacerlo. -->
+                      @if (!cellEditEmpty(row.day, row.slot.code, section.name)
+                           && !isCellAtCap(row.day, row.slot.code, section.name)) {
+                        <button class="add-btn cell-add"
+                                (click)="togglePicker(row.day, row.slot.code, section.name)"
+                                matTooltip="Añadir empleado">
+                          <mat-icon>add</mat-icon>
+                        </button>
+                      }
+
+                      <!-- Dropdown buscador de empleados (Figma 2480:28495).
+                           Clases propias emp-picker (no figma-list-item) para
+                           controlar 100% el estilo con variables --figma-*. -->
+                      @if (isPickerOpen(row.day, row.slot.code, section.name)) {
+                        <div class="emp-picker" appDropdownFlip>
+                          <!-- Fila de búsqueda (fila gris + caja Input/search con borde azul) -->
+                          <div class="emp-picker__search">
+                            <div class="emp-picker__search-box">
+                              <mat-icon class="emp-picker__search-icon">search</mat-icon>
+                              <input type="text" placeholder="Buscar" class="emp-picker__search-field"
+                                     [value]="pickerSearch()"
+                                     (input)="pickerSearch.set($any($event.target).value)"
+                                     (click)="$event.stopPropagation()" />
+                              <button type="button" class="emp-picker__search-clear"
+                                      (click)="closePickers(); $event.stopPropagation()"
+                                      aria-label="Cerrar">
+                                <mat-icon class="emp-picker__search-icon">close</mat-icon>
+                              </button>
+                            </div>
+                          </div>
+
+                          <!-- Lista de empleados disponibles (+ ausentes marcados) -->
+                          @for (opt of pickerWorkers(row.day, row.slot.code); track opt.worker.id) {
+                            <div class="emp-picker__row"
+                                 [class.emp-picker__row--absent]="opt.blocked"
+                                 [title]="opt.blocked ? absenceTitle(opt.worker.id, row.day.date) : ''">
+                              <span class="emp-picker__name">
+                                <span class="emp-picker__name-text">{{ formatWorkerName(opt.worker.name) }}</span>
+                                @if (isEttWorker(opt.worker)) {
+                                  <span class="emp-picker__badge">ETT</span>
+                                }
+                              </span>
+                              @if (!opt.blocked) {
+                                <button class="emp-picker__add-btn"
+                                        (click)="addWorkerToCell(row.day, row.slot.code, section.name, opt.worker)">
+                                  <mat-icon>add</mat-icon>
+                                </button>
+                              }
+                            </div>
+                          }
+                          @empty {
+                            <div class="emp-picker__empty">Sin empleados disponibles</div>
+                          }
+
+                          <!-- Opción Borrar (slot lleno, Figma 2483:30551) -->
+                          @if (cellHasWorkers(row.day, row.slot.code, section.name)) {
+                            <button class="emp-picker__delete"
+                                    (click)="clearCell(row.day, row.slot.code, section.name)">
+                              <span>Borrar</span>
+                              <svg class="emp-picker__delete-icon" viewBox="0 0 11.6667 15" fill="none" aria-hidden="true">
+                                <path d="M0.833333 13.3333C0.833333 14.25 1.58333 15 2.5 15H9.16667C10.0833 15 10.8333 14.25 10.8333 13.3333V5C10.8333 4.08333 10.0833 3.33333 9.16667 3.33333H2.5C1.58333 3.33333 0.833333 4.08333 0.833333 5V13.3333ZM10.8333 0.833333H8.75L8.15833 0.241667C8.00833 0.0916666 7.79167 0 7.575 0H4.09167C3.875 0 3.65833 0.0916666 3.50833 0.241667L2.91667 0.833333H0.833333C0.375 0.833333 0 1.20833 0 1.66667C0 2.125 0.375 2.5 0.833333 2.5H10.8333C11.2917 2.5 11.6667 2.125 11.6667 1.66667C11.6667 1.20833 11.2917 0.833333 10.8333 0.833333Z" fill="currentColor"/>
+                              </svg>
+                            </button>
+                          }
+                        </div>
+                      }
+                    </div>
+                  } @else if (cellViewEmpty(row.day, row.slot.code, section.name)
+                              && slotTimeLabel(row.slot)
+                              && !isSectionClosedToday(section.name, row.day.date)) {
+                    <!-- Empty state (Figma View mode 2434:19080): sin nadie
+                         asignado, la celda muestra el horario base del turno
+                         como referencia de lo que hay que cubrir. Salvo que la
+                         sección no abra ese día: entonces no hay nada que cubrir. -->
+                    <div class="figma-plantable__cell-cols">
+                      <div class="figma-plantable__cell-stack">
+                        <div class="figma-plantable__worker figma-plantable__worker--time-hint">
+                          <span class="figma-plantable__worker__time">{{ slotTimeLabel(row.slot) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  } @else {
+                    <!-- Modo vista con datos guardados (Figma Vista por Día
+                         2440:35871): cada trabajador asignado en una cajita
+                         indigo con su NOMBRE (solo lectura, sin drag ni menú).
+                         El estado error/warning tiñe la cajita si aplica. -->
+                    <div class="figma-plantable__cell-cols">
+                      @for (col of cellEditColumns(row.day, row.slot.code, section.name); track $index) {
+                        <div class="figma-plantable__cell-stack">
+                          @for (it of col; track $index) {
+                            @if (it.filled) {
+                              <div class="figma-plantable__worker figma-plantable__worker--name"
+                                   [class.figma-plantable__worker--name-error]="workerSeverity(it.assignment, row.day, row.slot.code, section.name) === 'error'"
+                                   [class.figma-plantable__worker--name-warning]="workerSeverity(it.assignment, row.day, row.slot.code, section.name) === 'warning'"
+                                   [matTooltip]="workerCellTooltip(it.assignment, row.day, row.slot.code, section.name)"
+                                   matTooltipClass="multiline-tooltip">
+                                @if (workerSeverity(it.assignment, row.day, row.slot.code, section.name) === 'error') {
+                                  <span class="material-icons figma-plantable__worker__sev-icon" aria-hidden="true">error</span>
+                                } @else if (workerSeverity(it.assignment, row.day, row.slot.code, section.name) === 'warning') {
+                                  <span class="material-icons figma-plantable__worker__sev-icon" aria-hidden="true">warning</span>
+                                }
+                                <span class="figma-plantable__worker__name">{{ formatWorkerName(it.label) }}</span>
+                              </div>
+                            }
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </td>
+              }
+
+              <!-- Columna Ausencias: empleados con ausencia aprobada (baja/
+                   vacaciones) ese día, en amarillo warning. Vacía en días de
+                   cierre (con el negocio cerrado no aplica el concepto). -->
+              <td class="figma-plantable__cell figma-plantable__cell--ausencias">
+                @if (row.isFirstOfDay && !isDayClosed(row.day.date)) {
+                  <div class="figma-plantable__cell-stack" [attr.rowspan]="row.dayRowSpan">
+                    @for (name of absentWorkersOn(row.day.date); track name) {
+                      <div class="figma-plantable__worker figma-plantable__worker--yellow">
+                        <span class="figma-plantable__worker__name">{{ name }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+
+<!-- ── Vista imprimible (PDF) — Figma 2445:23224. Oculta en pantalla,
+     visible solo al imprimir (window.print → guardar como PDF). A4 landscape,
+     agrupada por ROL(sección) → empleado → horario por día. ── -->
+<div class="pdf-print" aria-hidden="true">
+  <!-- Página 1/2: planificación por rol → empleado → horario por día -->
+  <div class="pdf-page">
+    <div class="pdf-header">
+      <div class="pdf-header__title">
+        <span class="pdf-header__store">{{ selectedScopeName() }}</span>
+        <span class="pdf-header__range">{{ getWeekRangeLabel() }}</span>
+      </div>
+      <span class="pdf-header__page">1/2</span>
+    </div>
+    <!-- SIN rowspan en la columna ROL. Un rowspan que cruza un salto de página
+         rompe la paginación de Chrome (corta la tabla, deja páginas en blanco y
+         descarta lo que viene después → las ausencias no salían). En su lugar,
+         cada fila lleva su propia celda ROL: con el nombre de la sección solo en
+         la PRIMERA fila del grupo y vacía en el resto (CSS oculta sus bordes
+         internos para que visualmente parezca una única celda agrupada). Así la
+         tabla fluye en columna y se pagina limpia. -->
+    <table class="pdf-table">
+      <thead>
+        <tr>
+          <th class="pdf-table__rol">Rol</th>
+          <th class="pdf-table__emp">Empleado</th>
+          @for (d of pdfDays(); track d.date) {
+            <th class="pdf-table__day">
+              <span class="pdf-table__dayname">{{ d.name }}</span>
+              <span class="pdf-table__daynum">{{ d.num }}</span>
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (group of pdfRows(); track group.section) {
+          @for (w of group.workers; track w.name; let wi = $index) {
+            <tr>
+              <td class="pdf-table__rol"
+                  [class.pdf-table__rol--cont]="wi !== 0"
+                  [class.pdf-table__rol--mid]="wi !== group.workers.length - 1">{{ wi === 0 ? group.section : '' }}</td>
+              <td class="pdf-table__emp">{{ w.name }}</td>
+              @for (tramos of w.days; track $index) {
+                <td class="pdf-table__cell">
+                  @if (tramos.length) {
+                    <span class="pdf-table__slots">
+                      @for (h of tramos; track $index) {
+                        <span class="pdf-table__slot">
+                          <!-- Icono reloj (Material 'schedule') como SVG inline:
+                               al imprimir, la ligadura de la fuente material-icons
+                               a veces sale como texto "schedule" en el PDF; el SVG
+                               siempre se pinta bien. -->
+                          <svg class="pdf-table__clock" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>{{ h }}</span>
+                      }
+                    </span>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Sección Ausencias (Figma 2464:42412): fluye al FINAL del documento, justo
+       DESPUÉS de la planificación (no en página forzada), como en el mockup. Al
+       quitar el rowspan de arriba, la tabla ya se pagina limpia, así que las
+       ausencias aparecen a continuación sin que Chrome las descarte. Solo se
+       muestra si hay ausencias. Columnas = días abiertos (sin domingo/festivos). -->
+  @if (hasPdfAusencias()) {
+    <div class="pdf-ausencias">
+      <!-- Banda de título gris (Figma 2464:42412: Surface/subtle #f1f2f3) -->
+      <div class="pdf-ausencias__band">
+        <h3 class="pdf-ausencias__title">Ausencias</h3>
+      </div>
+      <table class="pdf-table pdf-table--ausencias">
+        <thead>
+          <tr>
+            @for (d of pdfAusenciasDays(); track d.date) {
+              <th class="pdf-table__day">
+                <span class="pdf-table__dayname">{{ d.name }}</span>
+                <span class="pdf-table__daynum">{{ d.num }}</span>
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (rowIdx of pdfAusenciasRows(); track rowIdx) {
+            <tr>
+              @for (d of pdfAusenciasDays(); track d.date) {
+                <td class="pdf-table__cell pdf-table__cell--ausencia">{{ pdfAusenciaAt(d.date, rowIdx) }}</td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+
+<!-- ── Schedule dialogs ── -->
+<zb-dialog
+  [(open)]="showGenerateConfirm"
+  title="Generar planificación automática"
+  [message]="generateConfirmMessage()"
+  [html]="true"
+  mode="warning"
+  confirmLabel="Generar"
+  cancelLabel="Cancelar"
+  (confirm)="doGenerate()"
+></zb-dialog>
+
+<zb-dialog
+  [(open)]="showGenerateAllConfirm"
+  title="Generar todas las planificaciones"
+  [message]="generateAllMessage"
+  [html]="true"
+  mode="warning"
+  confirmLabel="Generar todas"
+  cancelLabel="Cancelar"
+  (confirm)="doGenerateAll()"
+></zb-dialog>
+
+<zb-dialog
+  [(open)]="showGenerationWarnings"
+  [title]="generationWarningsTitle"
+  [message]="generationWarningsMessage"
+  [html]="true"
+  [mode]="generationWarningsMode"
+  confirmLabel="Entendido"
+  cancelLabel="Cerrar"
+  (confirm)="showGenerationWarnings = false"
+></zb-dialog>
+
+<zb-dialog
+  [(open)]="showCopyConfirm"
+  title="Copiar semana anterior"
+  message="Se copiará la planificación de la semana pasada y reemplazará las asignaciones actuales.<br><strong>Los descansos oficiales se conservarán.</strong>"
+  [html]="true"
+  mode="warning"
+  confirmLabel="Copiar"
+  cancelLabel="Cancelar"
+  (confirm)="doCopy()"
+></zb-dialog>
+
+<zb-dialog
+  [(open)]="showCopyError"
+  title="No se pudo copiar"
+  message="No existe una planificación guardada de la semana anterior. Debes crearla primero o usar la generación automática."
+  mode="warning"
+  confirmLabel="Entendido"
+  cancelLabel="Cerrar"
+  (confirm)="showCopyError = false"
+></zb-dialog>
+
+<zb-dialog
+  [(open)]="showClearConfirm"
+  title="Limpiar planificación"
+  message="Se eliminará toda la planificación de esta semana.<br><strong>Los descansos oficiales se conservarán.</strong>"
+  [html]="true"
+  mode="danger"
+  confirmLabel="Limpiar"
+  cancelLabel="Cancelar"
+  (confirm)="doClear()"
+></zb-dialog>
+
+<zb-dialog
+  [(open)]="showCancelConfirm"
+  (closed)="onCancelDialogClosed()"
+  title="Tienes cambios sin guardar"
+  message="Si cancelas, perderás los cambios que no hayas guardado.<br><strong>Esta acción no se puede deshacer.</strong>"
+  [html]="true"
+  mode="danger"
+  confirmLabel="Descartar"
+  cancelLabel="Seguir editando"
+  (confirm)="doCancelEdit()"
+></zb-dialog>

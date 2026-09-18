@@ -1,0 +1,334 @@
+// ============================================================
+// Inicio — Dashboard (panel de acciones)
+// Rediseño 1:1 del nodo Figma "Inicio - Dashboard" 2424:18371
+// (frame 2422:16470). Reutiliza tokens ya portados:
+//   --figma-alert-*  (_figma-components.scss, Alert 2112:2223)
+//   --p-dashboard-*  (_figma-primitives.scss, "Inicio - Dashboard")
+//   --figma-btn-text-* (link de acción, Button text 2088:3639)
+// Valores exactos verificados con get_design_context (tertiary 2464:44138).
+// ============================================================
+
+.dash {
+  display: flex;
+  flex-direction: column;
+  gap: var(--p-dashboard-section-padding-bottom, 32px); // spacing/XL entre filas
+  max-width: 1134px; // ancho del contenido en Figma (Content area - 2×56px)
+
+  // Aire con la cabecera: en Figma el Main Content tiene 32px (spacing/XL) de
+  // padding superior. `.page-container` es global y lleva padding-top:0, así
+  // que el margen se aplica aquí y no afecta al resto de pantallas.
+  margin-top: var(--p-dashboard-section-padding-bottom, 32px);
+}
+
+/* ── Fila 1 — Urgente a resolver ─────────────────────────── */
+// Los alerts usan el COMPONENTE del sistema .figma-alert (variantes de
+// severidad + colores vía tokens --figma-alert-*, con dark-theme incluido).
+// Aquí solo el LAYOUT de la fila y el detalle del link (subrayado solo texto).
+.dash-alerts {
+  display: flex;
+  gap: 16px; // spacing/M (Figma: 16px entre alerts)
+  align-items: stretch;
+  flex-wrap: wrap;
+
+  // Cada alert ocupa 1/3 (flex-1) como en Figma; con menos de 3 no se
+  // estira más allá de ~1/3 del ancho de la fila.
+  .figma-alert {
+    flex: 1 1 0;
+    min-width: 260px;
+    max-width: calc((100% - 32px) / 3);
+  }
+}
+
+// Icono de severidad: centrado frente a la 1ª línea del título (h20).
+.dash-alerts .figma-alert__icon { margin-top: 2px; }
+
+// Link "Resolver/Planificar" del alert: hereda el color de la severidad
+// (color:inherit del sistema). El subrayado va SOLO en el texto (no en la
+// flecha), como en Figma → se quita el underline base de .figma-alert__link.
+.dash-alerts .figma-alert__link {
+  padding: 2px 0;                  // py spacing/xxs (Figma link)
+  font-weight: var(--fw-bold, 700); // Figma: Inter Bold
+  text-decoration: none;
+
+  .dash-alert-link-text { text-decoration: underline; text-underline-position: from-font; }
+  &:hover { opacity: 0.85; }
+}
+
+/* Iconos = SVG exactos exportados de Figma, inline con fill=currentColor.
+   El contenedor fija la caja (14/16/20px) y el <svg> la rellena al 100%
+   conservando su viewBox propio (los glifos de Figma NO son cuadrados). */
+.dash-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg { display: block; width: 100%; height: 100%; }
+
+  &--14 { width: 14px; height: 14px; }
+  &--16 { width: 16px; height: 16px; }
+  &--20 { width: 20px; height: 20px; }
+
+  // Icono más tenue que el texto (Figma: iconos de sección van a
+  // text/secondary = #060F19 66%, el título va a text/primary).
+  &--muted { color: var(--texto-secundario, rgba(6, 15, 25, 0.66)); }
+}
+
+/* ── Filas 2 y 3 — secondary / tertiary ──────────────────── */
+.dash-row {
+  display: flex;
+  gap: var(--p-dashboard-section-gap, 24px); // spacing/L entre columnas
+  align-items: flex-start;
+}
+
+.dash-col {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--p-dashboard-column-gap, 8px); // título ↔ lista
+}
+
+.dash-section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--p-dashboard-section-title-gap, 4px);
+  padding: var(--p-dashboard-section-title-padding-y, 8px) 0;
+
+  // El icono (20px) hereda su color de .dash-icon--muted (text/secondary),
+  // más tenue que el título — igual que en Figma.
+  h2 {
+    margin: 0;
+    font-family: var(--ff-display, Inter);
+    font-size: var(--p-dashboard-section-title-font-size, 16px); // heading/5
+    line-height: var(--p-dashboard-section-title-line-height, 1.2);
+    font-weight: var(--fw-semibold, 600);
+    color: var(--texto-principal, rgba(8, 14, 20, 0.88));
+  }
+}
+
+/* ── Card genérica "Caja" ─────────────────────────────────── */
+.dash-card {
+  background: var(--fondo-card, #fff);       // surface/raised
+  border: 1px solid var(--borde-general, #d6d8dc); // border/base
+  border-radius: var(--p-dashboard-card-radius, 8px);
+  padding: var(--p-dashboard-card-padding, 16px);
+}
+
+.dash-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--p-btn-spacing-s, 8px); // spacing/S entre cards de planificación (Figma 2435:23249)
+}
+
+/* ── Fila de planificación (card clicable) ────────────────── */
+.dash-plan-row {
+  display: flex;
+  align-items: center;
+  gap: var(--p-dashboard-planrow-gap, 8px);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+
+  // Hover: patrón del design system (Accent/alpha/low + borde acento),
+  // el mismo que usan los botones secundarios y los list-item de Figma.
+  &:hover {
+    background: var(--accent-alpha-low);
+    border-color: var(--border-accent, var(--p-blue-light-600));
+  }
+
+  // Icono calendar de la fila: en Figma es #27292E (neutral-800), sólido.
+  .dash-plan-icon { color: var(--p-neutral-800, #27292e); }
+  .dash-plan-range {
+    font-size: var(--fs-14, 14px);
+    line-height: 1.4; // body/2-emphasis
+    font-weight: var(--fw-semibold, 600);
+    color: var(--texto-principal, rgba(8, 14, 20, 0.88));
+    white-space: nowrap;
+  }
+  .dash-plan-label {
+    font-size: var(--fs-14, 14px);
+    line-height: 1.4; // body/2
+    color: var(--texto-principal, rgba(8, 14, 20, 0.88)); // Figma: text/primary
+  }
+  // Estado de planificación (badge 12px MAYÚS, como el resto de badges del
+  // sistema). Pendiente = severidad warning; completa = success.
+  .dash-plan-status {
+    margin-left: auto;
+    padding: 2px 8px;
+    border-radius: var(--figma-badge-radius, 4px);
+    font-size: var(--fs-12, 12px);
+    line-height: 1.2;
+    font-weight: var(--fw-semibold, 600);
+    letter-spacing: 0.12px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: var(--figma-alert-warning-surface);
+    color: var(--figma-alert-warning-text);
+
+    &--done {
+      background: var(--figma-alert-success-surface);
+      color: var(--figma-alert-success-text);
+    }
+  }
+
+  // Flecha de la fila: #27292E (neutral-800) en Figma.
+  // Con badge de estado presente, el margin-left:auto lo lleva el badge.
+  .dash-plan-arrow {
+    color: var(--p-neutral-800, #27292e);
+  }
+}
+
+/* ── Card de horas extra ──────────────────────────────────── */
+.dash-overtime {
+  display: flex;
+  flex-direction: column;
+  gap: var(--p-dashboard-card-gap, 2px);
+}
+
+.dash-card-title {
+  display: flex;
+  gap: var(--p-dashboard-card-title-gap, 4px);
+  align-items: baseline;
+  padding-bottom: var(--p-dashboard-card-title-padding-bottom, 2px);
+}
+
+.dash-card-title-label {
+  font-size: var(--p-dashboard-card-title-font-size, 12px);
+  line-height: var(--p-dashboard-card-title-line-height, 1.2);
+  font-weight: var(--fw-semibold, 600);
+  letter-spacing: var(--p-dashboard-card-title-letter-spacing, 0.12px);
+  text-transform: uppercase;
+  // En la card de horas extra el título (label + fecha) es text/secondary
+  // (Figma 2466:21074). En las stat-cards se sobreescribe a primary.
+  color: var(--texto-secundario, rgba(6, 15, 25, 0.66));
+}
+
+.dash-card-title-range {
+  font-size: var(--p-dashboard-card-title-font-size, 12px);
+  line-height: var(--p-dashboard-card-title-line-height, 1.2);
+  color: var(--texto-secundario, rgba(6, 15, 25, 0.66));
+}
+
+/* Lista scrollable: ~6 filas visibles y el resto por scroll, para que la card
+   no empuje hacia abajo el resto del dashboard cuando hay muchos empleados. */
+.dash-overtime-list {
+  max-height: var(--p-dashboard-overtime-max-height, 17.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  // Scrollbar discreta, en línea con el resto del sistema.
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium, #d8dade) transparent;
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-medium, #d8dade);
+    border-radius: 3px;
+  }
+}
+
+.dash-overtime-row {
+  display: flex;
+  align-items: center;
+  gap: var(--p-dashboard-hourrow-gap, 8px);
+  padding: var(--p-dashboard-hourrow-padding-y, 8px) 0;
+  // Separador entre empleados (Figma: border-b border/low, salvo el último).
+  border-bottom: 1px solid var(--border-low, #f1f2f3);
+  &:last-child { border-bottom: 0; }
+
+  .dash-overtime-hours {
+    font-size: var(--fs-14, 14px);
+    line-height: 1.4;
+    color: var(--texto-principal, rgba(8, 14, 20, 0.88));
+    white-space: nowrap;
+    strong { font-weight: var(--fw-semibold, 600); } // "43" Semi Bold
+    .dash-overtime-contract { font-weight: var(--fw-regular, 400); } // "/40h" Regular
+  }
+  .dash-overtime-name {
+    flex: 1 0 0;
+    min-width: 0;
+    font-size: var(--fs-14, 14px);
+    line-height: 1.4;
+    color: var(--texto-principal, rgba(8, 14, 20, 0.88)); // body/2
+  }
+  // La flecha de Figma (2424:18356) se retiró: la fila no navega a ningún sitio.
+}
+
+.dash-empty {
+  margin: var(--p-dashboard-hourrow-padding-y, 8px) 0 0;
+  font-size: var(--fs-13, 13px);
+  color: var(--texto-secundario, rgba(6, 15, 25, 0.66));
+}
+
+/* ── Stat-cards (Ausencias / Empleados ETT) ───────────────── */
+.dash-stats {
+  display: flex;
+  gap: var(--p-dashboard-stat-gap, 16px); // spacing/M entre cards
+  align-items: stretch; // todas las cards con la misma altura
+  flex-wrap: wrap;
+}
+
+.dash-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--figma-chip-gap, 4px); // spacing/XS (número ↔ título)
+  justify-content: center;
+  width: var(--p-dashboard-stat-width, 200px); // Ausencias
+  min-height: 99px; // alto de la "Caja" stat en Figma (2464:44128)
+  box-sizing: border-box;
+
+  &--wide { width: var(--p-dashboard-stat-width-ett, 242px); } // Empleados ETT
+
+  // En las stat-cards el título va APILADO (label encima, rango debajo),
+  // a diferencia de la card de horas extra que los pone en línea (Figma
+  // tertiary 2464:44129 = columna; horas extra 2497:33324 = fila).
+  .dash-card-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--figma-chip-gap, 4px);
+  }
+  // En las stat-cards el label "ESTA SEMANA" es text/primary (Figma
+  // 2464:44130), a diferencia de la card de horas extra (secondary).
+  .dash-card-title-label { color: var(--texto-principal, rgba(8, 14, 20, 0.88)); }
+  // Los textos no envuelven (whitespace-nowrap en Figma): así ambas
+  // cards de una fila quedan idénticas en tamaño.
+  .dash-card-title-label,
+  .dash-card-title-range { white-space: nowrap; }
+}
+
+.dash-stat-value {
+  font-family: var(--ff-display, Inter);
+  font-size: var(--p-dashboard-stat-number-font-size, 24px); // heading/2
+  line-height: var(--p-dashboard-stat-number-line-height, 1.2);
+  font-weight: var(--fw-semibold, 600);
+  color: var(--texto-principal, rgba(8, 14, 20, 0.88));
+}
+
+/* ── Dark theme ───────────────────────────────────────────── */
+:host-context(.dark-theme) {
+  .dash-plan-row:hover { background: var(--surface-subtle); }
+
+  // El badge de estado usa los tokens dark del Alert del sistema.
+  .dash-plan-status {
+    background: var(--figma-alert-dark-warning-surface);
+    color: var(--figma-alert-dark-warning-text);
+
+    &--done {
+      background: var(--figma-alert-dark-success-surface);
+      color: var(--figma-alert-dark-success-text);
+    }
+  }
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  // En móvil los alerts se apilan a ancho completo (el max-width de 1/3 que
+  // usan en escritorio los dejaría en una columna estrecha).
+  .dash-alerts .figma-alert { max-width: 100%; }
+  .dash-row { flex-direction: column; }
+  .dash-col { width: 100%; }
+  .dash-stat, .dash-stat--wide { width: 100%; }
+}

@@ -1,0 +1,77 @@
+// ════════════════════════════════════════════════════════════
+// Maestro de Empleados — Figma 2464:44408.
+// La tabla/toolbar/paginación/sidepanel/empty-state usan los COMPONENTES del
+// sistema (zb-data-table + zb-table-card, zb-table-toolbar, zb-paginator,
+// zb-sidepanel, zb-empty-state) que resuelven a los tokens --figma-* de
+// stylesJPfigma. Aquí solo lo específico de esta vista.
+// ════════════════════════════════════════════════════════════
+
+// ── Toast de feedback de guardado (fijo, esquina sup. derecha) ──
+.save-toast {
+  position: fixed;
+  top: 80px;
+  right: var(--sp-l, 24px);
+  width: 360px;
+  z-index: 9999;
+}
+
+// ── Empty state — centrado en el espacio restante del viewport ──
+.empty-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 140px); // topbar ~64 + page-header ~52 + margen
+}
+
+// ── Toolbar del sistema (misma clase/valor que entity-records/absences) ──
+.employees-toolbar {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--sp-m);
+}
+
+// El buscador viene con padding 8px (más alto que los botones del toolbar, que
+// usan 5px/15px + line-height 24 = 34px). Se iguala aquí y no en el componente
+// para no cambiar su alto en otras pantallas.
+.employees-search {
+  ::ng-deep .search-shell { padding: 5px 15px; }
+  // El input nativo trae 16px: al lado de "Columnas"/"Filtros" (14px) cantaba.
+  ::ng-deep .search-native { font-size: var(--fs-14); }
+}
+
+// ── Tabla (zb-data-table): solo anchos/tratamiento de celdas propios ──
+.employees-table {
+  width: 100%;
+  min-width: 700px; // dispara el scroll horizontal por debajo de este ancho
+
+  // El peso SemiBold del nombre lo aporta la base zb-data-table (1ª celda).
+  .name-cell { min-width: 120px; }
+  .actions-cell { white-space: nowrap; width: var(--figma-datatable-col-actions-width); }
+}
+
+// Celda de texto largo con elipsis (campos personalizados).
+.custom-cell { max-width: 120px; cursor: default; }
+.cell-truncate {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Nombre de la fila en edición: color de acento del sistema (theme-aware).
+// El resaltado de fondo de la fila lo aporta .zb-data-table (.editing-row →
+// var(--accent-low)); NO lo duplicamos aquí.
+.editing-name {
+  color: var(--figma-input-border-active, var(--p-blue-light-600));
+  font-weight: var(--fw-semibold);
+}
+
+// Aviso cuando los filtros dejan la tabla sin filas (no es un empty-state de
+// "no hay datos": las 272 fichas siguen cargadas).
+.employees-sin-resultados {
+  margin: 0;
+  padding: var(--figma-emptystate-padding-y, 24px) var(--figma-datatable-cell-padding-x, 16px);
+  text-align: center;
+  font-size: var(--figma-emptystate-desc-size, 14px);
+  color: var(--figma-emptystate-title-color, var(--p-alpha-black-600));
+}

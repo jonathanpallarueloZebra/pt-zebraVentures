@@ -1,0 +1,6 @@
+[
+  {"model": "absences.absencetype", "pk": 1, "fields": {"name": "Vacaciones", "requires_approval": true, "active": true}},
+  {"model": "absences.absencetype", "pk": 2, "fields": {"name": "Baja médica", "requires_approval": false, "active": true}},
+  {"model": "absences.absencetype", "pk": 3, "fields": {"name": "Asuntos propios", "requires_approval": true, "active": true}},
+  {"model": "absences.absencetype", "pk": 4, "fields": {"name": "Permiso retribuido", "requires_approval": true, "active": true}}
+]

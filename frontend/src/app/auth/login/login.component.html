@@ -1,0 +1,72 @@
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-logo-section">
+      <!-- Logo de branding (subido a /media desde el panel, igual que el del
+           navbar). Se espera a loaded() para no pintar el PNG estatico y
+           reemplazarlo al llegar la respuesta. -->
+      @if (brandingService.loaded()) {
+        <img class="auth-logo"
+             [src]="brandingService.branding().logo_url || 'logo-cabrero.png'"
+             [alt]="brandingService.branding().company_name" />
+      }
+    </div>
+
+    <form class="auth-form" (ngSubmit)="onSubmit()">
+      <h1 class="auth-title">Iniciar sesión</h1>
+
+      @if (error()) {
+        <div class="auth-alert auth-alert--error">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <div class="auth-fields">
+        <div class="auth-field">
+          <label class="auth-label" for="email">Usuario</label>
+          <input
+            class="auth-input"
+            type="email"
+            id="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="Usuario"
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="auth-field">
+          <label class="auth-label" for="password">Contraseña</label>
+          <div class="auth-input-wrap">
+            <input
+              class="auth-input auth-input--icon"
+              [type]="hidePassword ? 'password' : 'text'"
+              id="password"
+              [(ngModel)]="password"
+              name="password"
+              placeholder="· · · · · ·"
+              required
+              autocomplete="current-password"
+            />
+            <button type="button" class="auth-input-toggle" (click)="hidePassword = !hidePassword">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-forgot-row">
+        <a class="auth-link" routerLink="/forgot-password">Recuperar contraseña</a>
+      </div>
+
+      <div class="auth-action">
+        <button type="submit" class="auth-btn" [disabled]="loading()">
+          @if (loading()) { Entrando... } @else { Entrar }
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>

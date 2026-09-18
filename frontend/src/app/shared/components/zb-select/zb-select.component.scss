@@ -1,0 +1,319 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+// ── Wrapper ───────────────────────────────────────────────────
+.sel-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+// ── Label ─────────────────────────────────────────────────────
+.sel-label {
+  color: var(--input-label);
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  line-height: 14.4px;
+  text-transform: uppercase;
+  letter-spacing: 0.12px;
+
+  &--error { color: var(--input-label-error); }
+}
+
+// ── Trigger button ────────────────────────────────────────────
+.sel-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  // Es un <button>: sin este reset, el navegador dibuja su propio borde
+  // (más oscuro/grueso) por debajo del outline de abajo — se nota sobre
+  // todo al lado de controles que son <div> (p.ej. "Columnas" del toolbar).
+  appearance: none;
+  border: none;
+  background: var(--figma-input-surface);
+  box-shadow: var(--figma-input-shadow);
+  border-radius: var(--figma-input-radius);
+  outline: var(--figma-input-border-width) solid var(--figma-input-border);
+  outline-offset: calc(-1 * var(--figma-input-border-width));
+  cursor: pointer;
+  font-family: var(--ff-body);
+  transition: outline-color var(--transition-fast), outline-width var(--transition-fast), box-shadow var(--transition-fast);
+
+  // Open state → estado "active" del dropdown de Figma (.figma-dropdown--active
+  // en stylesJPfigma): borde azul 2px, SIN anillo/sombra. Un dropdown abierto
+  // es "active", no "focused" — por eso NO lleva focus-ring (evita el doble borde).
+  &--open:not(&--error) {
+    outline: var(--figma-input-border-width-active) solid var(--figma-input-border-active);
+    outline-offset: calc(-1 * var(--figma-input-border-width-active));
+    box-shadow: none;
+  }
+
+  // Error → borde rojo 2px (Active/Error), sin anillo de foco
+  &--error {
+    outline: var(--figma-input-border-width-active) solid var(--figma-input-border-error);
+    outline-offset: calc(-1 * var(--figma-input-border-width-active));
+    box-shadow: none;
+  }
+
+  &--disabled {
+    background: var(--input-surface-disabled);
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  // Valor del dropdown = Input/text de Figma: 14px Body/2 Regular, Input/text/default.
+  &__text {
+    flex: 1 1 0;
+    text-align: left;
+    font-size: var(--figma-input-value-font-size);
+    font-weight: var(--fw-regular);
+    line-height: var(--figma-input-value-line-height);
+    color: var(--figma-input-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &--placeholder &__text {
+    color: var(--figma-input-placeholder);
+    font-weight: var(--fw-regular);
+  }
+
+  &--disabled &__text {
+    color: var(--input-text-disabled);
+    font-weight: var(--fw-regular);
+  }
+
+  // Chevron = zb-icon (SVG de Figma); el tamaño lo fija el componente.
+  // Abierto → mismo glifo rotado 180º (Figma no tiene expand_less aparte).
+  &__chevron {
+    color: var(--input-icon);
+    transition: transform var(--transition-fast);
+
+    &--open { transform: rotate(180deg); }
+
+    .sel-trigger--disabled & { color: var(--input-icon-disabled); }
+  }
+
+  // Icono opcional del valor seleccionado (campos de tipo `icon`).
+  &__icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+    color: var(--figma-input-text);
+  }
+
+  // Variante SVG (iconos propios del Figma) del valor seleccionado.
+  &__icon-svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+}
+
+// ── Panel ─────────────────────────────────────────────────────
+.sel-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--surface-raised);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border-base);
+  overflow: hidden;
+}
+
+// ── List ──────────────────────────────────────────────────────
+.sel-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+// Opción del dropdown = _Dropdown_list-item de Figma (nodo 2357:10229),
+// tokens --figma-list-item-*: padding 10/16, texto 14 Body/2, color Text/primary,
+// hover accent/alpha/low, seleccionado accent/alpha/high.
+.sel-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: var(--figma-list-item-padding-y) var(--figma-list-item-padding-x);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+
+  &:hover:not(&--disabled) {
+    background: var(--figma-list-item-bg-hover);
+  }
+
+  &--active {
+    background: var(--figma-list-item-bg-selected);
+
+    .sel-item__label { font-weight: var(--fw-semibold); }
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  // Icono opcional a la izquierda del label (campos de tipo `icon`).
+  &__icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+    color: var(--figma-list-item-text);
+  }
+
+  // Variante SVG (iconos propios del Figma) a la izquierda del label.
+  &__icon-svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+
+  &__label {
+    flex: 1 1 0;
+    color: var(--figma-list-item-text);
+    font-family: var(--ff-body);
+    font-size: var(--figma-list-item-font-size);
+    font-weight: var(--fw-regular);
+    line-height: var(--figma-list-item-line-height);
+  }
+
+  &__action {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 2px;
+    cursor: pointer;
+    display: flex;
+    border-radius: 4px;
+    flex-shrink: 0;
+    transition: background var(--transition-fast);
+
+    .material-icons { font-size: 18px; width: 18px; height: 18px; line-height: 1; }
+
+    &--delete {
+      color: var(--error-icon);
+      &:hover { background: var(--error-surface); }
+    }
+  }
+}
+
+.sel-empty {
+  padding: 12px 16px;
+  color: var(--text-disabled);
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-style: italic;
+}
+
+// ── Search inside panel ───────────────────────────────────────
+.sel-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--divider-default);
+
+  &__icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--input-icon);
+    flex-shrink: 0;
+  }
+
+  &__input {
+    flex: 1 1 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--ff-body);
+    font-size: var(--fs-14);
+    font-weight: var(--fw-regular);
+    color: var(--input-text);
+    line-height: 22px;
+
+    &::placeholder { color: var(--input-placeholder); }
+    &::-webkit-search-cancel-button { display: none; }
+  }
+
+  &__clear {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 2px;
+    cursor: pointer;
+    color: var(--input-icon);
+    display: flex;
+    border-radius: 4px;
+    &:hover { background: var(--surface-subtle); }
+    .material-icons { font-size: 16px; width: 16px; height: 16px; line-height: 1; }
+  }
+}
+
+// ── Add item row ──────────────────────────────────────────────
+.sel-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--divider-default);
+
+  &__label {
+    flex: 1 1 0;
+    font-family: var(--ff-body);
+    font-size: var(--figma-list-item-font-size);   // 14 Body/2, como los items
+    font-weight: var(--fw-regular);
+    color: var(--figma-list-item-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__btn {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--brand-base);
+    color: var(--on-brand);
+    flex-shrink: 0;
+    transition: background var(--transition-fast);
+
+    &:hover { background: var(--brand-high); }
+
+    .material-icons { font-size: 16px; width: 16px; height: 16px; line-height: 1; }
+  }
+}
+
+// ── Sub-text ──────────────────────────────────────────────────
+.sel-sub {
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  line-height: 14.4px;
+  &--error { color: var(--input-text-error); font-weight: var(--fw-medium); }
+  &--hint  { color: var(--text-secondary);   font-weight: var(--fw-regular); }
+}

@@ -1,0 +1,14 @@
+# Los ficheros que ejecuta Linux van con finales de línea LF, siempre.
+#
+# En Windows, Git convierte a CRLF al sacar los ficheros. Un script de shell con
+# CRLF falla en el servidor con un «bad interpreter: /bin/sh^M» que no dice nada
+# del problema real, y un Dockerfile con CRLF puede romper el build.
+
+*.sh text eol=lf
+Dockerfile text eol=lf
+Dockerfile-* text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.template text eol=lf
+.env.example text eol=lf
+*.ejemplo text eol=lf

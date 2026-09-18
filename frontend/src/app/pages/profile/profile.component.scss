@@ -1,0 +1,78 @@
+.alert-success { background: #d4edda; color: #155724; padding: 12px; border-radius: 6px; margin-bottom: 16px; }
+.alert-error { background: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; margin-bottom: 16px; }
+
+.form-card {
+  padding: var(--sp-l);
+
+  h3 {
+    margin: 0 0 var(--sp-m);
+    font-size: var(--fs-18);
+    font-weight: var(--fw-semibold);
+  }
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-m);
+
+  zb-input, .field-with-action {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+}
+
+.field-with-action {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+
+  zb-input { flex: 1; }
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-s);
+  margin-top: var(--sp-m);
+}
+
+.appearance-card { margin-top: 16px; }
+
+.pref-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-m);
+}
+
+.pref-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pref-label { font-size: var(--fs-14); font-weight: var(--fw-medium); }
+.pref-desc  { font-size: var(--fs-13); }
+
+/* Responsive — stack fields on narrow viewports */
+@media (max-width: 600px) {
+  .form-card {
+    padding: var(--sp-m);
+  }
+
+  .form-row {
+    flex-direction: column;
+
+    zb-input, .field-with-action {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}

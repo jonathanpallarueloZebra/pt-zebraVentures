@@ -1,0 +1,47 @@
+<div class="zb-column-menu">
+  <button
+    class="zb-column-menu__trigger"
+    type="button"
+    [class.zb-column-menu__trigger--open]="isOpen"
+    (click)="toggle()"
+    [attr.aria-expanded]="isOpen"
+    aria-haspopup="true"
+  >
+    <!-- Icono de configuración de tabla del Figma (settings, 2085:4587),
+         el mismo que usa el botón "Columnas" del toolbar. -->
+    <zb-icon class="zb-column-menu__icon" name="settings" size="16"></zb-icon>
+    <span class="zb-column-menu__label">{{ label }}</span>
+    <zb-icon class="zb-column-menu__chevron" name="expand_more" size="16"></zb-icon>
+  </button>
+
+  @if (isOpen) {
+    <div class="zb-column-menu__panel" role="menu">
+      @if (menuTitle) {
+        <div class="zb-column-menu__panel-title">{{ menuTitle }}</div>
+      }
+
+      <div class="zb-column-menu__list">
+        @for (col of toggleableColumns; track col.id) {
+          <label class="zb-column-menu__item">
+            <input
+              class="zb-column-menu__checkbox"
+              type="checkbox"
+              [checked]="isVisible(col.id)"
+              (change)="toggleColumn(col)"
+            />
+            <span class="zb-column-menu__item-label">{{ col.label }}</span>
+          </label>
+        } @empty {
+          <div class="zb-column-menu__empty">No hay columnas configurables</div>
+        }
+      </div>
+
+      @if (showReset) {
+        <button class="zb-column-menu__reset" type="button" (click)="onReset()">
+          <span class="material-icons" aria-hidden="true">restart_alt</span>
+          Restablecer
+        </button>
+      }
+    </div>
+  }
+</div>

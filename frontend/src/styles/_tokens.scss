@@ -1,0 +1,234 @@
+// ============================================================
+// LAYER 2 — Semantic tokens (light-mode defaults)
+// All values reference Layer 1 primitives via var(--p-*).
+// Dark overrides live in _themes.scss.
+// Components must ONLY consume variables from this layer.
+// ============================================================
+
+:root {
+
+  // ── Brand (client-themeable via BrandingService) ──────────
+  // BrandingService may override --brand-base and --color-primary at runtime.
+  --brand-lowest:  var(--p-brand-50);
+  --brand-low:     var(--p-brand-100);
+  --brand-base:    var(--p-brand-300);
+  --brand-high:    var(--p-brand-400);
+  --brand-highest: var(--p-brand-500);
+  --on-brand:      var(--p-alpha-black-800);  // text/icon on brand-colored bg
+
+  // ── Accent (interactive: links, focus, checked states) ────
+  --accent-alpha-low:  #0ba5ec1a;
+  --accent-alpha-high: #0ba5ec33;
+  --accent-lowest:     var(--p-blue-light-25);
+  --accent-low:        var(--p-blue-light-100);
+  --accent-base:       var(--p-blue-light-600);
+  --accent-high:       var(--p-blue-light-700);
+  --accent-highest:    var(--p-blue-light-800);
+
+  // ── Text ──────────────────────────────────────────────────
+  --text-primary:            var(--p-alpha-black-800);
+  --text-secondary:          var(--p-alpha-black-600);
+  --text-disabled:           var(--p-alpha-black-400);
+  --text-inverted:           var(--p-alpha-white-100);
+  --text-link:               var(--accent-high);
+  --text-on-dark-primary:    var(--p-alpha-white-50);
+  --text-on-dark-secondary:  var(--p-alpha-white-200);
+  --text-on-light-primary:   var(--p-alpha-black-800);
+  --text-on-light-secondary: var(--p-alpha-black-700);
+
+  // ── Surface ───────────────────────────────────────────────
+  --surface-raised:        var(--p-neutral-0);    // cards, modals, popovers
+  --surface-base:          var(--p-neutral-50);   // page background
+  --surface-subtle:        var(--p-neutral-100);  // secondary panels
+  --surface-sunken:        var(--p-neutral-200);  // inset areas, wells
+  --surface-sunken-strong: var(--p-neutral-800);  // dark panels on light bg
+
+  // ── Border ────────────────────────────────────────────────
+  --border-highest: var(--p-neutral-800);
+  --border-high:    var(--p-neutral-300);
+  --border-base:    var(--p-neutral-200);
+  --border-low:     var(--p-neutral-100);
+  --border-on-dark: var(--p-neutral-50);
+  --border-accent:  var(--accent-base);
+
+  // ── Divider ───────────────────────────────────────────────
+  --divider-default: var(--p-neutral-100);
+  --divider-on-dark: var(--p-alpha-white-700);
+
+  // ── Icon ──────────────────────────────────────────────────
+  --icon-brand:           var(--brand-base);
+  --icon-on-brand:        var(--on-brand);
+  --icon-on-dark:         var(--p-alpha-white-50);
+  --icon-on-light:        var(--p-alpha-black-800);
+  --icon-neutral-highest: var(--p-neutral-800);
+  --icon-neutral-high:    var(--p-alpha-black-600);
+  --icon-neutral-base:    var(--p-neutral-50);
+  --icon-neutral-lowest:  var(--p-neutral-0);
+  --icon-disabled:        var(--p-alpha-black-300);
+  --icon-link:            var(--text-link);
+
+  // ── Sidebar ───────────────────────────────────────────────
+  --sidebar-surface: var(--p-neutral-800);
+
+  // ── Misc ──────────────────────────────────────────────────
+  --modal-overlay:    var(--p-alpha-black-600);
+  --focus-ring:       var(--accent-alpha-high);
+  --elevation-shadow: var(--p-alpha-black-200);
+
+  // ── Status: Success ───────────────────────────────────────
+  --success-text:    var(--p-green-900);
+  --success-surface: var(--p-green-50);
+  --success-icon:    var(--p-green-700);
+  --success-border:  var(--p-green-200);
+
+  // ── Status: Info ──────────────────────────────────────────
+  --info-text:    var(--p-blue-light-900);
+  --info-surface: var(--p-blue-light-50);
+  --info-icon:    var(--p-blue-light-700);
+  --info-border:  var(--p-blue-light-200);
+
+  // ── Status: Warning ───────────────────────────────────────
+  --warning-text:    var(--p-orange-900);
+  --warning-surface: var(--p-orange-50);
+  --warning-icon:    var(--p-orange-700);
+  --warning-border:  var(--p-orange-200);
+
+  // ── Status: Error ─────────────────────────────────────────
+  --error-text:        var(--p-red-900);
+  --error-surface:     var(--p-red-50);
+  --error-icon:        var(--p-red-700);
+  --error-border-low:  var(--p-red-200);
+  --error-border-high: var(--p-red-700);
+
+  // ── Component: Button ─────────────────────────────────────
+  --btn-text-primary:                  var(--text-primary);
+  --btn-text-disabled:                 var(--text-disabled);
+  --btn-text-danger:                   var(--p-red-800);
+  --btn-text-on-dark:                  var(--text-on-dark-primary);
+  --btn-text-on-brand:                 var(--on-brand);
+  --btn-surface-disabled:              var(--surface-subtle);
+  --btn-surface-primary:               var(--brand-base);
+  --btn-surface-primary-hover:         var(--brand-high);
+  --btn-surface-primary-active:        var(--brand-highest);
+  --btn-surface-secondary-hover:       var(--accent-alpha-low);
+  --btn-surface-secondary-active:      var(--accent-alpha-high);
+  --btn-surface-danger-default:        var(--p-red-700);
+  --btn-surface-danger-hover:          var(--p-red-800);
+  --btn-surface-danger-active:         var(--p-red-900);
+  --btn-surface-danger-outlined-hover: var(--p-red-50);
+  --btn-surface-danger-outlined-active:var(--p-red-100);
+  --btn-border-on-dark:                #ffffff;
+  --btn-border-danger-outlined:        var(--p-red-800);
+
+  // ── Component: Input / Form controls ──────────────────────
+  --input-label:            var(--text-secondary);
+  --input-label-error:      var(--error-text);
+  --input-surface:          var(--p-neutral-0);
+  --input-surface-disabled: var(--p-neutral-100);
+  --input-check-surface:    var(--p-neutral-0);
+  --input-check-checked:    var(--accent-base);
+  --input-check-hover:      var(--accent-high);
+  --input-check-active:     var(--p-neutral-0);
+  --input-check-disabled:   var(--icon-disabled);
+  --input-text:             var(--text-primary);
+  --input-placeholder:      var(--p-alpha-black-600);
+  --input-text-disabled:    var(--text-disabled);
+  --input-text-error:       var(--error-text);
+  --input-icon:             var(--text-secondary);
+  --input-icon-disabled:    var(--icon-disabled);
+  --input-icon-error:       var(--error-icon);
+  --input-border:           var(--border-high);
+  --input-border-active:    var(--accent-base);
+  --input-border-error:     var(--error-border-high);
+
+  // ── Semantic Radius ───────────────────────────────────────
+  --radius-btn:        var(--r-full);
+  --radius-forms:      var(--r-small);
+  --radius-containers: var(--r-default);
+
+  // ── Density: default ──────────────────────────────────────
+  --box-padding-xs: var(--sp-xs);
+  --box-padding-s:  var(--sp-s);
+  --box-padding-m:  var(--sp-m);
+  --box-padding-l:  var(--sp-l);
+  --box-gap-xs:     var(--sp-xs);
+  --box-gap-s:      var(--sp-s);
+  --box-gap-m:      var(--sp-m);
+  --box-gap-l:      var(--sp-l);
+
+  // ── Angular Material integration ──────────────────────────
+  // BrandingService may override --color-primary at runtime.
+  --color-primary:      var(--brand-base);
+  --color-primary-dark: var(--brand-high);
+  --color-primary-text: var(--on-brand);
+
+  // ── Backward-compat: primitive aliases ────────────────────
+  // Existing components use these names — keep until migrated.
+  --c-brand:      var(--brand-base);
+  --c-brand-dark: var(--brand-high);
+
+  --c-grey-50:  var(--p-neutral-50);
+  --c-grey-100: var(--p-neutral-100);
+  --c-grey-200: var(--p-neutral-200);
+  --c-grey-300: var(--p-neutral-300);
+  --c-grey-400: var(--p-neutral-400);
+  --c-grey-500: var(--p-neutral-500);
+  --c-grey-600: var(--p-neutral-600);
+  --c-grey-700: var(--p-neutral-700);
+  --c-grey-800: var(--p-neutral-800);
+  --c-grey-900: var(--p-neutral-900);
+
+  --c-red-50:  var(--p-red-50);
+  --c-red-100: var(--p-red-100);
+  --c-red-200: var(--p-red-200);
+  --c-red-300: var(--p-red-300);
+  --c-red-400: var(--p-red-400);
+  --c-red-500: var(--p-red-500);
+  --c-red-600: var(--p-red-600);
+  --c-red-700: var(--p-red-700);
+
+  --c-green-50:  var(--p-green-50);
+  --c-green-100: var(--p-green-100);
+  --c-green-300: var(--p-green-300);
+  --c-green-500: var(--p-green-500);
+  --c-green-700: var(--p-green-700);
+
+  --c-blue-50:  var(--p-blue-50);
+  --c-blue-100: var(--p-blue-100);
+  --c-blue-500: var(--p-blue-500);
+  --c-blue-700: var(--p-blue-700);
+
+  --c-purple-50:  var(--p-purple-50);
+  --c-purple-100: var(--p-purple-100);
+  --c-purple-200: var(--p-purple-200);
+  --c-purple-300: var(--p-purple-300);
+  --c-purple-400: var(--p-purple-400);
+  --c-purple-500: var(--p-purple-500);
+  --c-purple-600: var(--p-purple-600);
+  --c-purple-700: var(--p-purple-700);
+  --c-purple-800: var(--p-purple-800);
+  --c-purple-900: var(--p-purple-900);
+
+  // Radius
+  --br-small:   var(--r-small);
+  --br-default: var(--r-default);
+  --br-large:   var(--r-large);
+  --br-rounded: var(--r-full);
+
+  // Line-height aliases
+  --lh-title:     var(--lh-snug);
+  --lh-paragraph: var(--lh-normal);
+}
+
+// ── Density: compact modifier ─────────────────────────────────
+// Add class="density-compact" to a container (or <html>) to tighten spacing.
+.density-compact {
+  --box-padding-xs: var(--sp-xxs);
+  --box-padding-s:  var(--sp-xs);
+  --box-padding-m:  var(--sp-s);
+  --box-padding-l:  var(--sp-m);
+  --box-gap-xs:     var(--sp-xxs);
+  --box-gap-s:      var(--sp-xs);
+  --box-gap-m:      var(--sp-s);
+  --box-gap-l:      var(--sp-m);
+}

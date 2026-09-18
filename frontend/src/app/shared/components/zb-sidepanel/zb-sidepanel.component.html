@@ -1,0 +1,55 @@
+<div
+  class="zb-sidepanel"
+  [class.zb-sidepanel--open]="open()"
+  [attr.inert]="open() ? null : ''"
+>
+  <div class="zb-sidepanel__scrim" (click)="onScrim()"></div>
+
+  <aside
+    class="zb-sidepanel__panel"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="title"
+    [style.width]="width"
+  >
+    <header class="zb-sidepanel__header">
+      <h2 class="zb-sidepanel__title">{{ title }}</h2>
+      @if (showClose) {
+        <zb-button
+          class="zb-sidepanel__close"
+          variant="icon-only"
+          size="sm"
+          icon="close"
+          ariaLabel="Cerrar"
+          (click)="onCancel()"
+        ></zb-button>
+      }
+    </header>
+
+    <div class="zb-sidepanel__body">
+      <ng-content></ng-content>
+    </div>
+
+    <footer class="zb-sidepanel__footer">
+      @switch (mode) {
+        @case ('view') {
+          <span class="zb-sidepanel__spacer"></span>
+          <zb-button variant="primary" size="md" iconLeft="edit" (click)="edit.emit()">{{ editLabel }}</zb-button>
+        }
+        @case ('edit') {
+          @if (showDelete) {
+            <zb-button variant="danger-outlined" size="md" iconLeft="delete" (click)="delete.emit()">{{ deleteLabel }}</zb-button>
+          }
+          <span class="zb-sidepanel__spacer"></span>
+          <zb-button variant="secondary" size="md" (click)="onCancel()">{{ cancelLabel }}</zb-button>
+          <zb-button variant="primary" size="md" [loading]="saving" [disabled]="saveDisabled" (click)="save.emit()">{{ saveLabel }}</zb-button>
+        }
+        @default {
+          <span class="zb-sidepanel__spacer"></span>
+          <zb-button variant="secondary" size="md" (click)="onCancel()">{{ cancelLabel }}</zb-button>
+          <zb-button variant="primary" size="md" [loading]="saving" [disabled]="saveDisabled" (click)="save.emit()">{{ saveLabel }}</zb-button>
+        }
+      }
+    </footer>
+  </aside>
+</div>

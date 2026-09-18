@@ -1,0 +1,21 @@
+# ── Build stage ──
+FROM node:22-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+# Configuración `docker`: usa environment.docker.ts con apiUrl = '/api' (ruta relativa)
+RUN npm run build -- --configuration=docker
+
+# ── Production stage (nginx con proxy al backend) ──
+FROM nginx:alpine
+COPY --from=build /app/dist/browser /usr/share/nginx/html
+# Plantilla: nginx sustituye ${BACKEND_HOST} al arrancar y la deja en conf.d/.
+COPY default.conf.template /etc/nginx/templates/default.conf.template
+# Host del backend al que se hace proxy. Se puede sobreescribir por-despliegue
+# con la variable de entorno BACKEND_HOST (p.ej. valentia-backend).
+ENV BACKEND_HOST=backend
+# Limita la sustitución a variables BACKEND_* para no tocar las $variables de nginx.
+ENV NGINX_ENVSUBST_FILTER=^BACKEND_
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

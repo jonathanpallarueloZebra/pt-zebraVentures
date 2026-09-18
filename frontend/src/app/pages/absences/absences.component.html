@@ -1,0 +1,291 @@
+<zb-page-header
+  [title]="'Ausencias'"
+  [subtitle]="filteredRequests().length !== requests().length
+    ? filteredRequests().length + ' de ' + requests().length + ' ausencias'
+    : requests().length + (requests().length === 1 ? ' ausencia' : ' ausencias')"
+  [showSidebarToggle]="true"
+  [sidebarCollapsed]="false">
+</zb-page-header>
+
+<div class="page-container">
+  <!-- Acciones de página (Figma 2374:15917): botón primary "Registrar ausencia".
+       Misma estructura que /entities/* (.page-container + .page-actions). -->
+  <div class="page-actions">
+    <zb-button variant="secondary" iconLeft="upload_file" (click)="showImport = true">Importar Excel</zb-button>
+    <zb-button variant="secondary" iconRight="download" (click)="descargarExcel()">Descargar Excel</zb-button>
+    <zb-button variant="primary" iconLeft="add" (click)="openAdd()">Registrar ausencia</zb-button>
+  </div>
+
+  <!-- Resultado de la importacion: cuantas entraron y el detalle por fila de
+       las que no (AC-6). -->
+  @if (avisoImport(); as aviso) {
+    <zb-alert
+      class="abs-import-alert"
+      [type]="aviso.tipo"
+      [title]="aviso.texto"
+      [dismissible]="true"
+      (dismissed)="cerrarAvisoImport()">
+    </zb-alert>
+    @if (erroresImport().length) {
+      <ul class="abs-import-errores">
+        @for (e of erroresImport(); track e) { <li>{{ e }}</li> }
+      </ul>
+    }
+  }
+
+  @if (loading()) {
+    <!-- Sin indicador de carga (ni skeleton ni spinner): la tabla aparece al
+         llegar los datos. -->
+  } @else {
+
+    <!-- Toolbar: Mostrar [N] + Columnas (Figma 2374:15917) -->
+    <zb-table-toolbar
+      class="records-toolbar"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="pageSizeOptions"
+      [showPageSize]="true"
+      [showColumnsToggle]="false"
+      (pageSizeChange)="setPageSize($event)"
+    >
+      <!-- Filtros: un solo boton "Filtros" con los selects dentro, mismo
+           componente y mismo patron que /employees. De momento solo el estado
+           (vigentes / finalizadas / todas); si se anaden mas (tipo, fechas)
+           caben aqui sin tocar el toolbar. -->
+      <zb-filter-menu
+        toolbar-left
+        [filters]="filterMenuDefs()"
+        [values]="filterMenuValues()"
+        [uncountedKeys]="[ESTADO_KEY]"
+        (valuesChange)="onFiltersChange($event)"
+        (reset)="clearFilters()"
+      ></zb-filter-menu>
+
+      <!-- Buscador por empleado (AC-1). Mismo componente y mismo placeholder
+           que /employees, para que se busque igual en las dos pantallas. -->
+      <zb-search-input
+        toolbar-left
+        class="abs-search"
+        placeholder="Buscar por nombre o código"
+        [ngModel]="search()"
+        (ngModelChange)="onSearchChange($event)"
+      ></zb-search-input>
+    </zb-table-toolbar>
+
+    <!-- ── Tabla de datos (Figma 2374:17894): NOMBRE · TIPO · DURACIÓN · ACCIONES ── -->
+    <div class="zb-table-card">
+      <div class="zb-table-scroll">
+        <table mat-table [dataSource]="pagedRequests()" class="abs-data-table zb-data-table full-width">
+
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef>
+              <span class="abs-hcell">
+                <span class="abs-hcell__label">Nombre</span>
+                <mat-icon class="abs-hcell__sort" svgIcon="ausencias-sort"></mat-icon>
+              </span>
+              <mat-icon class="abs-hcell__filter" svgIcon="ausencias-filter"></mat-icon>
+            </th>
+            <td mat-cell *matCellDef="let r">{{ r.worker_name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="tipo">
+            <th mat-header-cell *matHeaderCellDef>
+              <span class="abs-hcell">
+                <span class="abs-hcell__label">Tipo</span>
+                <mat-icon class="abs-hcell__sort" svgIcon="ausencias-sort"></mat-icon>
+              </span>
+              <mat-icon class="abs-hcell__filter" svgIcon="ausencias-filter"></mat-icon>
+            </th>
+            <td mat-cell *matCellDef="let r">{{ r.type_name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="duracion">
+            <th mat-header-cell *matHeaderCellDef>
+              <span class="abs-hcell">
+                <span class="abs-hcell__label">Duración</span>
+                <mat-icon class="abs-hcell__sort" svgIcon="ausencias-sort"></mat-icon>
+              </span>
+              <mat-icon class="abs-hcell__filter" svgIcon="ausencias-filter"></mat-icon>
+            </th>
+            <td mat-cell *matCellDef="let r">{{ formatRange(r) }}</td>
+          </ng-container>
+
+          <!-- AC-2: columnas marcadas como "Mostrar en tabla" en AdminZebra.
+               Se declaran todas las configurables; displayedColumns() decide
+               cuales se pintan. -->
+          @for (f of columnasConfigurables(); track f.key) {
+            <ng-container [matColumnDef]="'cd_' + f.key">
+              <th mat-header-cell *matHeaderCellDef>{{ f.label }}</th>
+              <td mat-cell *matCellDef="let r">
+                {{ valorCelda(r, f) }}
+              </td>
+            </ng-container>
+          }
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let r" class="actions-cell">
+              <!-- Única acción (Figma: no hay moderación): editar. SVG real de
+                   Figma (nodo 2374:17894, edit 20x20), igual que entity-records. -->
+              <button type="button" class="zb-action" aria-label="Editar ausencia" title="Editar"
+                      (click)="openEdit(r)">
+                <svg class="zb-action__icon" viewBox="-2.5 -2.5 20 20" fill="none" aria-hidden="true">
+                  <path d="M0 11.8771V15.0021H3.125L12.3417 5.78542L9.21667 2.66042L0 11.8771ZM14.7583 3.36875C15.0833 3.04375 15.0833 2.51875 14.7583 2.19375L12.8083 0.24375C12.4833 -0.08125 11.9583 -0.08125 11.6333 0.24375L10.1083 1.76875L13.2333 4.89375L14.7583 3.36875Z" fill="currentColor"/>
+                </svg>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns(); let odd = odd"
+              [class.zb-row--alt]="odd"></tr>
+        </table>
+
+        @if (!pagedRequests().length) {
+          <!-- Se distingue "no hay nada" de "la busqueda no encuentra": con 29
+               ausencias cargadas, "No hay ausencias registradas" al buscar un
+               nombre que no existe hace pensar que se han borrado. -->
+          <div class="abs-empty">
+            @if (search()) {
+              No hay ausencias de ningún empleado que coincida con «{{ search() }}».
+            } @else if (estado() === 'vigentes' && finalizadasCount()) {
+              No hay ausencias vigentes. Cambia el filtro «Estado» para ver las
+              {{ finalizadasCount() }} ya finalizadas.
+            } @else if (estado() === 'finalizadas') {
+              No hay ausencias finalizadas.
+            } @else {
+              No hay ausencias registradas.
+            }
+          </div>
+        }
+      </div>
+
+      <zb-paginator
+        class="zb-table-card__pager"
+        [currentPage]="page() + 1"
+        [totalPages]="totalPages()"
+        (pageChange)="page.set($event - 1)"
+      ></zb-paginator>
+    </div>
+  }
+</div>
+
+<!-- ── Sidepanel: registrar / editar ausencia (Figma 2377:18654) ── -->
+<zb-sidepanel
+  [open]="showAdd"
+  (openChange)="showAdd = $event"
+  [title]="panelTitle"
+  [showClose]="false"
+  [mode]="editingId === null ? 'create' : 'edit'"
+  [saveDisabled]="!newRequest.worker || !newRequest.tipo || !newRequest.start_date || (!newRequest.indefinite && !newRequest.end_date)"
+  (save)="saveNew()"
+  (delete)="deleteRequest()"
+  (cancel)="cancelNew()">
+  <div class="abs-form">
+    <!-- searchable: son 260 empleados; sin buscador hay que bajar por una lista
+         plana hasta encontrar el apellido. -->
+    <zb-select label="Empleado" placeholder="Seleccionar empleado"
+      [options]="workerOptions" [(ngModel)]="newRequest.worker"
+      [searchable]="true"
+      [ngModelOptions]="{standalone: true}"></zb-select>
+
+    <!-- Los valores salen del catalogo 'absence_type' (AdminZebra > Catalogo),
+         asi que anadir un tipo no necesita desarrollo. -->
+    <zb-select label="Tipo de ausencia" placeholder="Seleccionar"
+      [options]="typeOptions" [(ngModel)]="newRequest.tipo"
+      [ngModelOptions]="{standalone: true}"></zb-select>
+
+    <div class="abs-form__row">
+      <div class="abs-field">
+        <label class="abs-field__label">Fecha de inicio <span class="abs-field__req">*</span></label>
+        <input type="date" class="abs-field__input" [(ngModel)]="newRequest.start_date"
+          [ngModelOptions]="{standalone: true}">
+      </div>
+      <div class="abs-field">
+        <label class="abs-field__label">Fecha de fin</label>
+        <input type="date" class="abs-field__input" [(ngModel)]="newRequest.end_date"
+          [disabled]="newRequest.indefinite" [ngModelOptions]="{standalone: true}">
+      </div>
+    </div>
+
+    <zb-checkbox
+      label="Duración indefinida"
+      [(ngModel)]="newRequest.indefinite"
+      [ngModelOptions]="{standalone: true}">
+    </zb-checkbox>
+    @if (newRequest.indefinite) {
+      <p class="abs-hint">Mientras la ausencia sea indefinida, el empleado no será planificado en turnos. Podrás cerrarla más adelante añadiendo una fecha de fin.</p>
+    }
+
+    <div class="abs-field">
+      <label class="abs-field__label">Observaciones</label>
+      <textarea class="abs-field__input abs-field__input--area" rows="3" placeholder="Añade una observación"
+        [(ngModel)]="newRequest.reason" [ngModelOptions]="{standalone: true}"></textarea>
+    </div>
+
+    <!-- AC-1: campos configurados desde AdminZebra > Entidades > Ausencias.
+         Los de arriba (empleado, fechas, indefinida) son fijos porque el
+         planificador los necesita; estos los define el cliente. -->
+    @if (camposFormulario().length) {
+      <app-dynamic-fields
+        [fields]="camposFormulario()"
+        [values]="customData"
+        appearance="outline"
+        [markRequired]="true"
+        (valuesChange)="customData = $event">
+      </app-dynamic-fields>
+    }
+  </div>
+</zb-sidepanel>
+
+<!-- ── Confirmación de borrado ── -->
+<zb-dialog
+  [(open)]="showDeleteConfirm"
+  title="¿Eliminar ausencia?"
+  message="Esta acción no se puede deshacer."
+  mode="danger"
+  confirmLabel="Eliminar"
+  cancelLabel="Cancelar"
+  (confirm)="confirmDelete()"
+></zb-dialog>
+
+<!-- ── Importar ausencias (AC-2). El boton "Descargar ejemplo" va DENTRO del
+     modal, en la ranura footer-left, como pide la tarea. ── -->
+<zb-file-upload
+  [(open)]="showImport"
+  title="Importar ausencias"
+  hint="Excel (.xlsx, .xls)"
+  accept=".xlsx,.xls"
+  [multiple]="false"
+  confirmLabel="Importar"
+  maxWidth="680px"
+  [hideConfirmUntilFiles]="true"
+  (confirm)="importarExcel($event)"
+  (filesAdded)="revisarFichero($event)"
+>
+  <!-- Revision previa: en cuanto se suelta el fichero se valida en el servidor
+       sin escribir nada, y se dice que va a pasar. Asi el fallo se ve ANTES de
+       importar y se puede corregir el Excel. -->
+  <div preview class="abs-revision">
+    @if (revisando()) {
+      <p class="abs-revision__cargando">Revisando el fichero…</p>
+    } @else {
+      @if (revision(); as r) {
+        <zb-alert
+          [type]="tipoRevision()"
+          [title]="textoRevision()"
+          [dismissible]="false">
+        </zb-alert>
+        @if (r.fallos.length) {
+          <ul class="abs-revision__fallos">
+            @for (f of r.fallos; track f) { <li>{{ f }}</li> }
+          </ul>
+        }
+      }
+    }
+  </div>
+
+  <zb-button footer-left variant="text" size="lg" iconRight="download"
+             (click)="descargarEjemplo()">
+    Descargar ejemplo
+  </zb-button>
+</zb-file-upload>

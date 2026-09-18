@@ -1,0 +1,125 @@
+<div class="sel-wrapper">
+
+  <!-- ── Label ── -->
+  @if (label) {
+    <span class="sel-label" [class.sel-label--error]="!!error">{{ label }}</span>
+  }
+
+  <!-- ── Trigger ── -->
+  <button
+    class="sel-trigger"
+    type="button"
+    [class.sel-trigger--open]="isOpen"
+    [class.sel-trigger--error]="!!error"
+    [class.sel-trigger--disabled]="isDisabled"
+    [class.sel-trigger--placeholder]="!selectedOption"
+    [disabled]="isDisabled"
+    [attr.aria-expanded]="isOpen"
+    (click)="toggle()"
+  >
+    @if (selectedOption?.icon; as selIcon) {
+      <span class="sel-trigger__icon material-icons" aria-hidden="true">{{ selIcon }}</span>
+    }
+    @if (selectedOption?.iconSrc; as selSrc) {
+      <img class="sel-trigger__icon-svg" [src]="selSrc" alt="" aria-hidden="true" />
+    }
+    <span class="sel-trigger__text">{{ displayLabel || placeholder }}</span>
+    <!-- Chevron del set de Figma; abierto = el mismo glifo rotado 180º
+         (Figma no tiene un expand_less aparte). -->
+    <zb-icon class="sel-trigger__chevron"
+             [class.sel-trigger__chevron--open]="isOpen"
+             name="expand_more" size="16"></zb-icon>
+  </button>
+
+  <!-- ── Dropdown panel ── -->
+  @if (isOpen) {
+    <div class="sel-panel" role="listbox">
+
+      <!-- Search inside dropdown -->
+      @if (searchable) {
+        <div class="sel-search">
+          <zb-icon class="sel-search__icon" name="search" size="16"></zb-icon>
+          <!-- Sin ngModel a propósito: el componente es OnPush y ngModel no
+               marca la vista para revisión al teclear, así que la lista no se
+               volvía a filtrar. onSearch() actualiza y llama a markForCheck(). -->
+          <input
+            class="sel-search__input"
+            type="search"
+            placeholder="Buscar"
+            [value]="searchQuery"
+            (input)="onSearch($any($event.target).value)"
+            (click)="$event.stopPropagation()"
+          />
+          @if (searchQuery) {
+            <button class="sel-search__clear" type="button"
+                    aria-label="Limpiar búsqueda"
+                    (click)="onSearch(''); $event.stopPropagation()">
+              <zb-icon name="close" size="16"></zb-icon>
+            </button>
+          }
+        </div>
+      }
+
+      <!-- List items -->
+      <ul class="sel-list">
+        @for (opt of filteredOptions; track opt.value) {
+          <li
+            class="sel-item"
+            [class.sel-item--active]="isSelected(opt)"
+            [class.sel-item--disabled]="opt.disabled"
+            role="option"
+            [attr.aria-selected]="isSelected(opt)"
+            (click)="select(opt)"
+          >
+            @if (opt.icon) {
+              <span class="sel-item__icon material-icons" aria-hidden="true">{{ opt.icon }}</span>
+            }
+            @if (opt.iconSrc) {
+              <img class="sel-item__icon-svg" [src]="opt.iconSrc" alt="" aria-hidden="true" />
+            }
+            <span class="sel-item__label">{{ opt.label }}</span>
+
+            @if (allowDelete) {
+              <button
+                class="sel-item__action sel-item__action--delete"
+                type="button"
+                aria-label="Eliminar opción"
+                (click)="onDeleteItem(opt, $event)"
+              >
+                <span class="material-icons" aria-hidden="true">delete</span>
+              </button>
+            }
+          </li>
+        }
+
+        @if (filteredOptions.length === 0) {
+          <li class="sel-empty">Sin resultados</li>
+        }
+      </ul>
+
+      <!-- Add item (optional) -->
+      @if (allowAdd) {
+        <div class="sel-add">
+          <span class="sel-add__label">{{ searchQuery || 'Nueva opción' }}</span>
+          <button
+            class="sel-add__btn"
+            type="button"
+            aria-label="Añadir opción"
+            (click)="onAddItem()"
+          >
+            <zb-icon name="add" size="16"></zb-icon>
+          </button>
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- ── Sub-text ── -->
+  @if (error) {
+    <span class="sel-sub sel-sub--error" role="alert">{{ error }}</span>
+  } @else if (hint) {
+    <span class="sel-sub sel-sub--hint">{{ hint }}</span>
+  }
+
+</div>

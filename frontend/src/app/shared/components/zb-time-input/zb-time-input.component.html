@@ -1,0 +1,33 @@
+<div class="ti-wrapper">
+  @if (label) {
+    <span class="ti-label">{{ label }}</span>
+  }
+
+  <button
+    type="button"
+    class="ti-trigger"
+    [class.ti-trigger--open]="isOpen"
+    [class.ti-trigger--placeholder]="!value"
+    [class.ti-trigger--disabled]="isDisabled"
+    [disabled]="isDisabled"
+    [attr.aria-expanded]="isOpen"
+    (click)="toggle()"
+  >
+    <span class="ti-trigger__text">{{ value || placeholder }}</span>
+    <span class="ti-trigger__icon material-icons" aria-hidden="true">schedule</span>
+  </button>
+
+  @if (isOpen) {
+    <div #panel class="ti-panel" role="listbox" aria-label="Horario">
+      @for (opt of options; track opt) {
+        <button type="button" class="ti-opt"
+          [class.ti-opt--active]="opt === value"
+          (click)="pick(opt)">{{ opt }}</button>
+      }
+    </div>
+  }
+
+  @if (hint) {
+    <span class="ti-hint">{{ hint }}</span>
+  }
+</div>

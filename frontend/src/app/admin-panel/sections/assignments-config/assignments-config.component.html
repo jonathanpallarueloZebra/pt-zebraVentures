@@ -1,0 +1,353 @@
+<div class="section-container"
+     (dragover)="onDragOver($event)"
+     (dragleave)="onDragLeave($event)"
+     (drop)="onDrop($event)">
+
+  @if (dragOver()) {
+    <div class="drop-overlay">
+      <mat-icon>upload_file</mat-icon>
+      <span>Suelta el JSON para importar reglas de asignación</span>
+    </div>
+  }
+
+  <div class="section-header">
+    <div>
+      <h2>Reglas de Asignación</h2>
+      <p class="subtitle">Configura cómo se determina el turno efectivo de cada trabajador durante la generación. Sin tocar código: elige condición, campo de override y patrón temporal.</p>
+    </div>
+    <div class="header-actions">
+      <button mat-stroked-button (click)="downloadTemplate()" matTooltip="Descarga un JSON de ejemplo con reglas documentadas">
+        <mat-icon>description</mat-icon> Plantilla JSON
+      </button>
+      <button mat-stroked-button (click)="exportAll()" matTooltip="Descarga todas las reglas como JSON" [disabled]="rules().length === 0">
+        <mat-icon>download</mat-icon> Exportar todas
+      </button>
+      <button mat-stroked-button (click)="importInput.click()" matTooltip="Sube un JSON con reglas de asignación">
+        <mat-icon>upload</mat-icon> Importar JSON
+      </button>
+      <input #importInput type="file" accept=".json,application/json" style="display:none" (change)="onImportFile($event)">
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container"><mat-spinner diameter="40"></mat-spinner></div>
+  } @else {
+
+    <!-- ── TABLE ───────────────────────────────────────────────────── -->
+    @if (rules().length === 0 && !creating()) {
+      <div class="empty-state">
+        <mat-icon>assignment</mat-icon>
+        <p>No hay reglas de asignación. Sin ellas, se usa el turno principal del trabajador directamente.</p>
+      </div>
+    } @else {
+      <div class="zb-table-card">
+        <div class="zb-table-scroll">
+      <table mat-table [dataSource]="pagedRules()" class="full-width rules-table zb-data-table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Regla</th>
+          <td mat-cell *matCellDef="let r">
+            <div class="rule-info">
+              <span class="rule-name">{{ r.name }}</span>
+              @if (r.description) {
+                <span class="rule-desc">{{ r.description }}</span>
+              }
+              <span class="rule-config">{{ getConfigSummary(r) }}</span>
+            </div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="pattern">
+          <th mat-header-cell *matHeaderCellDef>Patrón</th>
+          <td mat-cell *matCellDef="let r">
+            <span class="pattern-badge">{{ getPatternLabel(r.config?.pattern) }}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>Activa</th>
+          <td mat-cell *matCellDef="let r">
+            <mat-slide-toggle [checked]="r.active" (change)="toggleActive(r)" color="primary"></mat-slide-toggle>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let r" class="actions-cell">
+            <zb-button variant="icon-only" size="sm" icon="download" ariaLabel="Exportar como JSON" matTooltip="Exportar como JSON" (click)="exportOne(r)"></zb-button>
+            <button type="button" class="zb-action" aria-label="Editar" title="Editar" (click)="startEdit(r)">
+              <svg class="zb-action__icon" viewBox="-2.5 -2.5 20 20" fill="none" aria-hidden="true">
+                <path d="M0 11.8771V15.0021H3.125L12.3417 5.78542L9.21667 2.66042L0 11.8771ZM14.7583 3.36875C15.0833 3.04375 15.0833 2.51875 14.7583 2.19375L12.8083 0.24375C12.4833 -0.08125 11.9583 -0.08125 11.6333 0.24375L10.1083 1.76875L13.2333 4.89375L14.7583 3.36875Z" fill="currentColor"/>
+              </svg>
+            </button>
+            <zb-button variant="icon-only" size="sm" icon="delete" ariaLabel="Eliminar" matTooltip="Eliminar" (click)="deleteRule(r)"></zb-button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns; let odd = odd"
+            [class.editing-row]="editingId() === row.id"
+            [class.zb-row--alt]="odd"></tr>
+      </table>
+        </div>
+        <zb-paginator
+          class="zb-table-card__pager"
+          [currentPage]="page() + 1"
+          [totalPages]="totalPages()"
+          (pageChange)="page.set($event - 1)"
+        ></zb-paginator>
+      </div>
+    }
+
+    @if (!creating()) {
+      <div class="add-row">
+        <button mat-stroked-button class="add-btn" (click)="startCreate()">
+          <mat-icon>add</mat-icon> Nueva regla de asignación
+        </button>
+        <button mat-stroked-button class="chat-btn" (click)="toggleChat()">
+          <mat-icon>smart_toy</mat-icon> Crear con asistente
+        </button>
+        @if (importing()) {
+          <span class="importing-hint">
+            <mat-spinner diameter="16"></mat-spinner>
+            Importando...
+          </span>
+        }
+      </div>
+    }
+
+    <!-- ── CREATE FORM ─────────────────────────────────────────────── -->
+    @if (creating()) {
+      <mat-card class="form-card">
+        <mat-card-header>
+          <mat-card-title>Nueva regla de asignación</mat-card-title>
+          <mat-card-subtitle>Configura la condición, el turno alternativo y el patrón temporal.</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <ng-container *ngTemplateOutlet="ruleForm; context: { $implicit: createForm(), isCreate: true }"></ng-container>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button (click)="cancelCreate()">Cancelar</button>
+          <button mat-flat-button color="primary" [disabled]="!createForm().name?.trim()" (click)="saveCreate()">Guardar</button>
+        </mat-card-actions>
+      </mat-card>
+    }
+
+    <!-- ── EDIT FORM ───────────────────────────────────────────────── -->
+    @if (editingId() !== null) {
+      <mat-card class="form-card edit-card">
+        <mat-card-header>
+          <mat-card-title>Editar: {{ editForm().name }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <ng-container *ngTemplateOutlet="ruleForm; context: { $implicit: editForm(), isCreate: false }"></ng-container>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button (click)="cancelEdit()">Cancelar</button>
+          <button mat-flat-button color="primary" (click)="saveEdit()">Guardar cambios</button>
+        </mat-card-actions>
+      </mat-card>
+    }
+
+  }
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- REUSABLE RULE FORM                                                      -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<ng-template #ruleForm let-form let-isCreate="isCreate">
+
+  <!-- ── BÁSICO ── -->
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="flex-2">
+      <mat-label>Nombre *</mat-label>
+      <input matInput [value]="form.name || ''" (input)="updateField(isCreate, 'name', $any($event.target).value)"
+             placeholder="Ej: Rotación semanal de turno">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="priority-field">
+      <mat-label>Prioridad</mat-label>
+      <input matInput type="number" min="0" max="99"
+             [value]="form.priority ?? 0"
+             (input)="updateField(isCreate, 'priority', +$any($event.target).value)">
+      <mat-hint>Menor = primero</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width-field">
+      <mat-label>Descripción (opcional)</mat-label>
+      <textarea matInput rows="2" [value]="form.description || ''" (input)="updateField(isCreate, 'description', $any($event.target).value)"
+                placeholder="Explica qué hace esta regla"></textarea>
+    </mat-form-field>
+  </div>
+
+  <!-- ── ALCANCE ── -->
+  @if (planningScopeRecords().length) {
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width-field">
+        <mat-label>Aplica a ({{ planningScopeEt()?.name || 'Ámbito' }})</mat-label>
+        <mat-select multiple
+          [value]="form.scope_records || []"
+          (selectionChange)="updateField(isCreate, 'scope_records', $event.value)">
+          @for (rec of planningScopeRecords(); track rec.id) {
+            <mat-option [value]="rec.id">{{ recordLabel(rec, planningScopeEt()) }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Vacío = aplica a todos.</mat-hint>
+      </mat-form-field>
+    </div>
+  }
+
+  <mat-divider class="engine-divider"></mat-divider>
+
+  <!-- ── 1. CONDICIÓN ── -->
+  <h4 class="engine-title">
+    <mat-icon>filter_alt</mat-icon> 1. Condición (¿a quién aplica?)
+  </h4>
+  <p class="hint-text">Si el campo del trabajador cumple esta condición, se aplica el override. Deja vacío para aplicar a todos.</p>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Campo del trabajador</mat-label>
+      <mat-select [value]="getConfig(form, 'conditionField', '')"
+                  (selectionChange)="updateConfig(form, 'conditionField', $event.value)">
+        <mat-option value="">Sin condición (aplica a todos)</mat-option>
+        @for (f of conditionFields(); track f.key) {
+          <mat-option [value]="f.key">{{ f.label }} ({{ f.field_type }})</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (getConfig(form, 'conditionField')) {
+      <mat-form-field appearance="outline">
+        <mat-label>Valor requerido</mat-label>
+        <input matInput [value]="getConfig(form, 'conditionValue', '')"
+               (input)="updateConfig(form, 'conditionValue', $any($event.target).value)"
+               placeholder="true, código, etc.">
+        <mat-hint>Vacío = cualquier valor truthy</mat-hint>
+      </mat-form-field>
+    }
+  </div>
+
+  <mat-divider class="sub-divider"></mat-divider>
+
+  <!-- ── 2. OVERRIDE ── -->
+  <h4 class="engine-title">
+    <mat-icon>swap_horiz</mat-icon> 2. Turno alternativo (¿qué turno usar?)
+  </h4>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width-field">
+      <mat-label>Campo con el turno alternativo *</mat-label>
+      <mat-select [value]="getConfig(form, 'overrideField', '')"
+                  (selectionChange)="updateConfig(form, 'overrideField', $event.value)">
+        <mat-option value="">— Selecciona —</mat-option>
+        @for (f of shiftFields(); track f.key) {
+          <mat-option [value]="f.key">{{ f.label }}</mat-option>
+        }
+      </mat-select>
+      <mat-hint>Campo del trabajador que contiene el turno alternativo (entity_select → shift)</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <mat-divider class="sub-divider"></mat-divider>
+
+  <!-- ── 3. PATRÓN TEMPORAL ── -->
+  <h4 class="engine-title">
+    <mat-icon>schedule</mat-icon> 3. Patrón temporal (¿cuándo aplica?)
+  </h4>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Patrón</mat-label>
+      <mat-select [value]="getConfig(form, 'pattern', 'always')"
+                  (selectionChange)="updateConfig(form, 'pattern', $event.value)">
+        @for (p of patterns(); track p.value) {
+          <mat-option [value]="p.value">{{ p.label }} — {{ p.description }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (getConfig(form, 'pattern') === 'alternate_weekly' || getConfig(form, 'pattern') === 'alternate_daily') {
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Frecuencia desde campo</mat-label>
+        <mat-select [value]="getConfig(form, 'frequencyField', '')"
+                    (selectionChange)="updateConfig(form, 'frequencyField', $event.value)">
+          <mat-option value="">Usar valor fijo ↓</mat-option>
+          @for (f of numberFields(); track f.key) {
+            <mat-option [value]="f.key">{{ f.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Campo numérico del worker con la frecuencia</mat-hint>
+      </mat-form-field>
+
+      @if (!getConfig(form, 'frequencyField')) {
+        <mat-form-field appearance="outline" class="freq-field">
+          <mat-label>Frecuencia fija</mat-label>
+          <input matInput type="number" min="1" max="52"
+                 [value]="getConfig(form, 'frequencyValue', 1)"
+                 (input)="updateConfig(form, 'frequencyValue', +$any($event.target).value)">
+          <mat-hint>Cada cuántas semanas/días alterna</mat-hint>
+        </mat-form-field>
+      }
+    </div>
+  }
+
+  @if (getConfig(form, 'pattern') === 'weekday') {
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Día de la semana</mat-label>
+        <mat-select [value]="getConfig(form, 'weekday', 5)"
+                    (selectionChange)="updateConfig(form, 'weekday', $event.value)">
+          @for (d of weekdays; track d.value) {
+            <mat-option [value]="d.value">{{ d.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>El override solo se aplica este día (ej: sábado para el turno de sábado)</mat-hint>
+      </mat-form-field>
+    </div>
+  }
+
+</ng-template>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- CHAT PANEL                                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+@if (chatOpen()) {
+  <div class="chat-panel">
+    <div class="chat-header">
+      <mat-icon>smart_toy</mat-icon>
+      <span>Asistente de asignaciones</span>
+      <span class="spacer"></span>
+      <button mat-icon-button (click)="clearChat()" matTooltip="Cerrar chat"><mat-icon>close</mat-icon></button>
+    </div>
+    <div class="chat-messages" #chatScroll>
+      @for (msg of chatMessages(); track $index) {
+        <div class="chat-msg" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+          <div class="msg-bubble" [innerHTML]="msg.content"></div>
+        </div>
+      }
+      @if (chatLoading()) {
+        <div class="chat-msg assistant">
+          <div class="msg-bubble typing"><mat-spinner diameter="16"></mat-spinner> Pensando...</div>
+        </div>
+      }
+    </div>
+    @if (chatProposal()) {
+      <div class="chat-proposal">
+        <span>¿Crear esta regla?</span>
+        <button mat-flat-button color="primary" (click)="applyChatProposal()">
+          <mat-icon>check</mat-icon> Crear regla
+        </button>
+      </div>
+    }
+    <div class="chat-input-row">
+      <mat-form-field appearance="outline" class="chat-input-field">
+        <input matInput placeholder="Describe la regla que quieres crear..."
+               [value]="chatInput()"
+               (input)="chatInput.set($any($event.target).value)"
+               (keydown.enter)="sendChat()">
+      </mat-form-field>
+      <button mat-icon-button color="primary" (click)="sendChat()" [disabled]="chatLoading()">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </div>
+}

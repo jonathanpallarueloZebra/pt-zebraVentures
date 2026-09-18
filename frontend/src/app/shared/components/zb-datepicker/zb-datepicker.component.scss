@@ -1,0 +1,123 @@
+:host { display: block; }
+
+.dp-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+// ── Label ─────────────────────────────────────────────────────
+.dp-label {
+  color: var(--input-label);
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  line-height: 14.4px;
+  text-transform: uppercase;
+  letter-spacing: 0.12px;
+
+  &--error { color: var(--input-label-error); }
+}
+
+// ── Shell ─────────────────────────────────────────────────────
+.dp-shell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 14px; // icon button is 32px on right
+  background: var(--input-surface);
+  box-shadow: 0px 1px 2px rgba(10, 13, 18, 0.05);
+  border-radius: 4px;
+  outline: 1px solid var(--input-border);
+  outline-offset: -1px;
+  transition: outline-color var(--transition-fast), outline-width var(--transition-fast), box-shadow var(--transition-fast);
+
+  &:focus-within:not(&--error):not(&--disabled) {
+    outline: 2px solid var(--input-border-active);
+    outline-offset: -2px;
+    box-shadow: 0 0 0 3px var(--surface-base), 0 0 0 5px var(--input-border-active);
+  }
+
+  &--error {
+    outline: 2px solid var(--input-border-error);
+    outline-offset: -2px;
+    box-shadow: none;
+  }
+
+  &--disabled {
+    background: var(--input-surface-disabled);
+    pointer-events: none;
+  }
+}
+
+// ── Native date input ─────────────────────────────────────────
+.dp-native {
+  flex: 1 1 0;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  min-width: 0;
+
+  color: var(--input-text);
+  font-family: var(--ff-body);
+  font-size: var(--fs-16);
+  font-weight: var(--fw-semibold);
+  line-height: 24px;
+  cursor: pointer;
+
+  // Hide browser's native calendar icon
+  &::-webkit-calendar-picker-indicator { display: none; }
+  &::-webkit-inner-spin-button         { display: none; }
+
+  &:disabled {
+    color: var(--input-text-disabled);
+    font-weight: var(--fw-regular);
+    cursor: not-allowed;
+  }
+
+  .dp-shell--error & { color: var(--input-text-error); }
+}
+
+// ── Calendar icon button ──────────────────────────────────────
+.dp-icon-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 4px;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 4px;
+  color: var(--input-icon);
+  transition: color var(--transition-fast);
+
+  &:disabled { color: var(--input-icon-disabled); cursor: not-allowed; }
+
+  &:hover:not(:disabled) { color: var(--text-primary); }
+
+  .material-icons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+  }
+
+  .material-icons.dp-icon--error    { color: var(--input-icon-error); }
+  .material-icons.dp-icon--disabled { color: var(--input-icon-disabled); }
+}
+
+// ── Sub-text ──────────────────────────────────────────────────
+.dp-sub {
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  line-height: 14.4px;
+  &--error { color: var(--input-text-error); font-weight: var(--fw-medium); }
+  &--hint  { color: var(--text-secondary);   font-weight: var(--fw-regular); }
+}

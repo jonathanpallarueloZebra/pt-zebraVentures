@@ -1,0 +1,48 @@
+<zb-page-header [title]="'Solicitar ausencia'" [showSidebarToggle]="true" [sidebarCollapsed]="false"></zb-page-header>
+<div class="page-container">
+  <div class="page-back">
+    <zb-button variant="icon-only" icon="arrow_back" (click)="cancel()"></zb-button>
+  </div>
+
+  <div class="form-card card-surface">
+    <p class="form-hint">Completa los datos para solicitar una ausencia. Tu solicitud será revisada por un administrador.</p>
+
+    <div class="form-fields">
+      <zb-select
+        label="Tipo de ausencia"
+        [options]="absenceTypeOptions"
+        [(ngModel)]="form.type_id"
+        [ngModelOptions]="{standalone: true}">
+      </zb-select>
+
+      <div class="date-row">
+        <div class="native-field">
+          <label class="native-label">Fecha inicio</label>
+          <div class="native-shell">
+            <input type="date" class="native-input" [(ngModel)]="form.start_date" [ngModelOptions]="{standalone: true}">
+          </div>
+        </div>
+        <div class="native-field">
+          <label class="native-label">Fecha fin</label>
+          <div class="native-shell">
+            <input type="date" class="native-input" [(ngModel)]="form.end_date" [ngModelOptions]="{standalone: true}">
+          </div>
+        </div>
+      </div>
+
+      <div class="native-field">
+        <label class="native-label">Motivo (opcional)</label>
+        <div class="native-shell native-shell--textarea">
+          <textarea class="native-input" [(ngModel)]="form.reason" [ngModelOptions]="{standalone: true}" rows="3" placeholder="Describe brevemente el motivo..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <zb-button variant="text" (click)="cancel()">Cancelar</zb-button>
+      <zb-button variant="primary" iconLeft="send" (click)="submit()" [disabled]="submitting()">
+        {{ submitting() ? 'Enviando...' : 'Enviar solicitud' }}
+      </zb-button>
+    </div>
+  </div>
+</div>

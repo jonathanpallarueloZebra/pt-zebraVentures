@@ -1,0 +1,144 @@
+// Mismo patrón/estilos que zb-column-menu (trigger + panel del sistema),
+// con badge de contador y una lista de zb-select apilados dentro del panel.
+.zb-filter-menu {
+  position: relative;
+  display: inline-block;
+  font-family: var(--ff-body);
+}
+
+// ── Trigger (idéntico al botón "Columnas") ────────────────────
+.zb-filter-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-s);
+  padding: 5px 15px;
+  appearance: none;
+  border: none;
+  background: var(--surface-raised);
+  box-shadow: 0 1px 2px rgba(10, 13, 18, 0.05);
+  border-radius: var(--radius-forms);
+  outline: 1px solid var(--border-high);
+  outline-offset: -1px;
+  cursor: pointer;
+  transition: outline-color var(--transition-fast);
+
+  &:hover { outline-color: var(--border-highest); }
+
+  &:focus-visible {
+    outline-color: var(--accent-base);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+  }
+
+  // Con filtros activos: borde de acento (como un select "activo" del Figma).
+  &--active { outline-color: var(--accent-base); }
+
+  &--open .zb-filter-menu__chevron { transform: rotate(180deg); }
+}
+
+// Icono = zb-icon (SVG de Figma); el tamaño lo fija el componente.
+.zb-filter-menu__icon {
+  color: var(--icon-neutral-highest);
+}
+
+.zb-filter-menu__label {
+  color: var(--text-primary);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+// Contador de filtros activos (píldora Accent).
+.zb-filter-menu__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9999px;
+  background: var(--accent-base);
+  color: #fff;
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+}
+
+// Chevron = zb-icon (SVG de Figma); el tamaño lo fija el componente.
+.zb-filter-menu__chevron {
+  color: var(--icon-neutral-high);
+  transition: transform var(--transition-fast);
+}
+
+// ── Dropdown panel (idéntico al de columnas) ──────────────────
+.zb-filter-menu__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  min-width: 260px;
+  padding: var(--sp-xs);
+  background: var(--surface-raised);
+  border-radius: var(--radius-containers);
+  outline: 1px solid var(--border-base);
+  box-shadow:
+    0 8px 8px -4px rgba(10, 13, 18, 0.03),
+    0 20px 24px -4px rgba(10, 13, 18, 0.08);
+}
+
+.zb-filter-menu__panel-title {
+  padding: var(--sp-s) var(--sp-s) var(--sp-xs);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+// Selects apilados verticalmente dentro del panel.
+// SIN overflow recortante: el dropdown de cada zb-select se abre por ENCIMA
+// (position:absolute) y un overflow:auto aquí lo cortaría ("se queda por dentro").
+.zb-filter-menu__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-m);
+  padding: var(--sp-s);
+  overflow: visible;
+}
+
+// El select abierto se eleva sobre los hermanos de abajo dentro del panel.
+.zb-filter-menu__select {
+  display: block;
+  width: 100%;
+  position: relative;
+
+  ::ng-deep .sel-wrapper:has(.sel-trigger--open) { z-index: 10; }
+}
+
+.zb-filter-menu__empty {
+  padding: var(--sp-s);
+  font-size: var(--fs-13);
+  color: var(--text-secondary);
+}
+
+.zb-filter-menu__reset {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  width: 100%;
+  margin-top: var(--sp-xs);
+  padding: var(--sp-s);
+  border: none;
+  border-top: 1px solid var(--divider-default);
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--ff-body);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  color: var(--text-link);
+  transition: background var(--transition-fast);
+
+  &:hover { background: var(--surface-subtle); }
+
+  .material-icons { font-size: 16px; width: 16px; height: 16px; }
+}

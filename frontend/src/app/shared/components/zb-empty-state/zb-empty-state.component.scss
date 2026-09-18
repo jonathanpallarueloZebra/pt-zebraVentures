@@ -1,0 +1,155 @@
+.zb-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-s);
+  padding: var(--sp-3xl) var(--sp-l);
+  font-family: var(--ff-body);
+  
+}
+
+// ── Icon well (soft circular background, muted glyph) ─────────
+.zb-empty-state__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  margin-bottom: var(--sp-s);
+  border-radius: var(--r-full);
+  background: var(--surface-subtle);
+  color: var(--icon-disabled);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+  }
+}
+
+.zb-empty-state__svg {
+  display: flex;
+
+  ::ng-deep svg {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+// ── Ilustración de Figma (nodo 2138:7849) ─────────────────────
+// Variante `[illustration]`: caja de 200×200 con las capas posicionadas en
+// los mismos porcentajes que el diseño (blob → glifo → ring → plus).
+.zb-empty-state--figma {
+  gap: var(--figma-emptystate-gap);
+  padding: var(--figma-emptystate-padding-y) 0;
+
+  .zb-empty-state__title {
+    font-size: var(--figma-emptystate-title-size);
+    line-height: var(--figma-emptystate-title-line-height);
+    color: var(--figma-emptystate-title-color); // Text/secondary, no primary
+  }
+
+  .zb-empty-state__subtitle {
+    font-size: var(--figma-emptystate-desc-size);
+    line-height: var(--figma-emptystate-desc-line-height);
+    color: var(--figma-emptystate-desc-color);
+    padding-bottom: var(--figma-emptystate-desc-padding-bottom);
+  }
+
+  .zb-empty-state__actions {
+    gap: var(--figma-emptystate-actions-gap);
+    margin-top: 0;
+    padding: var(--figma-emptystate-actions-padding-y) 0;
+  }
+}
+
+.zb-illus {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--figma-emptystate-img-size);
+  height: var(--figma-emptystate-img-size);
+  overflow: hidden;
+
+  img {
+    position: absolute;
+    display: block;
+    max-width: none;
+  }
+}
+
+// Blob orgánico #FAFAFA del fondo (138.706×94.3739 = el 69.35%×47.19% de la caja).
+.zb-illus__blob {
+  top: 46.59%;
+  left: 18.47%;
+  width: 69.353%;
+  height: 47.187%;
+}
+
+// Glifo central: la caja de Figma es del 22%/28% (=100×100 sobre 200×200) y
+// el SVG ya trae su propio inset interno, así que se deja que el <img>
+// conserve su tamaño intrínseco centrado en esa caja (con `inset` en los 4
+// lados se estiraría a 100×100 y el glifo saldría más grande de lo debido).
+.zb-illus__glyph {
+  top: 22%;
+  left: 22%;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+// En empleados el glifo va ligeramente descentrado a la izquierda (Figma:
+// left calc(50% - 6px) con translate -50%).
+.zb-illus__glyph--person_outline {
+  left: calc(50% - 6px);
+  transform: translateX(-50%);
+}
+
+// Círculo blanco y plus, sobre el glifo (abajo-derecha). 43×43 = 21.5% de 200.
+.zb-illus__ring {
+  top: 54%;
+  left: 60%;
+  width: 21.5%;
+  height: 21.5%;
+}
+
+// El plus va centrado en el ring. En Figma la caja del icono mide 34px
+// (left 62% / right 21% de 200) pero el glifo dentro es de 20px con inset
+// del 20.83%, así que se fija el tamaño real y se centra sobre esa caja.
+.zb-illus__plus {
+  top: calc(50% + 29px);
+  left: 62%;
+  width: 19.8333px;
+  height: 19.8333px;
+  transform: translate(calc((34px - 19.8333px) / 2), -50%);
+}
+
+// ── Copy ──────────────────────────────────────────────────────
+.zb-empty-state__title {
+  margin: 0;
+  font-family: var(--ff-display);
+  font-size: var(--fs-18);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  color: var(--text-primary);
+}
+
+.zb-empty-state__subtitle {
+  margin: 0;
+  max-width: 360px;
+  font-size: var(--fs-14);
+  line-height: var(--lh-normal);
+  color: var(--text-secondary);
+}
+
+// ── Actions (projected) ───────────────────────────────────────
+.zb-empty-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-s);
+  margin-top: var(--sp-m);
+
+  &:empty { display: none; }
+}

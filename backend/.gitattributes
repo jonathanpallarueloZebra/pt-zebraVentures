@@ -1,0 +1,5 @@
+# Los scripts de shell viajan dentro de imagenes Linux: con core.autocrlf=true un
+# clon en Windows los deja con CRLF, el shebang pasa a ser `#!/bin/sh\r` y el
+# contenedor muere con "exec /usr/local/bin/docker-entrypoint.sh: no such file or
+# directory". Se fuerza LF en el arbol de trabajo pase lo que pase.
+*.sh text eol=lf

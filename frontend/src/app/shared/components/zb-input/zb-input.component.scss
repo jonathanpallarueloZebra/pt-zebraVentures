@@ -1,0 +1,147 @@
+// ── Host ──────────────────────────────────────────────────────
+:host {
+  display: block;
+}
+
+// ── Wrapper (label + shell + sub-text) ────────────────────────
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+// ── Label ─────────────────────────────────────────────────────
+// Figma: fs-12 / fw-600 / uppercase / ls-0.12px / lh-14.4px / --input-label
+.input-label {
+  color: var(--figma-input-label-color);
+  font-family: var(--ff-body);
+  font-size: var(--figma-input-label-font-size);
+  font-weight: var(--fw-semibold);
+  line-height: var(--figma-input-label-line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--figma-input-label-letter-spacing);
+  cursor: pointer;
+
+  &--error {
+    color: var(--figma-input-label-color-error);
+  }
+}
+
+// ── Shell (the visual bordered box) ───────────────────────────
+// Patrón Input/text de stylesJPfigma (nodo 2112:2447): usa los tokens
+// --figma-input-* (no los genéricos --input-*), que resuelven SIEMPRE a
+// los valores exactos del Figma. pad 8 · radius 4 · borde #b3b6bd · Shadow/xs.
+.input-shell {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-input-gap, 8px);
+  padding: var(--figma-input-padding);
+  background: var(--figma-input-surface);
+  box-shadow: var(--figma-input-shadow);
+  border-radius: var(--figma-input-radius);
+  outline: var(--figma-input-border-width) solid var(--figma-input-border);
+  outline-offset: calc(-1 * var(--figma-input-border-width));
+  transition:
+    outline-color var(--transition-fast),
+    outline-width var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  // ── Focus ─────────────────────────────────────────────────
+  // Igual que el sidepanel de absences: al enfocar SOLO borde azul 1px, sin
+  // anillo de foco (evita el "doble borde" azul). Se conserva la sombra base.
+  &:focus-within:not(&--error):not(&--disabled) {
+    outline: var(--figma-input-border-width) solid var(--figma-input-border-active);
+    outline-offset: calc(-1 * var(--figma-input-border-width));
+  }
+
+  // ── Error ─────────────────────────────────────────────────
+  // Figma: borde 2px (Active/Error) rojo, sin anillo
+  &--error {
+    outline: var(--figma-input-border-width-active) solid var(--figma-input-border-error);
+    outline-offset: calc(-1 * var(--figma-input-border-width-active));
+    box-shadow: none;
+  }
+
+  // ── Disabled ──────────────────────────────────────────────
+  // Figma: bg #F1F2F3 / same border / pointer-events none
+  &--disabled {
+    background: var(--figma-input-surface-disabled);
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+}
+
+// ── Native input ──────────────────────────────────────────────
+// Figma "input text" (nodo 2112:2447): 14px (body/2) Regular, lh 1.11,
+// color Input/text/default. Placeholder Input/text/placeholder.
+.input-native {
+  flex: 1 1 0;
+  appearance: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+
+  color: var(--figma-input-text);
+  font-family: var(--ff-body);
+  font-size: var(--figma-input-value-font-size);
+  font-weight: var(--fw-regular);
+  line-height: var(--figma-input-value-line-height);
+
+  caret-color: var(--figma-input-border-active);
+
+  &::placeholder {
+    color: var(--figma-input-placeholder);
+    font-weight: var(--fw-regular);
+  }
+
+  &:disabled {
+    color: var(--figma-input-text-disabled);
+    font-weight: var(--fw-regular);
+    cursor: not-allowed;
+  }
+
+  .input-shell--error & {
+    color: var(--figma-input-text-error);
+  }
+}
+
+// ── Icons ─────────────────────────────────────────────────────
+.input-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+  color: var(--input-icon);
+  display: flex;
+  align-items: center;
+
+  .input-shell--error & {
+    color: var(--input-icon-error);
+  }
+
+  .input-shell--disabled & {
+    color: var(--input-icon-disabled);
+  }
+}
+
+// ── Sub-text (error message / hint) ───────────────────────────
+.input-sub {
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  line-height: 14.4px;
+
+  &--error {
+    color: var(--input-text-error);
+    font-weight: var(--fw-medium);
+  }
+
+  &--hint {
+    color: var(--text-secondary);
+    font-weight: var(--fw-regular);
+  }
+}

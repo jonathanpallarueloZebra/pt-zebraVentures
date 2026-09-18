@@ -1,0 +1,272 @@
+// ============================================================
+// LAYER 3 — Theme overrides
+// Flip semantic tokens for light / dark.
+// Apply data-theme="light" or data-theme="dark" on <html>.
+// Light values are the :root defaults in _tokens.scss;
+// this file makes switching explicit and reversible.
+// ============================================================
+
+// ── Light ────────────────────────────────────────────────────
+
+[data-theme='light'] {
+
+  // Accent
+  --accent-alpha-low:  #0ba5ec1a;
+  --accent-alpha-high: #0ba5ec33;
+  --accent-lowest:     var(--p-blue-light-25);
+  --accent-low:        var(--p-blue-light-100);
+  --accent-base:       var(--p-blue-light-600);
+  --accent-high:       var(--p-blue-light-700);
+  --accent-highest:    var(--p-blue-light-800);
+
+  // Brand
+  --brand-lowest:  var(--p-brand-50);
+  --brand-low:     var(--p-brand-100);
+  --brand-base:    var(--p-brand-300);
+  --brand-high:    var(--p-brand-400);
+  --brand-highest: var(--p-brand-500);
+
+  // Text
+  --text-primary:   var(--p-alpha-black-800);
+  --text-secondary: var(--p-alpha-black-600);
+  --text-disabled:  var(--p-alpha-black-400);
+  --text-inverted:  var(--p-alpha-white-100);
+  --text-link:      var(--accent-high);
+
+  // Surface
+  --surface-raised:        var(--p-neutral-0);
+  --surface-base:          var(--p-neutral-50);
+  --surface-subtle:        var(--p-neutral-100);
+  --surface-sunken:        var(--p-neutral-200);
+  --surface-sunken-strong: var(--p-neutral-800);
+
+  // Border
+  --border-highest: var(--p-neutral-800);
+  --border-high:    var(--p-neutral-300);
+  --border-base:    var(--p-neutral-200);
+  --border-low:     var(--p-neutral-100);
+  --border-accent:  var(--accent-base);
+
+  // Divider
+  --divider-default: var(--p-neutral-100);
+  --divider-on-dark: var(--p-alpha-white-700);
+
+  // Icon
+  --icon-neutral-highest: var(--p-neutral-800);
+  --icon-neutral-high:    var(--p-alpha-black-600);
+  --icon-neutral-base:    var(--p-neutral-50);
+  --icon-neutral-lowest:  var(--p-neutral-0);
+  --icon-disabled:        var(--p-alpha-black-300);
+
+  // Status
+  --success-text:    var(--p-green-900);
+  --success-surface: var(--p-green-50);
+  --success-icon:    var(--p-green-700);
+  --success-border:  var(--p-green-200);
+  --info-text:       var(--p-blue-light-900);
+  --info-surface:    var(--p-blue-light-50);
+  --info-icon:       var(--p-blue-light-700);
+  --info-border:     var(--p-blue-light-200);
+  --warning-text:    var(--p-orange-900);
+  --warning-surface: var(--p-orange-50);
+  --warning-icon:    var(--p-orange-700);
+  --warning-border:  var(--p-orange-200);
+  --error-text:        var(--p-red-900);
+  --error-surface:     var(--p-red-50);
+  --error-icon:        var(--p-red-700);
+  --error-border-low:  var(--p-red-200);
+  --error-border-high: var(--p-red-700);
+
+  // Button
+  --btn-text-danger:                   var(--p-red-800);
+  --btn-surface-disabled:              var(--surface-subtle);
+  --btn-surface-primary:               var(--brand-base);
+  --btn-surface-primary-hover:         var(--brand-high);
+  --btn-surface-primary-active:        var(--brand-highest);
+  --btn-surface-secondary-hover:       var(--accent-alpha-low);
+  --btn-surface-secondary-active:      var(--accent-alpha-high);
+  --btn-surface-danger-default:        var(--p-red-700);
+  --btn-surface-danger-hover:          var(--p-red-800);
+  --btn-surface-danger-active:         var(--p-red-900);
+  --btn-surface-danger-outlined-hover: var(--p-red-50);
+  --btn-surface-danger-outlined-active:var(--p-red-100);
+  --btn-border-danger-outlined:        var(--p-red-800);
+
+  // Input
+  --input-surface:          var(--p-neutral-0);
+  --input-surface-disabled: var(--p-neutral-100);
+  --input-check-surface:    var(--p-neutral-0);
+  --input-check-checked:    var(--accent-base);
+  --input-check-hover:      var(--accent-high);
+  --input-check-active:     var(--p-neutral-0);
+  --input-placeholder:      var(--p-alpha-black-600);
+
+  // Misc
+  --modal-overlay:    var(--p-alpha-black-600);
+  --focus-ring:       #0ba5ec33;
+  --elevation-shadow: var(--p-alpha-black-200);
+
+  // ── Backward-compat: semantic aliases ─────────────────────
+  --fondo-pagina:     var(--surface-base);
+  --fondo-header:     var(--surface-raised);
+  --fondo-card:       var(--surface-raised);
+  --fondo-sidebar:    var(--sidebar-surface);
+  --texto-principal:  var(--text-primary);
+  --texto-secundario: var(--text-secondary);
+  --texto-desactivado:var(--text-disabled);
+  --borde-general:    var(--border-base);
+  --borde-hover:      var(--border-high);
+  --color-acento:     var(--brand-base);
+  --color-acento-dark:var(--brand-high);
+  --color-acento-texto:var(--on-brand);
+  --input-fondo:      var(--input-surface);
+  --input-borde:      var(--input-border);
+  --input-foco-borde: var(--input-border-active);
+  --sidebar-fondo:    var(--sidebar-surface);
+  --sidebar-texto:        var(--p-neutral-300);
+  --sidebar-texto-activo: #ffffff;
+  --sidebar-item-hover:   var(--p-neutral-700);
+  --sidebar-item-activo:  var(--p-neutral-600);
+  --sidebar-borde:        var(--p-neutral-600);
+  --color-error:          var(--error-icon);
+  --color-exito:          var(--success-icon);
+  --color-warning:        var(--brand-base);
+  --color-info:           var(--info-icon);
+  --color-error-bg:       var(--error-surface);
+  --color-exito-bg:       var(--success-surface);
+  --color-warning-bg:     #fffbeb;
+  --color-info-bg:        var(--info-surface);
+}
+
+// ── Dark ─────────────────────────────────────────────────────
+
+[data-theme='dark'] {
+
+  // Accent — inverted scale: high values become accessible against dark bg
+  --accent-alpha-low:  #0ba5ec59;
+  --accent-alpha-high: #0ba5ec80;
+  --accent-lowest:     var(--p-blue-light-900);
+  --accent-low:        var(--p-blue-light-800);
+  --accent-base:       var(--p-blue-light-400);
+  --accent-high:       var(--p-blue-light-200);
+  --accent-highest:    var(--p-blue-light-50);
+
+  // Brand — scale inverts so lighter shades are the "high contrast" ones
+  --brand-lowest:  var(--p-brand-500);
+  --brand-low:     var(--p-brand-400);
+  --brand-base:    var(--p-brand-300);
+  --brand-high:    var(--p-brand-200);
+  --brand-highest: var(--p-brand-50);
+
+  // Text
+  --text-primary:   var(--p-alpha-white-100);
+  --text-secondary: var(--p-alpha-white-300);
+  --text-disabled:  var(--p-alpha-white-400);
+  --text-inverted:  var(--p-alpha-black-800);
+  --text-link:      var(--accent-high);
+
+  // Surface
+  --surface-raised:        var(--p-neutral-900);
+  --surface-base:          var(--p-neutral-800);
+  --surface-subtle:        var(--p-neutral-700);
+  --surface-sunken:        var(--p-neutral-600);
+  --surface-sunken-strong: var(--p-neutral-50);
+
+  // Border
+  --border-highest: var(--p-neutral-200);
+  --border-high:    var(--p-neutral-500);
+  --border-base:    var(--p-neutral-700);
+  --border-low:     var(--p-neutral-800);
+  --border-accent:  var(--accent-high);
+
+  // Divider
+  --divider-default: var(--p-neutral-700);
+  --divider-on-dark: var(--p-alpha-black-700);
+
+  // Icon
+  --icon-neutral-highest: var(--p-neutral-50);
+  --icon-neutral-high:    var(--p-alpha-white-300);
+  --icon-neutral-base:    var(--p-neutral-800);
+  --icon-neutral-lowest:  var(--p-neutral-900);
+  --icon-disabled:        var(--p-alpha-white-400);
+
+  // Status
+  --success-text:    var(--p-green-50);
+  --success-surface: var(--p-green-900);
+  --success-icon:    var(--p-green-300);
+  --success-border:  var(--p-green-700);
+  --info-text:       var(--p-blue-light-50);
+  --info-surface:    var(--p-blue-light-900);
+  --info-icon:       var(--p-blue-light-300);
+  --info-border:     var(--p-blue-light-700);
+  --warning-text:    var(--p-orange-50);
+  --warning-surface: var(--p-orange-900);
+  --warning-icon:    var(--p-orange-300);
+  --warning-border:  var(--p-orange-700);
+  --error-text:        var(--p-red-50);
+  --error-surface:     var(--p-red-900);
+  --error-icon:        var(--p-red-300);
+  --error-border-low:  var(--p-red-700);
+  --error-border-high: var(--p-red-200);
+
+  // Button
+  --btn-text-danger:                   var(--p-red-400);
+  --btn-surface-disabled:              var(--surface-subtle);
+  --btn-surface-primary:               var(--brand-base);
+  --btn-surface-primary-hover:         var(--brand-high);
+  --btn-surface-primary-active:        var(--brand-highest);
+  --btn-surface-secondary-hover:       var(--accent-alpha-low);
+  --btn-surface-secondary-active:      var(--accent-alpha-high);
+  --btn-surface-danger-default:        var(--p-red-500);
+  --btn-surface-danger-hover:          var(--p-red-600);
+  --btn-surface-danger-active:         var(--p-red-700);
+  --btn-surface-danger-outlined-hover: rgba(240, 68, 56, 0.10);
+  --btn-surface-danger-outlined-active:rgba(240, 68, 56, 0.16);
+  --btn-border-danger-outlined:        var(--p-red-400);
+
+  // Input
+  --input-surface:          var(--p-alpha-white-900);
+  --input-surface-disabled: var(--p-alpha-white-600);
+  --input-check-surface:    var(--p-neutral-800);
+  --input-check-checked:    var(--accent-base);
+  --input-check-hover:      var(--accent-high);
+  --input-check-active:     var(--p-neutral-800);
+  --input-placeholder:      var(--p-alpha-white-600);
+  --input-border:           var(--border-high);
+
+  // Misc
+  --modal-overlay:    var(--p-alpha-white-800);
+  --focus-ring:       #0ba5ec80;
+  --elevation-shadow: var(--p-alpha-white-700);
+
+  // ── Backward-compat: semantic aliases ─────────────────────
+  --fondo-pagina:     var(--surface-base);
+  --fondo-header:     var(--surface-raised);
+  --fondo-card:       var(--surface-raised);
+  --fondo-sidebar:    var(--sidebar-surface);
+  --texto-principal:  var(--text-primary);
+  --texto-secundario: var(--text-secondary);
+  --texto-desactivado:var(--text-disabled);
+  --borde-general:    var(--border-base);
+  --borde-hover:      var(--border-high);
+  --color-acento:     var(--brand-base);
+  --color-acento-dark:var(--brand-high);
+  --color-acento-texto:var(--on-brand);
+  --input-fondo:      var(--input-surface);
+  --input-borde:      var(--input-border);
+  --input-foco-borde: var(--input-border-active);
+  --sidebar-fondo:    var(--sidebar-surface);
+  --sidebar-texto:        var(--p-neutral-400);
+  --sidebar-texto-activo: #ffffff;
+  --sidebar-item-hover:   var(--p-neutral-800);
+  --sidebar-item-activo:  var(--p-neutral-700);
+  --sidebar-borde:        var(--p-neutral-800);
+  --color-error:          var(--error-icon);
+  --color-exito:          var(--success-icon);
+  --color-warning:        var(--brand-base);
+  --color-info:           var(--info-icon);
+  --color-error-bg:       var(--error-surface);
+  --color-exito-bg:       var(--success-surface);
+  --color-warning-bg:     rgba(252, 207, 63, 0.10);
+  --color-info-bg:        var(--info-surface);
+}

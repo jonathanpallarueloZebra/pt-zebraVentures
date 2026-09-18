@@ -1,0 +1,173 @@
+// ── Skeleton layout utilities ─────────────────────────────────
+// Used across pages to compose skeleton screens.
+// The shimmer animation lives in zb-skeleton.component.scss.
+
+.sk-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── Toolbar ───────────────────────────────────────────────────
+.sk-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sk-toolbar__left,
+.sk-toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+// ── Generic card ──────────────────────────────────────────────
+.sk-card {
+  background: var(--surface-raised);
+  border-radius: 12px;
+  border: 1px solid var(--border-base);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ── Table card ────────────────────────────────────────────────
+.sk-table-card {
+  background: var(--surface-raised);
+  border-radius: 12px;
+  border: 1px solid var(--border-base);
+  overflow: hidden;
+}
+
+.sk-table-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 16px;
+  border-bottom: 1px solid var(--border-low);
+
+  &--header {
+    background: var(--surface-subtle);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-base);
+  }
+
+  &:last-child { border-bottom: none; }
+}
+
+.sk-table-cell {
+  flex: 1;
+  min-width: 0;
+
+  &--wide  { flex: 2; }
+  &--tight { flex: 0 0 80px; }
+  &--icon  { flex: 0 0 44px; }
+}
+
+// ── Stat cards row (dashboard) ────────────────────────────────
+.sk-stat-row {
+  display: flex;
+  gap: 16px;
+}
+
+.sk-stat-card {
+  flex: 1;
+  background: var(--surface-raised);
+  border-radius: 12px;
+  border: 1px solid var(--border-base);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+// ── Form card (profile, absence-request) ─────────────────────
+.sk-form-card {
+  background: var(--surface-raised);
+  border-radius: 12px;
+  border: 1px solid var(--border-base);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sk-form-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sk-form-field {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+// ── Accordion panels (catalog) ────────────────────────────────
+.sk-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sk-accordion-panel {
+  background: var(--surface-raised);
+  border-radius: 8px;
+  border: 1px solid var(--border-base);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+// ── Dashboard calendar placeholder ───────────────────────────
+.sk-calendar-placeholder {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  padding: 8px 0;
+}
+
+// ── Schedule week grid skeleton ───────────────────────────────
+.sk-schedule {
+  background: var(--surface-raised);
+  border-radius: 12px;
+  border: 1px solid var(--border-base);
+  overflow: hidden;
+}
+
+.sk-schedule-header,
+.sk-schedule-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border-low);
+
+  &:last-child { border-bottom: none; }
+}
+
+.sk-schedule-header { background: var(--surface-subtle); }
+
+.sk-schedule-worker {
+  flex: 0 0 160px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--border-low);
+}
+
+.sk-schedule-cell {
+  flex: 1;
+  padding: 10px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--border-low);
+
+  &:last-child { border-right: none; }
+}

@@ -1,0 +1,87 @@
+schema: spec-driven
+
+context: |
+  Proyecto: PT Zebra — Planificador de Turnos de Zebra Ventures.
+
+  Origen: fork limpio (sin historial) del planificador desarrollado para Cabrero e
+  Hijos, validado en produccion con ese cliente. Cabrero y PT Zebra son repositorios
+  INDEPENDIENTES: cada uno arregla lo suyo, no hay sincronizacion automatica entre
+  ellos. Este repo es el PRODUCTO; Cabrero es una instalacion de cliente que se quedo
+  en su propia linea.
+
+  ARQUITECTURA — monorepo:
+    backend/   Django 5.1 + Django REST Framework. API REST bajo /api/.
+    frontend/  Angular 19 standalone, signals-first. Un componente = .ts + .html + .scss.
+    openspec/  Fuente de verdad del comportamiento (specs) y cambios en curso.
+    despliegue/  Ficheros .env de ejemplo por entorno.
+    scripts/   Construccion de imagenes y despliegue.
+
+  STACK Y DECISIONES DURAS:
+    - Backend: Django 5.1 + DRF, servido por uvicorn (config.asgi). Apps por dominio.
+    - Base de datos: PostgreSQL. QA y PRODUCCION tienen BASES SEPARADAS. Credenciales
+      SIEMPRE por variable de entorno, nunca en el repo.
+    - Migraciones: las aplica el entrypoint del contenedor al arrancar
+      (docker-entrypoint.sh ejecuta `migrate --noinput` con reintentos). Revisar a mano
+      toda migracion autogenerada antes de commit.
+    - Autenticacion: JWT (djangorestframework-simplejwt) sobre un User model custom.
+    - Frontend: Angular standalone, sin NgModules. Signals para estado, control flow
+      nativo (@if/@for). Cada componente con sus tres ficheros separados. NUNCA
+      templates ni estilos inline.
+    - Estilos: design tokens en frontend/src/stylesJPfigma (--figma-*). Nunca colores
+      hardcodeados en un componente.
+    - El front NO lleva URL absoluta al backend: usa ruta relativa `/api` y nginx hace
+      de proxy dentro del propio contenedor del front (configuracion `docker` de
+      Angular + default.conf.template). Asi el balanceador solo enruta UN contenedor y
+      no hay CORS entre front y back.
+
+  MARCA Y MULTI-CLIENTE:
+    La app `branding` guarda en BD el nombre, logo, favicon y colores de cada
+    instalacion ("one record per deployed instance"). La marca NO se hardcodea: un
+    despliegue nuevo se personaliza por datos, no tocando codigo. Todo texto o recurso
+    con marca de un cliente concreto es deuda a eliminar.
+
+  DOMINIO — modulos funcionales:
+    1. Planificacion — parrilla semanal por ambito (tienda), asignacion de trabajadores
+       a seccion y turno, generacion automatica y ajuste manual, PDF de la semana.
+    2. Generador — motor de reparto que respeta restricciones, topes semanales, turnos
+       consecutivos, maximos por area y disponibilidad. Admite regeneracion PARCIAL por
+       dias (`target_dates` + `base_plan` congela el resto).
+    3. Restricciones — reglas configurables por motor (condition, count, shift_area...)
+       con severidad error/aviso. Fijas (solo toggle) o personalizables por el cliente.
+    4. Empleados — ficha con campos dinamicos EAV (dynamic_fields), secciones por
+       prioridad, tipo de contrato, regimen, preferencias de turno.
+    5. Ausencias — registro sin moderacion; afectan a la generacion y a la parrilla.
+    6. Dias de cierre — festivos y cierres por ambito; sin turnos ni ausencias.
+    7. Entidades EAV — tiendas, secciones, turnos y catalogos definidos como datos.
+
+  REGLAS GLOBALES:
+    - Secretos por variable de entorno, jamas en el repo. Ningun volcado de datos
+      reales (usuarios, hashes de contrasena) entra en el repositorio.
+    - Toda entidad de negocio lleva trazabilidad: created_at, updated_at.
+    - Una feature toca backend y frontend en un UNICO cambio OpenSpec, nunca partida.
+    - Sin tests no hay feature: backend con pytest, frontend con specs de Angular.
+    - Subir SIEMPRE el tag de version al construir imagenes: no reutilizar un tag ya
+      desplegado (los orquestadores no refrescan si el tag no cambia).
+
+rules:
+  proposal:
+    - Indica el impacto visible para el usuario final (encargado de tienda), no solo el tecnico
+    - Menciona explicitamente si el cambio toca backend, frontend o ambos
+    - Incluye una seccion de "No incluye" para acotar el alcance
+    - Si el cambio afecta al motor de generacion, dilo de forma destacada
+  specs:
+    - Formato Requirement + Scenario con WHEN/THEN testeable, nunca prosa vaga
+    - Usa SHALL en el enunciado del requisito
+    - Reutiliza patrones y vocabulario de las specs existentes en openspec/specs/
+    - Cubre el comportamiento con datos ya guardados, no solo el caso nuevo
+    - Las fechas se especifican con su formato esperado (ISO en API, dd/mm/aaaa en UI)
+  design:
+    - Declara el enfoque de persistencia y las migraciones necesarias
+    - Enumera los endpoints REST afectados con su verbo y ruta
+    - Enumera los componentes Angular afectados con su ruta de carpeta
+    - Si toca el generador, indica el impacto en rendimiento de una semana completa
+  tasks:
+    - Tareas atomicas, verificables una a una
+    - Separa explicitamente las tareas de backend de las de frontend
+    - Cada tarea de codigo lleva su tarea de test asociada
+    - Incluye la tarea de migracion cuando el modelo cambie

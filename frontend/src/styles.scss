@@ -1,0 +1,339 @@
+@use '@angular/material' as mat;
+@use 'styles/primitives';
+@use 'styles/tokens';
+@use 'styles/themes';
+@use 'styles/data-table';
+@use 'styles/skeleton';
+@use 'stylesJPfigma/figma-primitives';
+@use 'stylesJPfigma/figma-components';
+@import 'material-icons/iconfont/material-icons.css';
+@import '@fontsource/inter/300.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
+// Angular Material custom theme
+html {
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$yellow-palette,
+      tertiary: mat.$violet-palette,
+    ),
+    typography: Inter,
+    density: 0,
+  ));
+}
+
+// -- Reset & base --
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--ff-body);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-14);
+  line-height: var(--lh-paragraph);
+  color: var(--texto-principal);
+  background-color: var(--fondo-pagina);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ff-display);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-title);
+  color: var(--texto-principal);
+}
+
+h1 { font-size: var(--fs-28); }
+h2 { font-size: var(--fs-24); }
+h3 { font-size: var(--fs-20); }
+h4 { font-size: var(--fs-18); }
+
+a {
+  color: var(--color-acento-dark);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-acento);
+}
+
+// -- Utility classes --
+
+.page-container {
+  padding: var(--sp-l);
+  padding-top: 0;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-l);
+  flex-wrap: wrap;
+  gap: var(--sp-m);
+}
+
+.page-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 12px var(--sp-l);
+}
+
+.page-title {
+  font-family: var(--ff-display);
+  font-size: var(--fs-24);
+  font-weight: var(--fw-bold);
+}
+
+// -- Active-filter state for zb-button used as toggle filters --
+// [class.active-filter] is on the host; .btn-inner is the encapsulated inner element
+// Global styles bypass encapsulation so the rounded background renders correctly.
+zb-button.active-filter .btn-inner {
+  background: var(--color-acento);
+  color:      var(--color-acento-texto);
+
+  &:hover { background: var(--color-acento); }
+}
+
+.card-surface {
+  background: var(--fondo-card);
+  border: 1px solid var(--borde-general);
+  border-radius: var(--br-default);
+  padding: var(--sp-l);
+  box-shadow: var(--shadow-sm);
+}
+
+// -- Branding: wire dynamic primary color into MDC button tokens --
+// When BrandingService sets --color-primary / --color-primary-text at runtime,
+// these rules propagate it to every Angular Material button with color="primary".
+.mat-primary {
+  &.mat-mdc-unelevated-button,
+  &.mat-mdc-button {
+    --mdc-filled-button-container-color: var(--color-primary);
+    --mdc-filled-button-label-text-color: var(--color-primary-text);
+    --mat-filled-button-state-layer-color: var(--color-primary-text);
+    --mat-filled-button-ripple-color: color-mix(in srgb, var(--color-primary-text) 12%, transparent);
+  }
+
+  &.mat-mdc-raised-button {
+    --mdc-protected-button-container-color: var(--color-primary);
+    --mdc-protected-button-label-text-color: var(--color-primary-text);
+    --mat-protected-button-state-layer-color: var(--color-primary-text);
+    --mat-protected-button-ripple-color: color-mix(in srgb, var(--color-primary-text) 12%, transparent);
+  }
+
+  &.mat-mdc-outlined-button {
+    --mdc-outlined-button-label-text-color: var(--color-primary);
+    --mdc-outlined-button-outline-color: var(--color-primary);
+    --mat-outlined-button-state-layer-color: var(--color-primary);
+    --mat-outlined-button-ripple-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  }
+
+  &.mat-mdc-icon-button {
+    --mat-icon-button-icon-color: var(--color-primary);
+    --mat-icon-button-state-layer-color: var(--color-primary);
+    --mat-icon-button-ripple-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  }
+}
+
+// -- Branding: wire primary color into MDC table cell tokens --
+// .mat-mdc-cell uses the primary palette for row hover/focus ripple and
+// selected-row highlight (sort header, checkbox rows, etc.)
+.mat-mdc-table {
+  // Row hover state layer
+  --mat-table-row-item-hover-state-layer-color: var(--color-primary);
+  --mat-table-row-item-hover-state-layer-opacity: 0.06;
+
+  // Selected row (e.g. when using MatTableDataSource with selection)
+  --mat-table-row-item-selected-state-layer-color: var(--color-primary);
+  --mat-table-row-item-selected-state-layer-opacity: 0.10;
+
+  // Sort header active color
+  --mat-sort-arrow-color: var(--color-primary);
+}
+
+// Checkbox inside a table cell with color="primary"
+.mat-mdc-cell .mat-primary.mat-mdc-checkbox,
+.mat-mdc-header-cell .mat-primary.mat-mdc-checkbox {
+  --mdc-checkbox-selected-checkmark-color: var(--color-primary-text);
+  --mdc-checkbox-selected-focus-icon-color: var(--color-primary);
+  --mdc-checkbox-selected-hover-icon-color: var(--color-primary);
+  --mdc-checkbox-selected-icon-color: var(--color-primary);
+  --mdc-checkbox-selected-pressed-icon-color: var(--color-primary-dark);
+  --mdc-checkbox-selected-focus-state-layer-color: var(--color-primary);
+  --mdc-checkbox-selected-hover-state-layer-color: var(--color-primary);
+  --mdc-checkbox-selected-pressed-state-layer-color: var(--color-primary);
+}
+
+// -- Branding: wire primary color into MDC slide-toggle (switch) tokens --
+// Targeted globally so they work regardless of whether color="primary" is set.
+:root {
+  // Track
+  --mdc-switch-selected-track-color: var(--color-primary);
+  --mdc-switch-selected-hover-track-color: var(--color-primary);
+  --mdc-switch-selected-focus-track-color: var(--color-primary);
+  --mdc-switch-selected-pressed-track-color: var(--color-primary-dark);
+  // Handle (thumb) — dark so it contrasts against the colored track
+  --mdc-switch-selected-handle-color: var(--color-primary-text);
+  --mdc-switch-selected-hover-handle-color: var(--color-primary-text);
+  --mdc-switch-selected-focus-handle-color: var(--color-primary-text);
+  --mdc-switch-selected-pressed-handle-color: var(--color-primary-text);
+  // Icon fill — white so it contrasts against the dark thumb
+  --mdc-switch-selected-icon-color: #ffffff;
+  --mdc-switch-selected-hover-icon-color: #ffffff;
+  --mdc-switch-selected-focus-icon-color: #ffffff;
+  --mdc-switch-selected-pressed-icon-color: #ffffff;
+  --mat-slide-toggle-checked-state-layer-color: var(--color-primary);
+  --mat-slide-toggle-checked-ripple-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+// Fallback: force the SVG fill directly with higher specificity
+.mat-mdc-slide-toggle .mdc-switch__icon--on path,
+.mat-mdc-slide-toggle .mdc-switch__icon--off path {
+  fill: #ffffff !important;
+}
+
+// Tooltip que respeta saltos de linea (\n)
+.multiline-tooltip {
+  white-space: pre-line !important;
+}
+
+// -- Native field wrapper (mirrors zb-input visual style for date/time/textarea) --
+
+.native-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.native-label {
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.12px;
+  color: var(--input-label);
+}
+
+.native-shell {
+  background: var(--input-surface);
+  box-shadow: 0px 1px 2px rgba(10, 13, 18, 0.05);
+  border-radius: 4px;
+  outline: 1px solid var(--input-border);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+
+  &--textarea {
+    align-items: flex-start;
+    padding-top: 10px;
+  }
+}
+
+.native-input {
+  color: var(--input-text);
+  font-family: var(--ff-body);
+  font-size: var(--fs-16);
+  font-weight: var(--fw-semibold);
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  resize: vertical;
+
+  &::-webkit-calendar-picker-indicator {
+    opacity: 0.5;
+    cursor: pointer;
+  }
+}
+
+.text-secondary {
+  color: var(--texto-secundario);
+}
+
+.text-disabled {
+  color: var(--texto-desactivado);
+}
+
+// -- Scrollbar --
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--c-grey-300);
+  border-radius: var(--br-rounded);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-grey-400);
+}
+
+// ── Filtros dentro del toolbar de tablas (zb-select.toolbar-filter) ──
+// Mismo aspecto y ALTURA que los controles del toolbar (Mostrar / Columnas,
+// ambos con padding 5px 15px → 34px de alto con línea de 24px).
+zb-select.toolbar-filter {
+  min-width: 170px;
+
+  .sel-trigger {
+    padding: 5px 15px;
+    background: var(--figma-input-surface);
+    // Borde de reposo = Input/border/default de Figma (#b3b6bd). El dropdown
+    // de Figma NO tiene estado hover con borde oscuro; se mantiene estable
+    // hasta abrirse (--open → estado active, borde azul 2px).
+    outline-color: var(--figma-input-border);
+  }
+
+  .sel-trigger__text {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-semibold);
+    line-height: 24px;
+  }
+
+  .sel-trigger--placeholder .sel-trigger__text {
+    font-weight: var(--fw-regular);
+  }
+}
+
+// ── Impresión (window.print → PDF): liberar los contenedores raíz ─────────
+// Los contenedores del layout (html/body/app-root/shell) tienen min-height:100vh
+// + overflow (scroll) para la UI en pantalla. Al imprimir eso RECORTA a la
+// altura de una pantalla y el contenido que va después (p.ej. la tabla de
+// Ausencias del PDF de /schedule, situada tras una tabla larga) quedaba fuera
+// del área recortada y NO se imprimía. Al imprimir los liberamos para que el
+// contenido fluya y pagine completo.
+@media print {
+  html, body, app-root, app-shell, router-outlet + * {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}

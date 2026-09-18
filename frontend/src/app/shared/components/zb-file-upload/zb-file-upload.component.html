@@ -1,0 +1,84 @@
+@if (open()) {
+  <div class="fu-scrim" (click)="close()">
+    <div class="fu-card" [style.max-width]="maxWidth" (click)="$event.stopPropagation()">
+
+      <div class="fu-body">
+        <h3 class="fu-title">{{ title }}</h3>
+
+        <!-- Drop zone -->
+        <div class="fu-dropzone"
+             [class.fu-dropzone--dragging]="isDragging()"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)"
+             (click)="fileInput.click()">
+          <div class="fu-drop-icon">
+            <mat-icon>file_upload</mat-icon>
+          </div>
+          <div class="fu-drop-text">
+            <div class="fu-drop-row">
+              <span class="fu-drop-link">Haz click para subir archivos</span>
+              <span class="fu-drop-secondary"> o arrástralos aquí</span>
+            </div>
+            <span class="fu-drop-hint">{{ hint }}</span>
+          </div>
+          <input #fileInput type="file" class="fu-input-hidden"
+                 [accept]="accept" [multiple]="multiple"
+                 (change)="onFileInput($event)">
+        </div>
+
+        <!-- File list -->
+        @if (files().length > 0) {
+          <div class="fu-file-list">
+            @for (f of files(); track f.id) {
+              <div class="fu-file-row" [class.fu-file-row--done]="f.done">
+                <div class="fu-file-info">
+                  <div class="fu-file-meta">
+                    <span class="fu-file-name">{{ f.name }}</span>
+                    <span class="fu-file-size">{{ f.sizeFmt }}</span>
+                  </div>
+                  <div class="fu-file-progress">
+                    <div class="fu-progress-track">
+                      <div class="fu-progress-fill" [style.width.%]="f.progress"></div>
+                    </div>
+                    <span class="fu-progress-pct">{{ f.progress }}%</span>
+                  </div>
+                </div>
+                <div class="fu-file-action">
+                  @if (f.done) {
+                    <mat-icon class="fu-done-icon">check_circle</mat-icon>
+                  } @else {
+                    <button class="fu-delete-btn" type="button" (click)="removeFile(f.id)">
+                      <mat-icon>delete_outline</mat-icon>
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Aviso previo (opcional): lo que se va a importar y los fallos
+           detectados, ANTES de confirmar. -->
+      <div class="fu-preview">
+        <ng-content select="[preview]"></ng-content>
+      </div>
+
+      <div class="fu-footer">
+        <!-- Ranura opcional a la IZQUIERDA para acciones propias del modal
+             (p.ej. "Descargar ejemplo" en la importacion de ausencias). Si
+             nadie proyecta nada, el :empty la oculta y el footer queda igual
+             que antes en el resto de pantallas. -->
+        <div class="fu-footer__extra">
+          <ng-content select="[footer-left]"></ng-content>
+        </div>
+        <zb-button variant="secondary" size="lg" (click)="onCancel()">{{ cancelLabel }}</zb-button>
+        @if (!hideConfirmUntilFiles || hasFiles) {
+          <zb-button variant="primary" size="lg" [disabled]="!hasFiles" (click)="onConfirm()">{{ confirmLabel }}</zb-button>
+        }
+      </div>
+
+    </div>
+  </div>
+}

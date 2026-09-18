@@ -1,0 +1,27 @@
+<header class="ph-root">
+
+  <!-- @if (showSidebarToggle) {
+    <button
+      class="ph-sidebar-toggle"
+      type="button"
+      [attr.aria-label]="sidebarCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'"
+      (click)="sidebarToggle.emit()"
+    >
+      <span class="material-icons">
+        {{ sidebarCollapsed ? 'chevron_right' : 'chevron_left' }}
+      </span>
+    </button>
+  } -->
+
+  <div class="ph-content">
+    <h1 class="ph-title">{{ title }}</h1>
+    @if (subtitle) {
+      <p class="ph-subtitle">{{ subtitle }}</p>
+    }
+  </div>
+
+  <div class="ph-actions">
+    <ng-content />
+  </div>
+
+</header>

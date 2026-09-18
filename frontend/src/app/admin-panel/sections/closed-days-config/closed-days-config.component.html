@@ -1,0 +1,105 @@
+<div class="section">
+  <!-- Acción: añadir nuevo (abre el side-panel en modo alta) -->
+  <div class="cd-actions">
+    <zb-button variant="primary" iconLeft="add" (click)="openCreate()">Añadir día de cierre</zb-button>
+  </div>
+
+  @if (loading()) {
+  } @else if (!groupedClosedDays().length) {
+    <p class="cd-empty">No hay días de cierre configurados.</p>
+  } @else {
+    <div class="zb-table-card">
+      <div class="zb-table-scroll">
+    <table mat-table [dataSource]="groupedClosedDays()" class="closed-days-table zb-data-table">
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let cd">{{ cd.date }}</td>
+      </ng-container>
+      <ng-container matColumnDef="scope">
+        <th mat-header-cell *matHeaderCellDef>{{ scopeName() }}</th>
+        <td mat-cell *matCellDef="let cd">{{ groupScopeLabel(cd) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="reason">
+        <th mat-header-cell *matHeaderCellDef>Motivo</th>
+        <td mat-cell *matCellDef="let cd">{{ cd.reason || '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let cd" class="actions-cell">
+          <!-- Editar: botón .zb-action + SVG real de Figma (nodo 2374:17894 /
+               2633:4444, edit 20x20, Icon/link #026aa2), igual que absences/employees. -->
+          <button type="button" class="zb-action" aria-label="Editar" title="Editar" (click)="openEdit(cd)">
+            <svg class="zb-action__icon" viewBox="-2.5 -2.5 20 20" fill="none" aria-hidden="true">
+              <path d="M0 11.8771V15.0021H3.125L12.3417 5.78542L9.21667 2.66042L0 11.8771ZM14.7583 3.36875C15.0833 3.04375 15.0833 2.51875 14.7583 2.19375L12.8083 0.24375C12.4833 -0.08125 11.9583 -0.08125 11.6333 0.24375L10.1083 1.76875L13.2333 4.89375L14.7583 3.36875Z" fill="currentColor"/>
+            </svg>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns; let odd = odd"
+          [class.zb-row--alt]="odd"></tr>
+    </table>
+      </div>
+    </div>
+  }
+
+  <!-- Side-panel: crear / editar día de cierre (patrón del sistema) -->
+  <zb-sidepanel
+    [open]="showPanel"
+    (openChange)="showPanel = $event"
+    [title]="panelTitle"
+    [showClose]="false"
+    [mode]="editingGroup === null ? 'create' : 'edit'"
+    [saving]="saving()"
+    [saveDisabled]="!form().date"
+    (save)="save()"
+    (delete)="removeFromPanel()"
+    (cancel)="cancelPanel()">
+    <div class="cd-form">
+      <div class="cd-field">
+        <label class="cd-field__label">Fecha</label>
+        <input type="date" class="cd-field__input" [value]="form().date"
+          (input)="updateForm('date', $any($event.target).value)">
+      </div>
+
+      <div class="cd-field">
+        <label class="cd-field__label">{{ scopeName() }}</label>
+        <div class="cd-scopes">
+          <zb-checkbox
+            label="Global (todas)"
+            [ngModel]="form().global"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="toggleGlobal($event)"></zb-checkbox>
+          @for (rec of scopeRecords(); track rec.id) {
+            <zb-checkbox
+              [label]="scopeLabel(rec.id)"
+              [ngModel]="isScopeChecked(rec.id)"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="toggleScope(rec.id, $event)"></zb-checkbox>
+          }
+        </div>
+        <p class="cd-hint">
+          <em>Global</em> aplica a todas las {{ scopeName().toLowerCase() }}s. Marca varias para crear el cierre en cada una a la vez.
+        </p>
+      </div>
+
+      <div class="cd-field">
+        <label class="cd-field__label">Motivo (opcional)</label>
+        <input type="text" class="cd-field__input" [value]="form().reason"
+          placeholder="Ej: Festivo local"
+          (input)="updateForm('reason', $any($event.target).value)">
+      </div>
+    </div>
+  </zb-sidepanel>
+
+  <!-- Confirmación de borrado (modal del sistema) -->
+  <zb-dialog
+    [(open)]="showDeleteConfirm"
+    title="Eliminar día de cierre"
+    [message]="deleteConfirmMessage"
+    mode="danger"
+    confirmLabel="Eliminar"
+    cancelLabel="Cancelar"
+    (confirm)="confirmDelete()"
+  ></zb-dialog>
+</div>

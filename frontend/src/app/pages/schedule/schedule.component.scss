@@ -1,0 +1,1645 @@
+﻿// Schedule — Design-token based styles
+// Uses semantic theme variables from _themes.scss
+
+// ── Page header ──────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--sp-l);
+  flex-wrap: wrap;
+  gap: var(--sp-m);
+}
+
+.page-title {
+  font-family: var(--ff-display);
+  font-size: var(--fs-24);
+  font-weight: var(--fw-bold);
+  margin: 0;
+  color: var(--texto-principal);
+}
+
+.page-subtitle {
+  font-size: var(--fs-14);
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+}
+
+// ── Edit toggle ──────────────────────────────────
+.edit-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-s);
+}
+
+.toggle-mode-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--texto-secundario);
+}
+
+// ── Toolbar ──────────────────────────────────────
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-m);
+  margin-bottom: var(--sp-m);
+  padding: var(--sp-s) var(--sp-m);
+  flex-wrap: wrap;
+}
+
+.scope-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-primary, #EF4444);
+  color: var(--color-primary-text, #000);
+  border-radius: 8px;
+  padding: 4px 12px 4px 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  .scope-icon { font-size: 16px; height: 16px; width: 16px; }
+  .scope-label { white-space: nowrap; }
+
+  .scope-select {
+    background: rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 6px;
+    color: var(--color-primary-text, #000);
+    padding: 2px 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+    option { background: #333; color: #fff; }
+  }
+}
+
+.toolbar-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--borde-general);
+  border-radius: var(--br-default);
+  background: var(--fondo-card);
+  color: var(--texto-principal);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+  &:hover { background: var(--c-grey-100); border-color: var(--borde-hover); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.week-label {
+  font-family: var(--ff-display);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  color: var(--texto-principal);
+  min-width: 200px;
+  text-align: center;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: var(--sp-xs);
+  align-items: center;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border: 1px solid var(--borde-general);
+  border-radius: var(--br-default);
+  background: var(--fondo-card);
+  color: var(--texto-principal);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  &:hover { border-color: var(--borde-hover); background: var(--c-grey-100); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &.generate {
+    background: var(--c-green-500);
+    color: var(--color-primary-text);
+    border-color: var(--c-green-500);
+    &:hover { background: var(--c-green-700); }
+  }
+
+  &.primary {
+    background: var(--c-blue-500);
+    color: var(--color-primary-text);
+    border-color: var(--c-blue-500);
+    &:hover { background: var(--c-blue-700); }
+  }
+}
+
+.toolbar-status {
+  display: flex;
+  gap: var(--sp-xs);
+  align-items: center;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--br-rounded);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+
+  mat-icon { font-size: 14px; width: 14px; height: 14px; }
+
+  &.unsaved { background: var(--color-warning-bg); color: var(--c-brand-dark); }
+  &.saved { background: var(--color-exito-bg); color: var(--c-green-700); }
+  &.validating { background: var(--color-info-bg); color: var(--c-blue-700); gap: 6px; }
+  &.errors { background: var(--color-error-bg); color: var(--c-red-600); }
+  // .warnings se quitó junto con su chip: los avisos ya salen en la barra de
+  // título agrupados en "N problemas a solucionar".
+  &.ok { background: var(--color-exito-bg); color: var(--c-green-700); }
+}
+
+// ── Loading ──────────────────────────────────────
+.loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-m);
+  padding: var(--sp-3xl) var(--sp-m);
+
+  p {
+    font-size: var(--fs-14);
+    color: var(--texto-secundario);
+    margin: 0;
+  }
+}
+
+// ── Calendar Grid ────────────────────────────────
+.schedule-scroll {
+  // Sin scroll horizontal: la tabla no tiene min-width, así que siempre cabe.
+  // Se mantiene `hidden` (no `visible`) para que el border-radius recorte las
+  // esquinas de la tabla, que es para lo que estaba aquí el overflow.
+  overflow-x: hidden;
+  border-radius: var(--br-large);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--borde-general);
+  background: var(--fondo-card);
+
+}
+
+.calendar-grid {
+  min-width: 900px;
+}
+
+// ── Calendar Header ──────────────────────────────
+.calendar-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid var(--borde-general);
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-bold);
+}
+
+.calendar-day-label {
+  width: 90px;
+  min-width: 90px;
+  text-align: center;
+  padding: 10px 6px;
+  border-right: 1px solid rgba(255,255,255,0.2);
+}
+
+.calendar-timeline-header {
+  flex: 1;
+  position: relative;
+  height: 36px;
+}
+
+.hour-mark {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  transform: translateX(-50%);
+
+  span {
+    font-size: 10px;
+    font-weight: var(--fw-semibold);
+    opacity: 0.85;
+    white-space: nowrap;
+  }
+}
+
+.calendar-rest-label {
+  width: 140px;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  font-size: var(--fs-12);
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+
+// ── Day Row ──────────────────────────────────────
+.calendar-day-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--borde-general);
+  min-height: 52px;
+
+  &:last-child { border-bottom: none; }
+  &.weekend { background: var(--c-grey-50); }
+  &.has-errors .calendar-day-cell { border-left: 3px solid var(--c-red-500); }
+}
+
+.calendar-day-cell {
+  width: 90px;
+  min-width: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-right: 1px solid var(--borde-general);
+  background: var(--c-grey-50);
+
+  &.today {
+    background: var(--color-info-bg);
+    .day-name { color: var(--c-blue-700); }
+  }
+}
+
+.day-name {
+  font-family: var(--ff-display);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-bold);
+  color: var(--texto-principal);
+}
+
+.day-date {
+  font-size: var(--fs-11, 11px);
+  color: var(--texto-secundario);
+  margin-top: 1px;
+}
+
+.day-violations {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.v-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 5px;
+  border-radius: var(--br-rounded);
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  cursor: help;
+
+  mat-icon { font-size: 12px; width: 12px; height: 12px; }
+
+  &.error { background: var(--c-red-100); color: var(--c-red-700); }
+  &.warning { background: #FFF8E1; color: #F9A825; }
+}
+
+// ── Timeline Area ────────────────────────────────
+.calendar-timeline {
+  flex: 1;
+  position: relative;
+  min-height: 44px;
+  padding: 4px 0;
+}
+
+.hour-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--borde-general);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+// ── Calendar Block (shift lane) ──────────────────
+.cal-block {
+  position: absolute;
+  border-radius: 6px;
+  background: var(--block-color, #628db4);
+  color: #fff;
+  overflow: hidden;
+  cursor: default;
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  z-index: 1;
+
+  &:hover {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    z-index: 5;
+  }
+
+  // Shift-lane variant (replaces old single-worker block)
+  &.shift-lane {
+    height: 48px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 7px 3px;
+    gap: 3px;
+  }
+}
+
+// Lane header row (shift name + time range)
+.lane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.lane-name {
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.lane-time {
+  font-size: 9px;
+  opacity: 0.85;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// Worker chips row
+.lane-workers {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 3px;
+  overflow: hidden;
+  flex: 1;
+  align-items: center;
+}
+
+.lane-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255,255,255,0.22);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+  flex-shrink: 0;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip-remove {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+
+  mat-icon { font-size: 10px; width: 10px; height: 10px; }
+  &:hover { background: rgba(200,0,0,0.6); }
+
+  .lane-chip:hover & { display: inline-flex; }
+}
+
+// Old block sub-elements kept for safety (hidden in lane mode)
+.block-name, .block-shift, .block-time, .block-remove { display: none; }
+
+.cal-add-btn {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px dashed var(--borde-general);
+  background: var(--fondo-card);
+  color: var(--texto-secundario);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: all var(--transition-fast);
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  &:hover {
+    border-color: var(--c-blue-500);
+    color: var(--c-blue-500);
+    background: var(--color-info-bg);
+  }
+}
+
+// ── Rest Cell ────────────────────────────────────
+.calendar-rest-cell {
+  width: 140px;
+  min-width: 140px;
+  padding: 4px 6px;
+  border-left: 1px solid var(--borde-general);
+  background: var(--c-green-50);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rest-entry { margin-bottom: 2px; }
+
+.rest-official {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  border-radius: var(--br-small);
+  background: var(--color-exito-bg);
+}
+
+.rest-icon {
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  color: var(--c-green-700);
+  flex-shrink: 0;
+}
+
+.rest-name {
+  font-size: var(--fs-11, 11px);
+  font-weight: var(--fw-semibold);
+  color: var(--texto-principal);
+}
+
+.rest-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.rest-read {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  font-size: var(--fs-11, 11px);
+  color: var(--texto-principal);
+}
+
+.worker-select.compact {
+  padding: 2px 4px;
+  font-size: var(--fs-11, 11px);
+  max-width: 100px;
+}
+
+.remove-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: var(--br-small);
+  background: transparent;
+  color: var(--c-red-400);
+  cursor: pointer;
+  flex-shrink: 0;
+
+  mat-icon { font-size: 14px; width: 14px; height: 14px; }
+  &:hover { background: var(--c-red-100); color: var(--c-red-700); }
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 2px 4px;
+  border: 1px dashed var(--borde-general);
+  border-radius: var(--br-small);
+  background: transparent;
+  color: var(--texto-secundario);
+  cursor: pointer;
+  font-size: var(--fs-11, 11px);
+
+  mat-icon { font-size: 12px; width: 12px; height: 12px; }
+  &:hover { border-color: var(--c-green-500); color: var(--c-green-500); }
+}
+
+// ── Toolbar de planificación (estilo Figma 2440:24572) ──────────────
+// El aspecto de chips/botones vive en stylesJPfigma; aquí solo el layout.
+.figma-planbar {
+  display: flex;
+  flex-direction: column;
+  // Figma (main content 2434:19085): spacing/M (16px) entre la fila del
+  // rango+botones y la fila de pills de tienda.
+  gap: var(--sp-m);
+  // Separación con el header de página superior. .page-container tiene
+  // padding-top:0 (global), así que sin esto la fila del rango+botones
+  // queda pegada al borde inferior del header. Figma deja spacing/L (24px).
+  margin-top: var(--sp-l);
+  margin-bottom: var(--sp-m);
+
+  &__level {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-m);
+    flex-wrap: wrap;
+  }
+
+  // Avisos de la tienda seleccionada, debajo de su selector. El planbar es
+  // columna con gap 16px, así que este nivel se coloca solo sin desplazar nada
+  // de la cabecera. Los avisos conservan su tamaño (figma-alert--compact): solo
+  // cambian de sitio.
+  &__scope-alerts {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-s);
+    flex-wrap: wrap;   // con dos avisos y pantalla estrecha, salta de línea
+  }
+
+  // Título (rango) + chip de vacantes en la misma línea (Figma edit mode)
+  &__title-group {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-m); // 16px entre el rango y el chip de vacantes
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-family: var(--ff-body);
+    font-size: var(--fs-18);
+    font-weight: var(--fw-semibold);
+    color: var(--texto-principal);
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-s);
+    flex-wrap: wrap;
+  }
+
+  // Fila de chips de tienda: scroll horizontal si no caben.
+  // Gap mayor que el 8px por defecto del Chip_group para que los pills
+  // queden más separados y ocupen más ancho (preferencia sobre Figma).
+  &__chips {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    column-gap: var(--sp-m); // 16px
+    row-gap: var(--sp-s);    // 8px al hacer wrap a 2ª línea
+  }
+}
+
+// Popover del date-picker desplegable (layout de posicionamiento;
+// el panel interior usa su propio estilo zb-date-picker-panel)
+.figma-pageheader__date-wrap { position: relative; }
+
+.figma-pageheader__date-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+.figma-pageheader__date-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 41;
+}
+
+// ── Ajustes de layout para la tabla de planificación (estilo Figma) ──
+// El aspecto visual (bordes, colores, cabecera, celda amarilla) vive en
+// stylesJPfigma/.figma-plantable-*; aquí solo el layout contenedor.
+// El min-width lo fija stylesJPfigma/.figma-plantable (1700px, calculado para
+// que los nombres quepan también con el turno a dos columnas). Aquí había un
+// `min-width: 900px` que lo pisaba —el componente gana en especificidad— y
+// dejaba la tabla más estrecha de lo previsto: era la causa real de que los
+// nombres se cortaran en "Co…" / "De…". Una sola fuente de verdad.
+
+// Botón "añadir asignación" dentro de una celda de la tabla.
+// Override del hover: el .add-btn genérico se tiñe de verde; aquí, en el
+// planificador, el "+" usa el color de acento del sistema (azul de Figma).
+.cell-add {
+  width: 100%;
+  margin-top: 2px;
+
+  &:hover {
+    border-color: var(--p-blue-light-600, #0086c9);
+    color: var(--p-blue-light-600, #0086c9);
+  }
+}
+
+// Worker asignado clicable (abre menú sustituir/borrar) + su dropdown.
+.worker-menu-wrap {
+  position: relative;
+  width: 100%;
+
+  // El worker es un <button>: reset para que se vea igual que el div original.
+  // Borde transparente por defecto (la cajita indigo normal no lleva borde),
+  // PERO las variantes de estado (--name-error / --name-warning) sí deben
+  // mostrar su borde rojo/ámbar, así que aquí solo se neutraliza el color.
+  .figma-plantable__worker--name {
+    width: 100%;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+
+    &.figma-plantable__worker--name-error {
+      border-color: var(--figma-plantable-name-error-border);
+    }
+    &.figma-plantable__worker--name-warning {
+      border-color: var(--figma-plantable-name-warning-border);
+    }
+  }
+
+  // Indicador de arrastre (6 puntos): el área SIEMPRE existe (para poder
+  // agarrar), pero solo se VE al pasar el ratón (Figma 2497:35628
+  // "worker → hover: aparece indicador drag").
+  // Asa de arrastre: sale del FLUJO (position:absolute) en vez de ocupar 14px
+  // permanentes. Estaba a opacity:0 —invisible salvo al pasar el ratón— pero
+  // seguía reservando su ancho más el gap, así que en modo edición el nombre
+  // tenía ~26px menos que en vista: por eso se leía "Colme…" en vista y "Co…"
+  // al pulsar Editar. Ahora el nombre dispone del mismo ancho en los dos modos.
+  // El asa va DENTRO del chip, pegada a su borde izquierdo y en absolute, así
+  // que no resta ancho al nombre (el problema que hacía leer "Co…" en edición y
+  // "Colme…" en vista). Fuera del chip no cabe: la celda solo tiene 6px de
+  // padding y el asa necesita 13, así que se metía en la columna vecina.
+  //
+  // Para que no TAPE el texto, el chip reserva ese hueco con su padding
+  // izquierdo (ver --name más abajo): el nombre empieza ya a la derecha del asa
+  // y no se mueve al pasar el ratón.
+  .figma-plantable__worker__drag {
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    opacity: 0;
+    color: var(--texto-secundario);
+    transition: opacity var(--transition-fast);
+    cursor: grab;
+    &:active { cursor: grabbing; }
+  }
+  .figma-plantable__worker--name:hover .figma-plantable__worker__drag {
+    opacity: 1;
+  }
+}
+
+// Dropdown del menú de worker (posicionado bajo el worker). Comparte el
+// estilo de .emp-picker (mismo Figma 2480:28495); aquí solo el posicionado.
+// Sin width fijo — .emp-picker ya da min/max-width y width:max-content.
+.worker-menu {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  z-index: 50;
+}
+
+// ── Drag & drop de workers entre slots (Figma 2435:18952 / 2497:35632) ──
+// El worker arrastrable indica que se puede coger (grab).
+.worker-menu-wrap[cdkdrag] { cursor: grab; }
+
+// Zona de drop de cada celda: área mínima para que celdas casi vacías
+// tengan superficie suficiente donde soltar (si no, el CDK no detecta la
+// entrada en celdas sin contenido y no se puede mover el worker allí).
+.figma-plantable__cell-cols--droplist {
+  min-height: 28px;
+}
+
+// SLOT DESTINO activo: la celda que va a recibir el worker se resalta con
+// fondo brand/lowest #fff9e9 y borde punteado brand/base #fccf3f (1.6px),
+// exactamente como el nodo 2497:35632 de Figma.
+.figma-plantable__cell-cols--drop-active {
+  border: 1.6px dashed var(--p-brand-300, #fccf3f);
+  background: var(--p-brand-50, #fff9e9);
+  border-radius: var(--figma-plantable-worker-radius, 4px);
+  // Compensar el borde para que no desplace el contenido de la celda.
+  margin: -1.6px;
+}
+
+// Preview personalizado (*cdkDragPreview) que viaja con el cursor: pastilla
+// indigo limpia con grip + nombre (Figma 2497:35628). Ancho de contenido.
+.drag-preview-pill.cdk-drag-preview,
+.drag-preview-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--figma-plantable-worker-gap, 4px);
+  width: auto;
+  height: var(--figma-plantable-chip-height, 24px);
+  padding: var(--figma-plantable-worker-padding-y) var(--figma-plantable-worker-padding-x);
+  background: var(--figma-plantable-name-bg, #e0eaff);
+  border-radius: var(--figma-plantable-worker-radius, 4px);
+  box-shadow: 0 4px 12px rgba(10, 13, 18, 0.16);
+
+  // Grip: tamaño fijo COMPLETO (font/width/height/line-height iguales) para
+  // que el glifo Material no tome su tamaño por defecto (24px) y desborde.
+  .figma-plantable__worker__drag {
+    opacity: 1;
+    flex-shrink: 0;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    color: var(--texto-secundario);
+  }
+  .figma-plantable__worker__name {
+    font-weight: 600;
+    font-size: var(--figma-plantable-worker-name-font-size, 10px);
+    color: var(--figma-plantable-name-text);
+    white-space: nowrap;
+    // Un nombre que no cabe se corta con "…" en vez de desbordar la celda o
+    // romper la rejilla. Hace falta el trío completo: nowrap + overflow +
+    // text-overflow, y min-width:0 para que el flex pueda encogerse por debajo
+    // del ancho de su texto (si no, ellipsis no llega a aplicarse nunca).
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+}
+
+// Hueco que deja el worker en su posición de origen mientras se arrastra
+// (Figma estado "worker que está siendo movido"): UNA sola cajita punteada
+// amarilla (fondo brand/lowest #fff9e9 + borde punteado brand/base #fccf3f),
+// con la misma altura que el chip. Se pinta en el propio wrap y se anula el
+// borde/fondo del botón interior para evitar el "doble borde".
+.cdk-drag-placeholder {
+  height: var(--figma-plantable-chip-height, 24px);
+  overflow: hidden;
+  box-sizing: border-box;
+  // Hueco de origen: SOLO fondo amarillo tenue, SIN borde propio. El único
+  // borde punteado visible es el del slot de la celda; así no hay dos cajitas.
+  background: var(--p-brand-50, #fff9e9);
+  border: 0;
+  border-radius: var(--figma-plantable-worker-radius, 4px);
+
+  // El botón interior tampoco dibuja caja alguna.
+  .figma-plantable__worker--name,
+  &.figma-plantable__worker--name {
+    height: 100%;
+    min-height: 0;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: transparent;
+    .figma-plantable__worker__name,
+    .figma-plantable__worker__drag,
+    .figma-plantable__worker__sev-icon { visibility: hidden; }
+  }
+  // El menú desplegable nunca se muestra en el placeholder.
+  .worker-menu { display: none; }
+}
+
+// Animación suave al soltar y reordenar (CDK).
+.cdk-drag-animating,
+.figma-plantable__cell-cols.cdk-drop-list-dragging .worker-menu-wrap:not(.cdk-drag-placeholder) {
+  transition: transform 180ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// Chips de estado clicables (reabren el detalle de errores/avisos)
+.status-chip--clickable {
+  cursor: pointer;
+  &:hover { filter: brightness(0.96); }
+}
+
+// Popover del buscador de empleados por celda (Figma 2459:31313)
+.cell-add-wrap {
+  position: relative;
+}
+
+// ════════════════════════════════════════════════════════════
+// emp-picker — Dropdown buscador de empleados del planificador.
+// Clases PROPIAS (no reutiliza .figma-list-item) para controlar 100% el
+// render con las variables --figma-* de stylesJPfigma. Figma 2480:28495
+// (Dropdown_menu) + 2483:30551 (fila Borrar).
+// ════════════════════════════════════════════════════════════
+.emp-picker {
+  // position/top/left los fija appDropdownFlip en runtime (position: fixed,
+  // respecto al viewport, para NO disparar el scroll de la tabla). El valor
+  // absolute aquí es solo un fallback si la directiva no corriera.
+  position: absolute;
+  z-index: 1000;
+  box-sizing: border-box;
+  // Ancho fijo 150px (según indicación). El nombre trunca con ellipsis.
+  min-width: 150px;
+  max-width: 150px;
+  width: max-content;
+  // Altura FIJA (siempre la misma). appDropdownFlip solo decide hacia dónde
+  // se despliega (arriba/abajo/izq/dcha) para que no se corte; no toca la altura.
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  // Contenedor Dropdown_menu de Figma: surface/raised, borde input/border,
+  // radius 4 (br-forms), Shadow/lg.
+  background: var(--figma-input-surface);
+  border: var(--figma-input-border-width) solid var(--figma-input-border);
+  border-radius: var(--figma-input-radius);
+  box-shadow:
+    0 12px 16px -4px rgba(10, 13, 18, 0.08),
+    0 4px 6px -2px rgba(10, 13, 18, 0.03);
+
+  // ── Fila de búsqueda: fila gris (surface/base) que contiene la caja
+  //    Input/search con borde azul (Figma 2480:28495) ──
+  &__search {
+    box-sizing: border-box;
+    padding: var(--figma-list-item-padding-compact, 8px); // box/inner/padding/s
+    background: var(--figma-datatable-header-bg, #fafafa); // Surface/base
+  }
+  // Caja Input/search: blanca, borde 2px azul activo, h32, radius 4, Shadow/xs
+  &__search-box {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--figma-list-item-search-input-height, 32px);
+    padding: var(--figma-list-item-padding-compact, 8px); // px8 py8
+    background: var(--figma-input-surface); // white
+    border: var(--figma-list-item-search-input-border-width, 2px) solid
+            var(--figma-list-item-search-input-border, #0086c9); // input/border/active
+    border-radius: var(--figma-list-item-search-input-radius, 4px); // radius/small
+    box-shadow: 0 1px 1px rgba(10, 13, 18, 0.05); // Shadow/xs
+  }
+  &__search-field {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--figma-btn-font-family, Inter);
+    font-size: var(--figma-list-item-font-size-compact, 12px); // caption
+    line-height: var(--figma-list-item-line-height-compact, 1.2);
+    color: var(--figma-input-text);
+    &::placeholder { color: var(--figma-input-placeholder); }
+  }
+  &__search-icon {
+    font-size: var(--figma-list-item-search-icon-size, 16px);
+    width: var(--figma-list-item-search-icon-size, 16px);
+    height: var(--figma-list-item-search-icon-size, 16px);
+    flex-shrink: 0;
+    color: var(--figma-input-label-color) !important; // Input/icon, vence .mat-icon-no-color
+  }
+  &__search-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  // ── Fila de empleado: 40px alto TOTAL, padding 4/8, texto 12px ──
+  &__row {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: var(--figma-list-item-height-default, 40px);
+    padding: var(--figma-list-item-padding-add-y, 4px) var(--figma-list-item-padding-add-x, 8px);
+    border-bottom: 1px solid var(--figma-list-item-divider, #f1f2f3);
+
+    &--absent {
+      opacity: 0.7;
+      cursor: default;
+      .emp-picker__name-text { color: var(--figma-input-label-color); }
+    }
+  }
+
+  // ── Nombre (12px caption Text/primary) + badge ETT debajo ──
+  &__name {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px; // spacing/xxs
+    flex: 1;
+    min-width: 0;
+  }
+  &__name-text {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--figma-list-item-font-size-compact, 12px); // caption
+    line-height: var(--figma-list-item-line-height-compact, 1.2);
+    color: var(--figma-list-item-text); // Text/primary #080e14e0
+  }
+
+  // Badge ETT (indigo, Figma 2480:28495)
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--figma-list-item-badge-padding-y, 2px) var(--figma-list-item-badge-padding-x, 4px);
+    border-radius: var(--figma-list-item-badge-radius, 3px);
+    background: var(--figma-list-item-badge-bg, #c7d7fe);
+    color: var(--figma-list-item-badge-text, rgba(0,0,0,0.88));
+    font-size: var(--figma-list-item-badge-font-size, 7px);
+    font-weight: 700;
+    letter-spacing: var(--figma-list-item-badge-letter-spacing, 0.54px);
+    text-transform: uppercase;
+  }
+
+  &__absent-tag {
+    font-size: var(--fs-11, 11px);
+    font-weight: var(--fw-semibold, 600);
+    color: var(--error-text, #7a271a);
+    background: var(--error-surface, #fef3f2);
+    border: 1px solid var(--error-border-low, #fecdca);
+    border-radius: 9999px;
+    padding: 1px 8px;
+    white-space: nowrap;
+  }
+
+  // ── Botón + circular (brand/low, icono 20px on-brand) ──
+  &__add-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--figma-list-item-add-btn-padding, 2px);
+    border: none;
+    border-radius: var(--figma-list-item-add-btn-radius, 9999px);
+    cursor: pointer;
+    background: var(--figma-list-item-add-btn-bg, #fef1cc); // color/brand/low
+    // Icono "+" = Icon/neutral-high #060f19a8 (gris 66%), NO negro 88%.
+    // (El SVG de Figma trae fill #060F19 @0.66.)
+    color: var(--figma-input-label-color); // #060f19a8
+
+    mat-icon.mat-icon {
+      font-size: var(--figma-list-item-add-btn-size, 20px);
+      width: var(--figma-list-item-add-btn-size, 20px);
+      height: var(--figma-list-item-add-btn-size, 20px);
+      line-height: var(--figma-list-item-add-btn-size, 20px);
+      color: var(--figma-input-label-color) !important; // vence .mat-icon-no-color
+    }
+  }
+
+  &__empty {
+    box-sizing: border-box;
+    padding: var(--figma-list-item-padding-add-y, 4px) var(--figma-list-item-padding-add-x, 8px);
+    font-size: var(--figma-list-item-font-size-compact, 12px);
+    color: var(--figma-input-label-color);
+  }
+
+  // ── Fila "Borrar" (Figma 2483:30551): fondo surface/base, border-top,
+  //    texto 12px caption; el icono papelera va en ROJO danger (#b42318). ──
+  &__delete {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border: none;
+    border-top: 1px solid var(--figma-list-item-divider);
+    background: var(--figma-datatable-header-bg, #fafafa); // Surface/base
+    padding: var(--figma-list-item-padding-compact, 8px);
+    cursor: pointer;
+    color: var(--figma-list-item-text); // Text/primary #080e14e0
+    font-family: var(--figma-btn-font-family, Inter);
+    font-size: var(--figma-list-item-font-size-compact, 12px);
+    font-weight: var(--fw-regular, 400); // Figma: "Borrar" es Regular, NO bold
+    line-height: var(--figma-list-item-line-height-compact, 1.2);
+  }
+  &__delete-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    flex-shrink: 0;
+    // Papelera en ROJO (Figma: fill #b42318). currentColor del SVG.
+    color: var(--figma-btn-danger-outlined-text); // #b42318 (Button/text/danger)
+  }
+}
+
+// Botón de quitar (X) dentro del chip de trabajador de la tabla
+.figma-plantable__worker .chip-remove {
+  margin-left: auto;
+}
+
+// ── Día de cierre / festivo en la parrilla ────────────────────────
+// Fila con fondo neutro (Surface/subtle) y sin horarios: el negocio no
+// trabaja ese día. Se distingue de un día normal vacío. Tokens del sistema.
+.figma-plantable__row--closed {
+  .figma-plantable__cell,
+  .figma-plantable__header-cell,
+  .figma-plantable__day-cell {
+    background: var(--surface-subtle, #f1f2f3); // Surface/subtle
+  }
+}
+::ng-deep .violation-tooltip {
+  white-space: pre-line !important;
+  font-size: 12px !important;
+  max-width: 320px !important;
+  line-height: 1.5 !important;
+}
+
+// ── Dark theme ───────────────────────────────────
+:host-context(.dark-theme) {
+  .calendar-day-cell { background: var(--c-grey-800); }
+  .calendar-day-cell.today { background: rgba(59, 130, 246, 0.1); }
+  .calendar-day-row.weekend { background: var(--c-grey-900); }
+  .calendar-rest-cell { background: rgba(34, 197, 94, 0.05); }
+  .nav-btn:hover { background: var(--c-grey-700); }
+  .rest-official { background: rgba(34, 197, 94, 0.1); }
+  .hour-line { background: var(--c-grey-600); }
+  .cal-block { box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+}
+
+// ── Responsive ───────────────────────────────────
+@media (max-width: 768px) {
+  .page-header { flex-direction: column; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar-nav { justify-content: center; }
+  .toolbar-actions { justify-content: center; flex-wrap: wrap; }
+  .toolbar-status { justify-content: center; }
+  .action-label { display: none; }
+  .week-label { min-width: 140px; font-size: var(--fs-13); }
+  .calendar-grid { min-width: 600px; }
+  .calendar-day-label, .calendar-day-cell { width: 60px; min-width: 60px; }
+  .calendar-rest-label, .calendar-rest-cell { width: 100px; min-width: 100px; }
+}
+
+// ── View mode toggle ─────────────────────────────
+.view-toggle-group {
+  display: flex;
+  border: 1px solid var(--borde-general);
+  border-radius: var(--br-default);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border: none;
+  background: var(--fondo-card);
+  color: var(--texto-secundario);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border-right: 1px solid var(--borde-general);
+
+  &:last-child { border-right: none; }
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+  &.active {
+    background: var(--c-blue-500);
+    color: #fff;
+  }
+
+  &:not(.active):hover {
+    background: var(--c-grey-100);
+    color: var(--texto-principal);
+  }
+}
+
+// ── Worker Table View ────────────────────────────
+.worker-table-scroll {
+  overflow-x: auto;
+  border-radius: var(--br-large);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--borde-general);
+  background: var(--fondo-card);
+}
+
+.worker-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-13);
+  min-width: 700px;
+
+  thead tr {
+    background: var(--color-primary);
+    color: var(--color-primary-text);
+  }
+
+  th {
+    padding: 10px 8px;
+    text-align: left;
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-12);
+    white-space: nowrap;
+    border-right: 1px solid rgba(255,255,255,0.15);
+
+    &:last-child { border-right: none; }
+
+    &.day-col {
+      text-align: center;
+      min-width: 120px;
+
+      &.weekend { background: rgba(0,0,0,0.12); }
+      &.today { background: rgba(255,255,255,0.18); }
+    }
+
+    &.worker-col {
+      min-width: 180px;
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: var(--color-primary);
+    }
+
+    .th-dayname { display: block; font-weight: var(--fw-bold); }
+    .th-date { display: block; font-size: 10px; opacity: 0.8; font-weight: var(--fw-normal); margin-top: 1px; }
+  }
+
+  tbody tr.group-row {
+    background: var(--c-grey-100);
+
+    td {
+      padding: 6px 12px;
+      font-size: var(--fs-12);
+      font-weight: var(--fw-bold);
+      color: var(--texto-principal);
+      border-top: 2px solid var(--borde-general);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+
+      .group-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--group-color, #628db4);
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  tbody tr.worker-row {
+    border-bottom: 1px solid var(--borde-general);
+    transition: background var(--transition-fast);
+
+    &:hover { background: var(--c-grey-50); }
+    &:last-child { border-bottom: none; }
+  }
+
+  .worker-cell {
+    padding: 6px 10px;
+    vertical-align: middle;
+    border-right: 1px solid var(--borde-general);
+    position: sticky;
+    left: 0;
+    background: var(--fondo-card);
+    z-index: 1;
+    min-width: 180px;
+
+    tr.worker-row:hover & { background: var(--c-grey-50); }
+  }
+
+  .worker-name {
+    display: block;
+    font-size: var(--fs-13);
+    font-weight: var(--fw-semibold);
+    color: var(--texto-principal);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 170px;
+  }
+
+  .worker-badge {
+    display: inline-block;
+    margin-top: 3px;
+    padding: 1px 7px;
+    border-radius: var(--br-rounded);
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    color: #fff;
+    background: var(--badge-color, #628db4);
+    letter-spacing: 0.02em;
+  }
+
+  .shift-cell, .rest-cell-td, .empty-cell-td {
+    padding: 4px 6px;
+    vertical-align: middle;
+    text-align: center;
+    border-right: 1px solid var(--borde-general);
+    min-width: 120px;
+
+    &:last-child { border-right: none; }
+    &.weekend { background: var(--c-grey-50); }
+  }
+
+  .cell-shift {
+    border-radius: 6px;
+    padding: 4px 6px;
+    background: var(--cell-color, #628db4);
+    color: #fff;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: default;
+
+    .cell-shift-name {
+      font-size: 11px;
+      font-weight: var(--fw-bold);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 108px;
+      display: block;
+    }
+
+    .cell-shift-time {
+      font-size: 10px;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+  }
+
+  .cell-rest {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    padding: 4px 6px;
+    border-radius: 6px;
+    background: var(--c-grey-200);
+    color: var(--texto-secundario);
+    font-size: 11px;
+    box-sizing: border-box;
+
+    mat-icon { font-size: 13px; width: 13px; height: 13px; opacity: 0.7; }
+
+    &.official {
+      background: var(--color-exito-bg);
+      color: var(--c-green-700);
+    }
+  }
+
+  .cell-empty {
+    color: var(--texto-terciario, var(--texto-secundario));
+    font-size: var(--fs-16);
+    opacity: 0.3;
+  }
+}
+
+// ── Dark theme (table) ───────────────────────────
+:host-context(.dark-theme) {
+  .worker-table tbody tr.group-row { background: var(--c-grey-800); }
+  .worker-table tbody tr.worker-row:hover { background: var(--c-grey-800); }
+  .worker-table .worker-cell { background: var(--fondo-card); }
+  .worker-table tbody tr.worker-row:hover .worker-cell { background: var(--c-grey-800); }
+  .worker-table .shift-cell.weekend, .worker-table .empty-cell-td.weekend { background: var(--c-grey-900); }
+  .cell-rest { background: var(--c-grey-700); }
+}
+
+// ── Vista imprimible / PDF (Figma 2445:23224 pág.1 + 2464:42412 pág.2) ────
+// Oculta en pantalla; solo se muestra al imprimir (window.print → PDF).
+// Dos páginas A4 landscape en orden: planificación y ausencias.
+.pdf-print { display: none; }
+
+// ── Estilos del documento PDF (Figma 2445:23224 / 2464:42412 / 2464:43888) ──
+// Se aplican al imprimir (window.print → @media print). Se define como MIXIN
+// (no placeholder: @extend no cruza media queries; @include sí) para que la
+// vista imprimible quede SIEMPRE clavada a Figma.
+@mixin pdf-doc-styles {
+  .pdf-page { width: 100%; }
+  // Sección Ausencias: fluye al final de la planificación (Figma 2464:42412),
+  // con un espacio de separación. Ya NO se aísla en página forzada: al quitar el
+  // rowspan de la tabla de arriba, la planificación pagina limpia y las
+  // ausencias caben a continuación sin ser descartadas por Chrome.
+  .pdf-ausencias { margin-top: var(--figma-pdf-section-gap, 24px); }
+  // El rótulo "Ausencias" no debe quedar huérfano al pie sin su tabla.
+  .pdf-ausencias__band { break-after: avoid; page-break-after: avoid; }
+
+  // Header (Figma 2445:23224): código+localidad + rango de fechas a la izq;
+  // nº de página a la der. Padding 32px alrededor como el mockup.
+  // ── PDF: usa SOLO variables --figma-pdf-* de stylesJPfigma ──
+  .pdf-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0 0 var(--figma-pdf-doc-padding-b);
+    &__title { display: flex; align-items: baseline; gap: var(--figma-pdf-doc-title-gap); }
+    &__store { font-size: var(--figma-pdf-doc-title-font-size); font-weight: 700; color: var(--figma-pdf-text-primary); }
+    &__range { font-size: var(--figma-pdf-doc-range-font-size); font-weight: 400; color: var(--figma-pdf-text-secondary); }
+    &__page  { font-size: var(--figma-pdf-doc-page-font-size); color: var(--figma-pdf-text-secondary); }
+  }
+
+  // Banda de título "Ausencias": fondo Surface/subtle #f1f2f3, padding M/S,
+  // borde Border/base (Figma 2464:42412). El título va dentro, sin margen.
+  .pdf-ausencias__band {
+    background: var(--figma-pdf-band-bg);            // #f1f2f3
+    border: var(--figma-pdf-border-width) solid var(--figma-pdf-border);
+    border-bottom: 0;                                 // la tabla continúa debajo
+    // Esquinas superiores redondeadas; la tabla de debajo redondea las de abajo.
+    border-radius: var(--figma-pdf-radius) var(--figma-pdf-radius) 0 0;
+    padding: var(--figma-pdf-band-padding-y) var(--figma-pdf-band-padding-x);
+  }
+  // Cuando hay banda encima, la tabla de ausencias NO redondea sus esquinas
+  // superiores (la banda ya lo hace) para que encajen sin doble curva.
+  .pdf-ausencias__band + .pdf-table {
+    border-top: 0;
+    border-radius: 0 0 var(--figma-pdf-radius) var(--figma-pdf-radius);
+  }
+  .pdf-ausencias__title {
+    font-size: var(--figma-pdf-section-title-font-size);
+    font-weight: 700;
+    margin: 0;
+    color: var(--figma-pdf-text-primary);
+  }
+
+  .pdf-table {
+    width: 100%;
+    // separate + border-spacing 0 permite border-radius en la tabla (collapse
+    // no lo respeta). Bordes internos: solo top+left por celda; el exterior lo
+    // cierra el borde de la tabla. Así las esquinas salen redondeadas (Figma).
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+    font-size: var(--figma-pdf-cell-font-size);
+    // Contenedor con esquinas redondeadas (radius/default 8) + borde exterior.
+    border: var(--figma-pdf-border-width) solid var(--figma-pdf-border);
+    border-radius: var(--figma-pdf-radius);
+    overflow: hidden;
+
+    // Paginación de la tabla al imprimir: la cabecera se REPITE en cada hoja
+    // (table-header-group) y las filas NO se parten a media altura. Esto hace
+    // que Chrome pagine la tabla de forma limpia (sin páginas en blanco ni
+    // descartar lo que va después), incluso con el rowspan de la columna ROL.
+    thead { display: table-header-group; }
+    tbody tr { break-inside: avoid; page-break-inside: avoid; }
+
+    th, td {
+      // Solo borde derecho + inferior por celda (el izq/superior lo da la
+      // tabla o la celda vecina) → sin dobles líneas y con radius limpio.
+      border-right: var(--figma-pdf-border-width) solid var(--figma-pdf-border);
+      border-bottom: var(--figma-pdf-border-width) solid var(--figma-pdf-border);
+      padding: var(--figma-pdf-cell-padding-y) var(--figma-pdf-cell-padding-x);
+      vertical-align: middle;
+      text-align: left;
+      word-break: break-word;
+    }
+    // Última columna y última fila: sin borde (lo cierra el borde de la tabla).
+    th:last-child, td:last-child { border-right: 0; }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    // Cabecera de columna: fondo Surface/base #fafafa, texto secondary (Figma).
+    thead th {
+      background: var(--figma-pdf-header-bg);
+      font-size: var(--figma-pdf-header-font-size);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: var(--figma-pdf-header-letter-spacing);
+      height: var(--figma-pdf-header-height);
+      color: var(--figma-pdf-text-secondary);
+      text-align: center;
+    }
+
+    // Cada fila de empleado: 40px de alto (Figma).
+    tbody td { height: var(--figma-pdf-row-height); }
+
+    // Anchos de columna proporcionales a Figma (ROL 120 · EMP 169 · día 149).
+    &__rol { width: 10.1%; font-weight: 700; background: var(--figma-pdf-header-bg); vertical-align: top; text-transform: uppercase; color: var(--figma-pdf-text-secondary); }
+    // Celda ROL sin rowspan: para que el bloque del rol se vea como UNA celda
+    // agrupada (como daba el rowspan) hay que ocultar las líneas internas del
+    // grupo. `--cont` = filas 2..n (sin borde superior); `--mid` = todas menos
+    // la última del grupo (sin borde inferior). Así solo quedan el borde de
+    // arriba del grupo y el de abajo del último → apariencia de celda única.
+    &__rol--cont { border-top: 0; }
+    &__rol--mid { border-bottom: 0; }
+    &__emp { width: 14.3%; font-weight: 600; color: var(--figma-pdf-text-primary); }
+    &__day { width: 12.6%; text-align: center; }
+
+    // Cabecera de día: "LUNES 1" TEXTO PLANO — en Figma el número NO va en
+    // círculo. Nombre + número, ambos overline; el número solo un poco más suave.
+    &__dayname { margin-right: var(--figma-pdf-daynum-gap); }
+    &__daynum {
+      font-size: var(--figma-pdf-header-font-size);
+      font-weight: 700;
+      color: var(--figma-pdf-text-secondary);
+    }
+
+    &__cell {
+      text-align: center;
+      font-size: var(--figma-pdf-cell-font-size);
+      white-space: nowrap;
+      color: var(--figma-pdf-text-secondary); // horario en secondary (Figma)
+      &--ausencia { text-align: left; color: var(--figma-pdf-text-primary); }
+    }
+
+    // Doble tramo horario (Figma 2464:43888): cuando un empleado tiene 2
+    // horarios el mismo día, cada tramo va en su PROPIA línea (no en la misma
+    // separados por " / "). Cada línea con su icono de reloj delante.
+    &__slots { display: inline-flex; flex-direction: column; gap: 2px; align-items: center; }
+    &__slot  {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    // Icono de reloj (SVG inline) delante del horario (como Figma).
+    &__clock {
+      width: var(--figma-pdf-clock-icon-size);
+      height: var(--figma-pdf-clock-icon-size);
+      vertical-align: -2px;
+      margin-right: 3px;
+      color: var(--figma-pdf-clock-icon);
+      flex: none;
+    }
+
+    tbody tr { break-inside: avoid; page-break-inside: avoid; }
+  }
+} // @mixin pdf-doc-styles
+
+// Spinner del chip de tienda mientras se genera su planificación. Reutiliza la
+// animación `figma-btn-spin` del sistema (stylesJPfigma/_figma-components).
+.chip-spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: var(--sp-xxs);
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 9999px;
+  animation: figma-btn-spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+
+// Indicador de severidad del chip de tienda: ● rojo (errores) / ▲ ámbar
+// (avisos). Sin contador — solo señala qué tienda hay que mirar; el número y el
+// desglose están en el rótulo de arriba y en su modal.
+//
+// El tamaño es obligatorio: un `.material-icons` sin acotar hereda 24px y
+// deforma el chip (se veía el triángulo enorme, fuera de la pastilla).
+.figma-chip__sev {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  line-height: 14px;
+  margin-left: var(--sp-xxs);
+  flex-shrink: 0;
+
+  &--error   { color: var(--figma-alert-error-icon);   }
+  &--warning { color: var(--figma-alert-warning-icon); }
+}
+
+// ── Split button "Generar ▾" ───────────────────────────────────────────────
+// Botón principal (genera esta tienda) + flecha que abre el desplegable con
+// "Generar todas". Los dos botones se pegan y comparten el borde para que se
+// lean como una sola pieza: el radio pill solo va en los extremos externos.
+.gen-split {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+}
+
+.gen-split__main {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right-color: transparent;
+}
+
+.gen-split__toggle {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  // El toggle solo lleva el chevron: sin el padding horizontal del botón
+  // normal se queda estrecho y no descuadra la barra de acciones.
+  padding-left: var(--sp-xs);
+  padding-right: var(--sp-xs);
+  min-width: 32px;
+}
+
+.gen-split__chevron {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.gen-split__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 60;   // por encima de la cabecera sticky de la parrilla
+  min-width: 280px;
+  padding: var(--sp-xs);
+  background: var(--surface-raised);
+  border-radius: var(--radius-containers);
+  outline: 1px solid var(--border-base);
+  box-shadow:
+    0 8px 8px -4px rgba(10, 13, 18, 0.03),
+    0 20px 24px -4px rgba(10, 13, 18, 0.08);
+}
+
+.gen-split__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-s);
+  width: 100%;
+  padding: var(--sp-s);
+  border: none;
+  border-radius: var(--r-s);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+
+  &:hover { background: var(--surface-subtle); }
+
+  .material-icons {
+    font-size: 20px;
+    color: var(--text-secondary);
+    flex: none;
+  }
+
+  small {
+    display: block;
+    margin-top: 2px;
+    font-size: var(--fs-12);
+    font-weight: var(--fw-regular);
+    color: var(--text-secondary);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+}
+
+// ── Impresión del navegador (window.print → guardar como PDF) ─────────────
+@media print {
+  @page { size: A4 landscape; margin: 12mm; }
+
+  // Ocultar TODA la vista de pantalla y dejar SOLO la vista imprimible.
+  // Usamos display:none (saca del flujo) en vez de visibility:hidden (que
+  // deja el hueco y provoca que .pdf-print, al ir en absolute, se pinte
+  // encima de nombres/tags → texto encabalgado). Ocultamos cada hijo directo
+  // del componente (:host) salvo .pdf-print, y también los overlays globales
+  // (diálogos, tooltips, menús) que Angular Material inyecta en <body>.
+  :host > *:not(.pdf-print) { display: none !important; }
+  ::ng-deep .cdk-overlay-container,
+  ::ng-deep .mat-mdc-tooltip,
+  ::ng-deep .cdk-overlay-backdrop { display: none !important; }
+
+  // La vista imprimible pasa a flujo normal (no absolute): ocupa la página
+  // por sí sola sin superponerse a nada. (Anula el off-screen de --exporting
+  // por si ambas condiciones coincidieran.)
+  .pdf-print {
+    display: block;
+    position: static;
+    left: auto;
+    width: 100%;
+    padding: 0;
+    background: #fff;
+    color: var(--p-alpha-black-800, #080e14e0);
+    font-family: var(--ff-body, Inter, sans-serif);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .pdf-print { @include pdf-doc-styles; }
+}

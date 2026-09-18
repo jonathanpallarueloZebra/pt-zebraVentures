@@ -1,0 +1,81 @@
+:host { display: inline-block; }
+
+.radio-root {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+
+  &--disabled {
+    cursor: not-allowed;
+    .radio-label { color: var(--text-disabled); }
+  }
+}
+
+// Figma: *_text (Radius_text 2133:9182) = Body/2-emphasis → 14px SemiBold 600, lh 1.4.
+// Tokens --figma-control-text-* compartidos con checkbox/toggle.
+.radio-label {
+  color: var(--figma-control-text-color, var(--text-primary));
+  font-family: var(--ff-body);
+  font-size: var(--figma-control-text-font-size); // 14px (body/2)
+  font-weight: var(--figma-control-text-font-weight); // 600 (emphasis)
+  line-height: var(--figma-control-text-line-height); // 1.4
+}
+
+// ── Native radio — styled directly ────────────────────────────
+// Figma: 20×20px circle, grey border unchecked, blue outer ring + inner dot checked
+.radio-native {
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--input-border);
+  background: var(--input-check-surface);
+  cursor: pointer;
+
+  // Inner dot via ::before
+  display: grid;
+  place-content: center;
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--input-check-checked);
+    transform: scale(0);
+    transition: transform 0.1s ease;
+  }
+
+  // ── Selected ──────────────────────────────────────────────
+  &:checked {
+    border-color: var(--input-check-checked);
+    border-width: 2px;
+
+    &::before { transform: scale(1); }
+  }
+
+  // ── Focus ─────────────────────────────────────────────────
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--surface-base), 0 0 0 5px var(--input-check-checked);
+  }
+
+  // ── Disabled ──────────────────────────────────────────────
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  &:not(:disabled):not(:checked):hover {
+    border-color: var(--input-check-hover);
+  }
+}

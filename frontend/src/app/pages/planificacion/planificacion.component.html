@@ -1,0 +1,256 @@
+<zb-page-header
+  title="Diagnóstico de planificación"
+  [subtitle]="'Semana ' + weekLabel()"
+  [showSidebarToggle]="true"
+  [sidebarCollapsed]="false">
+</zb-page-header>
+
+<div class="page-container">
+
+  <!-- ── Selector de semana ── -->
+  <div class="diag-toolbar">
+    <zb-button variant="secondary" size="sm" iconLeft="arrow_back"
+               (click)="shiftWeek(-1)">Anterior</zb-button>
+    <input class="diag-week" type="date" [value]="week()"
+           (change)="onWeekChange($any($event.target).value)"
+           aria-label="Semana a consultar" />
+    <zb-button variant="secondary" size="sm" iconRight="arrow_forward"
+               (click)="shiftWeek(1)">Siguiente</zb-button>
+    <span class="diag-toolbar__spacer"></span>
+    <zb-button variant="secondary" size="sm" (click)="load()">Actualizar</zb-button>
+  </div>
+
+  @if (error()) {
+    <div class="figma-alert figma-alert--error">
+      <div class="figma-alert__content">
+        <span class="figma-alert__title">{{ error() }}</span>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="diag-empty">Cargando diagnóstico…</p>
+  } @else if (scopes().length === 0) {
+    <p class="diag-empty">No hay ámbitos de planificación configurados.</p>
+  } @else {
+
+    <!-- ── Resumen de la semana ── -->
+    <div class="diag-stats">
+      <div class="diag-stat">
+        <span class="diag-stat__value">{{ totals().planificadas }}/{{ totals().tiendas }}</span>
+        <span class="diag-stat__label">Planificadas</span>
+      </div>
+      <div class="diag-stat">
+        <span class="diag-stat__value">{{ totals().asignaciones }}</span>
+        <span class="diag-stat__label">Asignaciones</span>
+      </div>
+      @if (totals().vacias > 0) {
+        <div class="diag-stat diag-stat--warn">
+          <span class="diag-stat__value">{{ totals().vacias }}</span>
+          <span class="diag-stat__label">Con plan vacío</span>
+        </div>
+      }
+    </div>
+
+    <!-- ── Tabla de tiendas ── -->
+    <div class="zb-table-card">
+      <table class="diag-table">
+        <thead>
+          <tr>
+            <th>Tienda</th>
+            <th>Estado</th>
+            <th class="num">Plantilla</th>
+            <th class="num">Elegibles</th>
+            <th class="num">Asignaciones</th>
+            <th class="num">Sin turno</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of scopes(); track s.scope; let odd = $odd) {
+            <tr class="diag-row" [class.diag-row--alt]="odd"
+                [class.diag-row--open]="expanded() === s.scope"
+                (click)="toggle(s.scope)">
+              <td class="diag-name">{{ s.scope_name }}</td>
+              <td>
+                <span class="diag-badge" [class]="'diag-badge--' + statusOf(s).code">
+                  {{ statusOf(s).label }}
+                </span>
+              </td>
+              <td class="num">{{ s.fixed_staff }}</td>
+              <td class="num">{{ s.eligible }}</td>
+              <td class="num">{{ s.total_assignments }}</td>
+              <td class="num">{{ s.without_shift.length }}</td>
+              <td class="num">
+                <zb-icon class="diag-chevron" [class.diag-chevron--open]="expanded() === s.scope"
+                         name="expand_more" size="16"></zb-icon>
+              </td>
+            </tr>
+
+            <!-- ── Detalle desplegado ── -->
+            @if (expanded() === s.scope) {
+              <tr class="diag-detail-row">
+                <td colspan="7">
+                  <div class="diag-detail">
+
+                    @if (!s.has_plan) {
+                      <p class="diag-empty">
+                        Esta {{ 'tienda' }} no tiene planificación guardada para la semana.
+                      </p>
+                    } @else {
+
+                      <div class="diag-legend">
+                        <span class="diag-worker"><span class="diag-worker__name">Nombre</span></span>
+                        <span class="diag-legend__text">plantilla de esta tienda</span>
+                        <span class="diag-worker diag-worker--out"><span class="diag-worker__name">Nombre</span></span>
+                        <span class="diag-legend__text">de otra tienda (cubre la zona)</span>
+                        <span class="diag-group__area diag-group__area--full">Sección <span class="diag-group__cap">3/3</span></span>
+                        <span class="diag-legend__text">sección al tope</span>
+                      </div>
+
+
+                      @for (d of openDays(s); track d.date) {
+                        <div class="diag-day">
+                          <div class="diag-day__head">
+                            <span class="diag-day__name">{{ d.day_name }} {{ d.date }}</span>
+                            <span class="diag-day__count">{{ d.assigned }} asignados</span>
+                          </div>
+
+                          <!-- Un bloque por turno; dentro, una fila por sección. -->
+                          @for (sh of d.shifts; track sh.code) {
+                            <div class="diag-shift">
+                              <div class="diag-shift__head">
+                                <span class="diag-shift__label">{{ sh.label }}</span>
+                                <span class="diag-shift__count">{{ sh.count }} personas</span>
+                              </div>
+
+                              @for (g of sh.groups; track g.area) {
+                                <div class="diag-group">
+                                  <span class="diag-group__area"
+                                        [class.diag-group__area--full]="areaFull(g.used, g.cap)">
+                                    {{ g.area }}
+                                    <span class="diag-group__cap">{{ g.used }}/{{ g.cap ?? '∞' }}</span>
+                                  </span>
+                                  <div class="diag-workers">
+                                    @for (w of g.workers; track w.worker_id) {
+                                      <span class="diag-worker" [class.diag-worker--out]="!w.in_scope"
+                                            [title]="w.in_scope ? 'Plantilla de esta tienda' : 'De otra tienda (cubre la zona)'">
+                                        <span class="diag-worker__name">{{ w.name }}</span>
+                                        <span class="diag-worker__meta">{{ w.start }}-{{ w.end }}</span>
+                                      </span>
+                                    }
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                          }
+
+                          <!-- Sin asignar, agrupados por la CAUSA que les
+                               impidió entrar (no basta con listar nombres). -->
+                          @if (d.unassigned.length) {
+                            <div class="diag-unassigned">
+                              <div class="diag-unassigned__title">
+                                Sin asignar ({{ d.unassigned.length }})
+                              </div>
+                              @for (g of d.unassigned_by_reason; track g.reason) {
+                                <div class="diag-reason">
+                                  <span class="diag-reason__label">
+                                    <span class="diag-reason__count">{{ g.count }}</span>
+                                    {{ g.reason }}
+                                  </span>
+                                  <div class="diag-reason__workers">
+                                    @for (u of g.workers.slice(0, 14); track u.worker_id) {
+                                      <span class="diag-chip">
+                                        {{ u.name }}
+                                        @if (u.areas?.length) {
+                                          <span class="diag-chip__area">{{ u.areas![0] }}</span>
+                                        }
+                                      </span>
+                                    }
+                                    @if (g.workers.length > 14) {
+                                      <span class="diag-chip diag-chip--more">+{{ g.workers.length - 14 }}</span>
+                                    }
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                          }
+                          @if (d.absent.length) {
+                            <div class="diag-line diag-line--muted">
+                              <strong>No disponibles ({{ d.absent.length }}):</strong>
+                              @for (a of d.absent; track a.worker_id) {
+                                <span class="diag-chip">{{ a.name }}</span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+
+                      @if (s.without_shift.length) {
+                        <div class="diag-line diag-line--warn">
+                          <strong>Sin ningún turno en toda la semana ({{ s.without_shift.length }}):</strong>
+                          @for (w of s.without_shift.slice(0, 15); track w.worker_id) {
+                            <span class="diag-chip">{{ w.name }}</span>
+                          }
+                          @if (s.without_shift.length > 15) {
+                            <span class="diag-chip diag-chip--more">+{{ s.without_shift.length - 15 }}</span>
+                          }
+                        </div>
+                      }
+
+                      <!-- ── Resumen: qué queda sin cubrir y por qué ── -->
+                      <div class="diag-summary">
+                        <div class="diag-summary__title">Qué queda sin cubrir</div>
+
+                        @if (!s.gaps_coverable.length && !s.gaps_structural.length) {
+                          <p class="diag-summary__ok">
+                            Todas las secciones están cubiertas en los turnos que operan.
+                          </p>
+                        }
+
+                        @if (s.gaps_coverable.length) {
+                          <div class="diag-summary__block diag-summary__block--warn">
+                            <strong>{{ s.gaps_coverable.length }}
+                              {{ s.gaps_coverable.length === 1 ? 'vacante' : 'vacantes' }} por cubrir</strong>
+                            <p class="diag-summary__why">
+                              Hay personal de esa sección con ese turno, así que se pueden
+                              asignar desde la planificación.
+                            </p>
+                            <div class="diag-summary__chips">
+                              @for (g of s.gaps_coverable; track g.area + g.shift) {
+                                <span class="diag-chip">
+                                  {{ g.area }} · {{ g.shift }}
+                                  <span class="diag-chip__area">{{ g.staff }} disponibles</span>
+                                </span>
+                              }
+                            </div>
+                          </div>
+                        }
+
+                        @if (s.gaps_structural.length) {
+                          <div class="diag-summary__block diag-summary__block--info">
+                            <strong>{{ s.gaps_structural.length }}
+                              {{ s.gaps_structural.length === 1 ? 'sección sin personal' : 'secciones sin personal' }}</strong>
+                            <p class="diag-summary__why">
+                              Ningún trabajador de esa sección puede hacer ese turno. No lo
+                              puede resolver la planificación: falta plantilla.
+                            </p>
+                            <div class="diag-summary__chips">
+                              @for (g of s.gaps_structural; track g.area + g.shift) {
+                                <span class="diag-chip">{{ g.area }} · {{ g.shift }}</span>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

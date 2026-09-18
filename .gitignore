@@ -1,0 +1,50 @@
+# ── Secretos: NUNCA en el repo ─────────────────────────────────────────
+.env
+.env.*
+!.env.example
+!.env.*.example
+!despliegue/*.ejemplo
+*.key
+*-key*.json
+gcs-key*.json
+
+# ── Volcados de datos reales ───────────────────────────────────────────
+# local_data.json y similares llevan usuarios con hash de contrasena.
+local_data.json
+*.dump
+*.sql
+
+# ── Python / Django ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.Python
+venv/
+.venv/
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Node / Angular ─────────────────────────────────────────────────────
+node_modules/
+dist/
+.angular/
+*.tsbuildinfo
+
+# ── IDE ────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS ─────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini

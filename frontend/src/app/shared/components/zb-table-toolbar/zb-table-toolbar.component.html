@@ -1,0 +1,55 @@
+<div class="toolbar-root">
+
+  <!-- ── Left controls ── -->
+  <div class="toolbar-left">
+
+    <!-- Mostrar [N] -->
+    @if (showPageSize) {
+      <div class="toolbar-show">
+        <span class="toolbar-show__label">Mostrar</span>
+        <div class="toolbar-ctrl toolbar-ctrl--select" (click)="togglePageSizeMenu($event)">
+          <span class="toolbar-ctrl__select-value">{{ pageSize }}</span>
+          <zb-icon class="toolbar-ctrl__chevron" name="expand_more" size="16"></zb-icon>
+
+          @if (showPageSizeMenu) {
+            <div class="toolbar-dropdown" role="listbox">
+              @for (opt of pageSizeOptions; track opt) {
+                <button
+                  class="toolbar-dropdown__item"
+                  [class.toolbar-dropdown__item--active]="opt === pageSize"
+                  type="button"
+                  role="option"
+                  [attr.aria-selected]="opt === pageSize"
+                  (click)="selectPageSize(opt, $event)"
+                >{{ opt }}</button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Columnas toggle -->
+    @if (showColumnsToggle) {
+      <button
+        class="toolbar-ctrl toolbar-ctrl--btn"
+        type="button"
+        (click)="columnsClick.emit()"
+      >
+        <zb-icon class="toolbar-ctrl__icon" name="settings" size="16"></zb-icon>
+        <span class="toolbar-ctrl__text">{{ columnsLabel }}</span>
+        <zb-icon class="toolbar-ctrl__chevron" name="expand_more" size="16"></zb-icon>
+      </button>
+    }
+
+    <!-- Extra left-aligned controls (e.g. zb-column-menu) -->
+    <ng-content select="[toolbar-left]"></ng-content>
+
+  </div>
+
+  <!-- ── Right actions (projected) ── -->
+  <div class="toolbar-right">
+    <ng-content />
+  </div>
+
+</div>

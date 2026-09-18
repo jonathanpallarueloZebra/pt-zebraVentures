@@ -1,0 +1,29 @@
+<div class="search-shell" [class.search-shell--disabled]="isDisabled">
+
+  <span class="search-icon material-icons" aria-hidden="true">search</span>
+
+  <input
+    class="search-native"
+    type="search"
+    [placeholder]="placeholder"
+    [disabled]="isDisabled"
+    [value]="value"
+    [autocomplete]="autocomplete"
+    (input)="handleInput($event)"
+    (keydown)="handleKeydown($event)"
+    (blur)="handleBlur()"
+  />
+
+  @if (value) {
+    <button
+      class="search-clear"
+      type="button"
+      tabindex="-1"
+      aria-label="Limpiar búsqueda"
+      (click)="clear()"
+    >
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  }
+
+</div>

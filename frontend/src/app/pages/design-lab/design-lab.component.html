@@ -1,0 +1,1250 @@
+<div class="lab-root">
+
+  <!-- ── Header ── -->
+  <header class="lab-header">
+    <div class="lab-header__brand">
+      <span class="lab-header__logo">Z</span>
+      <span class="lab-header__title">Design Lab</span>
+      <span class="lab-header__version">v1</span>
+    </div>
+    <button class="lab-theme-toggle" (click)="toggleTheme()">
+      <span class="material-icons">{{ theme() === 'light' ? 'dark_mode' : 'light_mode' }}</span>
+      {{ theme() === 'light' ? 'Dark' : 'Light' }}
+    </button>
+  </header>
+
+  <!-- ── Canvas ── -->
+  <main class="lab-canvas">
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Button
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Button</h2>
+      <p class="lab-section__desc">
+        <code>zb-button</code> · 5 variantes · 3 tamaños · icon-left / icon-right / loading
+      </p>
+
+      <!-- primary ─────────────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">primary</h3>
+        <div class="lab-row">
+
+          <!-- States -->
+          <div class="lab-col">
+            <span class="lab-sub">States</span>
+            <div class="lab-row-inner">
+              <zb-button variant="primary" size="sm">Default</zb-button>
+              <!-- hover / active shown natively via CSS — no extra markup needed -->
+            </div>
+          </div>
+
+          <!-- Sizes -->
+          <div class="lab-col">
+            <span class="lab-sub">Sizes</span>
+            <div class="lab-row-inner">
+              <div class="lab-item">
+                <zb-button variant="primary" size="sm">Button</zb-button>
+                <span class="lab-item__tag">sm · h34</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="primary" size="md">Button</zb-button>
+                <span class="lab-item__tag">md · h38</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="primary" size="lg">Button</zb-button>
+                <span class="lab-item__tag">lg · h42</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Icon left -->
+          <div class="lab-col">
+            <span class="lab-sub">Icon left</span>
+            <div class="lab-row-inner">
+              <zb-button variant="primary" size="sm" iconLeft="add">Button</zb-button>
+              <zb-button variant="primary" size="md" iconLeft="add">Button</zb-button>
+              <zb-button variant="primary" size="lg" iconLeft="add">Button</zb-button>
+            </div>
+          </div>
+
+          <!-- Icon right -->
+          <div class="lab-col">
+            <span class="lab-sub">Icon right</span>
+            <div class="lab-row-inner">
+              <zb-button variant="primary" size="sm" iconRight="arrow_forward">Button</zb-button>
+              <zb-button variant="primary" size="md" iconRight="arrow_forward">Button</zb-button>
+              <zb-button variant="primary" size="lg" iconRight="arrow_forward">Button</zb-button>
+            </div>
+          </div>
+
+          <!-- Disabled / Loading -->
+          <div class="lab-col">
+            <span class="lab-sub">Disabled · Loading</span>
+            <div class="lab-row-inner">
+              <zb-button variant="primary" size="md" [disabled]="true">Disabled</zb-button>
+              <zb-button variant="primary" size="md" [loading]="true">Loading</zb-button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- secondary ───────────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">secondary · outlined neutral (light bg)</h3>
+        <div class="lab-row">
+
+          <div class="lab-col">
+            <span class="lab-sub">Sizes</span>
+            <div class="lab-row-inner">
+              <div class="lab-item">
+                <zb-button variant="secondary" size="sm">Button</zb-button>
+                <span class="lab-item__tag">sm</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="secondary" size="md">Button</zb-button>
+                <span class="lab-item__tag">md</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="secondary" size="lg">Button</zb-button>
+                <span class="lab-item__tag">lg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub">Con iconos</span>
+            <div class="lab-row-inner">
+              <zb-button variant="secondary" size="sm" iconLeft="filter_list">Button</zb-button>
+              <zb-button variant="secondary" size="md" iconLeft="filter_list">Button</zb-button>
+              <zb-button variant="secondary" size="lg" iconLeft="filter_list">Button</zb-button>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub">Disabled</span>
+            <div class="lab-row-inner">
+              <zb-button variant="secondary" size="md" [disabled]="true">Disabled</zb-button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- danger filled ───────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">danger · filled</h3>
+        <div class="lab-row">
+
+          <div class="lab-col">
+            <span class="lab-sub">Sizes</span>
+            <div class="lab-row-inner">
+              <div class="lab-item">
+                <zb-button variant="danger" size="sm">Eliminar</zb-button>
+                <span class="lab-item__tag">sm</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="danger" size="md">Eliminar</zb-button>
+                <span class="lab-item__tag">md</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="danger" size="lg">Eliminar</zb-button>
+                <span class="lab-item__tag">lg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub">Con iconos</span>
+            <div class="lab-row-inner">
+              <zb-button variant="danger" size="sm" iconLeft="delete">Button</zb-button>
+              <zb-button variant="danger" size="md" iconLeft="delete">Button</zb-button>
+              <zb-button variant="danger" size="lg" iconLeft="delete">Button</zb-button>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub">Disabled</span>
+            <div class="lab-row-inner">
+              <zb-button variant="danger" size="md" [disabled]="true">Disabled</zb-button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- danger outlined ─────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">danger-outlined</h3>
+        <div class="lab-row">
+
+          <div class="lab-col">
+            <span class="lab-sub">Sizes</span>
+            <div class="lab-row-inner">
+              <div class="lab-item">
+                <zb-button variant="danger-outlined" size="sm">Eliminar</zb-button>
+                <span class="lab-item__tag">sm</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="danger-outlined" size="md">Eliminar</zb-button>
+                <span class="lab-item__tag">md</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="danger-outlined" size="lg">Eliminar</zb-button>
+                <span class="lab-item__tag">lg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub">Con iconos</span>
+            <div class="lab-row-inner">
+              <zb-button variant="danger-outlined" size="sm" iconLeft="delete">Button</zb-button>
+              <zb-button variant="danger-outlined" size="md" iconRight="delete">Button</zb-button>
+              <zb-button variant="danger-outlined" size="lg" iconLeft="delete">Button</zb-button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- outline-dark ────────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">outline-dark · sobre fondo oscuro</h3>
+        <div class="lab-row lab-row--on-dark">
+
+          <div class="lab-col">
+            <span class="lab-sub lab-sub--light">Sizes</span>
+            <div class="lab-row-inner">
+              <div class="lab-item">
+                <zb-button variant="outline-dark" size="sm">Button</zb-button>
+                <span class="lab-item__tag lab-item__tag--light">sm</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="outline-dark" size="md">Button</zb-button>
+                <span class="lab-item__tag lab-item__tag--light">md</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="outline-dark" size="lg">Button</zb-button>
+                <span class="lab-item__tag lab-item__tag--light">lg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub lab-sub--light">Con iconos</span>
+            <div class="lab-row-inner">
+              <zb-button variant="outline-dark" size="sm" iconLeft="settings">Button</zb-button>
+              <zb-button variant="outline-dark" size="md" iconLeft="settings">Button</zb-button>
+              <zb-button variant="outline-dark" size="lg" iconLeft="settings">Button</zb-button>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub lab-sub--light">Disabled</span>
+            <div class="lab-row-inner">
+              <zb-button variant="outline-dark" size="md" [disabled]="true">Disabled</zb-button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- icon-only ───────────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">icon-only · circular</h3>
+        <div class="lab-row">
+
+          <div class="lab-col">
+            <span class="lab-sub">Sizes</span>
+            <div class="lab-row-inner">
+              <div class="lab-item">
+                <zb-button variant="icon-only" size="sm" icon="visibility" ariaLabel="Ver"></zb-button>
+                <span class="lab-item__tag">sm · 34px</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="icon-only" size="md" icon="visibility" ariaLabel="Ver"></zb-button>
+                <span class="lab-item__tag">md · 38px</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="icon-only" size="lg" icon="visibility" ariaLabel="Ver"></zb-button>
+                <span class="lab-item__tag">lg · 42px</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub">Íconos comunes</span>
+            <div class="lab-row-inner">
+              <zb-button variant="icon-only" size="md" icon="edit" ariaLabel="Editar"></zb-button>
+              <zb-button variant="icon-only" size="md" icon="delete" ariaLabel="Eliminar"></zb-button>
+              <zb-button variant="icon-only" size="md" icon="more_vert" ariaLabel="Más opciones"></zb-button>
+              <zb-button variant="icon-only" size="md" icon="close" ariaLabel="Cerrar"></zb-button>
+              <zb-button variant="icon-only" size="md" icon="settings" ariaLabel="Ajustes"></zb-button>
+              <zb-button variant="icon-only" size="md" icon="download" ariaLabel="Descargar"></zb-button>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub">Disabled</span>
+            <div class="lab-row-inner">
+              <zb-button variant="icon-only" size="md" icon="edit" ariaLabel="Editar" [disabled]="true"></zb-button>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub">Sobre oscuro</span>
+            <div class="lab-row-inner lab-row-inner--dark-pad">
+              <zb-button variant="icon-only" size="sm" icon="close" ariaLabel="Cerrar"></zb-button>
+              <zb-button variant="icon-only" size="md" icon="close" ariaLabel="Cerrar"></zb-button>
+              <zb-button variant="icon-only" size="lg" icon="close" ariaLabel="Cerrar"></zb-button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- text / link ─────────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">text · link button</h3>
+        <div class="lab-row">
+
+          <div class="lab-col">
+            <span class="lab-sub">Default · 3 sizes</span>
+            <div class="lab-row-inner">
+              <div class="lab-item">
+                <zb-button variant="text" size="sm" iconRight="open_in_new">Abrir sitio</zb-button>
+                <span class="lab-item__tag">sm · fs12 lh22</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="text" size="md" iconRight="open_in_new">Abrir sitio</zb-button>
+                <span class="lab-item__tag">md · fs14 lh24</span>
+              </div>
+              <div class="lab-item">
+                <zb-button variant="text" size="lg" iconRight="open_in_new">Abrir sitio</zb-button>
+                <span class="lab-item__tag">lg · fs16 lh26</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub">Icon left</span>
+            <div class="lab-row-inner">
+              <zb-button variant="text" size="sm" iconLeft="arrow_back">Volver</zb-button>
+              <zb-button variant="text" size="md" iconLeft="arrow_back">Volver</zb-button>
+              <zb-button variant="text" size="lg" iconLeft="arrow_back">Volver</zb-button>
+            </div>
+          </div>
+
+          <div class="lab-col">
+            <span class="lab-sub">Disabled</span>
+            <div class="lab-row-inner">
+              <zb-button variant="text" size="md" iconRight="open_in_new" [disabled]="true">Abrir sitio</zb-button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Combinaciones ───────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Casos de uso comunes</h3>
+        <div class="lab-row">
+          <div class="lab-row-inner lab-row-inner--wrap">
+            <zb-button variant="primary" size="md" iconLeft="save">Guardar cambios</zb-button>
+            <zb-button variant="secondary" size="md">Cancelar</zb-button>
+            <zb-button variant="primary" size="sm" iconLeft="add">Nueva entidad</zb-button>
+            <zb-button variant="danger-outlined" size="sm" iconLeft="delete">Eliminar selección</zb-button>
+            <zb-button variant="primary" size="md" [loading]="true">Generando...</zb-button>
+            <zb-button variant="secondary" size="md" iconRight="download">Exportar</zb-button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Page Header
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Page Header</h2>
+      <p class="lab-section__desc">
+        <code>zb-page-header</code> · barra de título por página · slot de acciones · toggle de sidebar opcional
+      </p>
+
+      <!-- Solo título ─────────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Solo título</h3>
+        <div class="lab-row lab-row--flush">
+          <zb-page-header title="Empleados"></zb-page-header>
+        </div>
+      </div>
+
+      <!-- Con subtítulo ──────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Con subtítulo</h3>
+        <div class="lab-row lab-row--flush">
+          <zb-page-header
+            title="Turnos"
+            subtitle="Gestiona los turnos semanales del equipo">
+          </zb-page-header>
+        </div>
+      </div>
+
+      <!-- Con acciones (slot derecho) ────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Con acciones</h3>
+        <div class="lab-row lab-row--flush">
+          <zb-page-header title="Empleados">
+            <zb-button variant="primary" size="sm" iconLeft="add">Nuevo empleado</zb-button>
+            <zb-button variant="secondary" size="sm" iconLeft="download">Exportar</zb-button>
+            <zb-button variant="icon-only" size="sm" icon="more_vert" ariaLabel="Más opciones"></zb-button>
+          </zb-page-header>
+        </div>
+      </div>
+
+      <!-- Con sidebar toggle ──────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Con sidebar toggle</h3>
+        <div class="lab-row lab-row--flush" style="padding-left: 8px;">
+          <zb-page-header
+            title="Planificación"
+            [showSidebarToggle]="true"
+            [sidebarCollapsed]="false">
+          </zb-page-header>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Table Toolbar
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Table Toolbar</h2>
+      <p class="lab-section__desc">
+        <code>zb-table-toolbar</code> · select de paginación + toggle de columnas · slot derecho para acciones
+      </p>
+
+      <!-- Figma spec — exacto ─────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Caso de uso — Figma spec</h3>
+        <div class="lab-row">
+          <zb-table-toolbar [pageSize]="100">
+            <zb-button variant="secondary" size="md" iconLeft="upload_file">Importar Excel</zb-button>
+            <zb-button variant="secondary" size="md" iconRight="download">Descargar Excel</zb-button>
+            <zb-button variant="primary" size="md" iconLeft="add">Nuevo</zb-button>
+          </zb-table-toolbar>
+        </div>
+      </div>
+
+      <!-- Solo paginación ─────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Sin acciones / solo controles izquierda</h3>
+        <div class="lab-row">
+          <zb-table-toolbar [pageSize]="25"></zb-table-toolbar>
+        </div>
+      </div>
+
+      <!-- Sin columnas toggle ─────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Sin toggle de columnas</h3>
+        <div class="lab-row">
+          <zb-table-toolbar [pageSize]="50" [showColumnsToggle]="false">
+            <zb-button variant="primary" size="md" iconLeft="add">Nuevo turno</zb-button>
+          </zb-table-toolbar>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Paginator
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Paginator</h2>
+      <p class="lab-section__desc">
+        <code>zb-paginator</code> · paginación con algoritmo de ventana · accesible con <code>aria-current</code>
+      </p>
+
+      <!-- Figma spec — página 1 activa ───────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Inicio (página 1 de 10) — Anterior deshabilitado</h3>
+        <div class="lab-row lab-row--flush">
+          <zb-paginator [currentPage]="1" [totalPages]="10"></zb-paginator>
+        </div>
+      </div>
+
+      <!-- Página del medio ───────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Medio (página 5 de 10) — doble ellipsis</h3>
+        <div class="lab-row lab-row--flush">
+          <zb-paginator [currentPage]="5" [totalPages]="10"></zb-paginator>
+        </div>
+      </div>
+
+      <!-- Última página ──────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Fin (página 10 de 10) — Siguiente deshabilitado</h3>
+        <div class="lab-row lab-row--flush">
+          <zb-paginator [currentPage]="10" [totalPages]="10"></zb-paginator>
+        </div>
+      </div>
+
+      <!-- Pocas páginas (sin ellipsis) ───────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">≤ 7 páginas — sin ellipsis</h3>
+        <div class="lab-row lab-row--flush">
+          <zb-paginator [currentPage]="3" [totalPages]="5"></zb-paginator>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Alert
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Alert</h2>
+      <p class="lab-section__desc">
+        <code>zb-alert</code> · 4 tipos · 2 tamaños · light/dark automático via tokens de status
+      </p>
+
+      <!-- Default — 4 tipos ──────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Default — los 4 tipos</h3>
+        <div class="lab-row lab-alert-col">
+          <zb-alert type="warning" title="Título" description="Descripción"></zb-alert>
+          <zb-alert type="info"    title="Título" description="Descripción"></zb-alert>
+          <zb-alert type="success" title="Título" description="Descripción"></zb-alert>
+          <zb-alert type="error"   title="Título" description="Descripción"></zb-alert>
+        </div>
+      </div>
+
+      <!-- Compact — 4 tipos ──────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Compact — fs-12, padding 8px</h3>
+        <div class="lab-row lab-alert-col">
+          <zb-alert type="error"   size="compact" title="Título" description="Descripción"></zb-alert>
+          <zb-alert type="warning" size="compact" title="Título" description="Descripción"></zb-alert>
+          <zb-alert type="info"    size="compact" title="Título" description="Descripción"></zb-alert>
+          <zb-alert type="success" size="compact" title="Título" description="Descripción"></zb-alert>
+        </div>
+      </div>
+
+      <!-- Sin descripción / no dismissible ───────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Solo título · no dismissible</h3>
+        <div class="lab-row lab-alert-col">
+          <zb-alert type="info"    title="Sesión a punto de expirar" [dismissible]="false"></zb-alert>
+          <zb-alert type="warning" title="Cambios sin guardar"       [dismissible]="false"></zb-alert>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Input
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Input</h2>
+      <p class="lab-section__desc">
+        <code>zb-input</code> · ControlValueAccessor — funciona con <code>formControl</code> y <code>ngModel</code>
+      </p>
+
+      <!-- 6 estados del Figma ────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">6 estados — Figma spec</h3>
+        <div class="lab-row lab-input-col">
+
+          <div class="lab-item">
+            <zb-input label="Label" placeholder="Escribe algo..." [formControl]="inputDefault"></zb-input>
+            <span class="lab-item__tag">Default (filled)</span>
+          </div>
+
+          <div class="lab-item">
+            <zb-input label="Label" placeholder="text" [formControl]="inputEmpty"></zb-input>
+            <span class="lab-item__tag">Placeholder</span>
+          </div>
+
+          <!-- focus — el usuario hace click, se ve el ring azul -->
+          <div class="lab-item">
+            <zb-input label="Label" placeholder="Haz click aquí para ver focus" [formControl]="inputEmpty"></zb-input>
+            <span class="lab-item__tag">Focus (click para ver)</span>
+          </div>
+
+          <div class="lab-item">
+            <zb-input label="Label" placeholder="Escribe algo..." error="Este campo contiene un error" [formControl]="inputDefault"></zb-input>
+            <span class="lab-item__tag">Error</span>
+          </div>
+
+          <div class="lab-item">
+            <zb-input label="Label" placeholder="text" [formControl]="inputDisabled"></zb-input>
+            <span class="lab-item__tag">Disabled</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Con iconos ──────────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Con iconos</h3>
+        <div class="lab-row lab-input-col">
+          <div class="lab-item">
+            <zb-input label="Buscar" placeholder="Buscar empleado..." iconLeft="search" [formControl]="inputIcon"></zb-input>
+            <span class="lab-item__tag">Icon left</span>
+          </div>
+          <div class="lab-item">
+            <zb-input label="Email" placeholder="correo@empresa.com" iconLeft="mail" iconRight="visibility" [formControl]="inputIcon"></zb-input>
+            <span class="lab-item__tag">Icon left + right</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Con hint ────────────────────────────────────────── -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Con hint / ayuda</h3>
+        <div class="lab-row lab-input-col">
+          <div class="lab-item">
+            <zb-input label="Contraseña" placeholder="Mínimo 8 caracteres" type="password" hint="Usa mayúsculas, números y símbolos." [formControl]="inputIcon"></zb-input>
+            <span class="lab-item__tag">Hint</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Datepicker
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Datepicker</h2>
+      <p class="lab-section__desc">
+        <code>zb-datepicker</code> · nativo <code>type="date"</code> estilizado · icono abre el picker del SO
+      </p>
+      <div class="lab-group">
+        <div class="lab-row lab-input-col">
+          <div class="lab-item">
+            <zb-datepicker label="Label" [formControl]="dateCtrl"></zb-datepicker>
+            <span class="lab-item__tag">Default (filled)</span>
+          </div>
+          <div class="lab-item">
+            <zb-datepicker label="Label" [formControl]="dateEmpty"></zb-datepicker>
+            <span class="lab-item__tag">Placeholder dd/mm/yyyy</span>
+          </div>
+          <div class="lab-item">
+            <zb-datepicker label="Label" [formControl]="dateEmpty" error="Fecha inválida"></zb-datepicker>
+            <span class="lab-item__tag">Error</span>
+          </div>
+          <div class="lab-item">
+            <zb-datepicker label="Label" [formControl]="dateDisabled"></zb-datepicker>
+            <span class="lab-item__tag">Disabled</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Search Input
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Search Input</h2>
+      <p class="lab-section__desc">
+        <code>zb-search-input</code> · icono lupa · botón × al tener texto · emite <code>(search)</code> con Enter
+      </p>
+      <div class="lab-group">
+        <div class="lab-row lab-input-col">
+          <div class="lab-item">
+            <zb-search-input [formControl]="searchCtrl" placeholder="Buscar"></zb-search-input>
+            <span class="lab-item__tag">Empty</span>
+          </div>
+          <div class="lab-item">
+            <zb-search-input [formControl]="searchFilled" placeholder="Buscar"></zb-search-input>
+            <span class="lab-item__tag">Filled — aparece ×</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Range Input (time / date)
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Range Input</h2>
+      <p class="lab-section__desc">
+        <code>zb-range-input</code> · <code>mode="time"</code> o <code>mode="date"</code> · emite <code>(open)</code> para abrir el picker
+      </p>
+      <div class="lab-group">
+        <h3 class="lab-group__label">Time range</h3>
+        <div class="lab-row lab-input-col">
+          <div class="lab-item">
+            <zb-range-input mode="time"></zb-range-input>
+            <span class="lab-item__tag">Empty — HH:MM - HH:MM</span>
+          </div>
+          <div class="lab-item">
+            <zb-range-input mode="time" [value]="timeRangeFilled"></zb-range-input>
+            <span class="lab-item__tag">Filled</span>
+          </div>
+        </div>
+      </div>
+      <div class="lab-group">
+        <h3 class="lab-group__label">Date range</h3>
+        <div class="lab-row lab-input-col">
+          <div class="lab-item">
+            <zb-range-input mode="date"></zb-range-input>
+            <span class="lab-item__tag">Empty — DD-MM - DD-MM</span>
+          </div>
+          <div class="lab-item">
+            <zb-range-input mode="date" [value]="dateRangeFilled"></zb-range-input>
+            <span class="lab-item__tag">Filled</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Select / Dropdown
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Select / Dropdown</h2>
+      <p class="lab-section__desc">
+        <code>zb-select</code> · ControlValueAccessor · búsqueda interna · añadir/eliminar ítems opcionales
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Estados — placeholder / filled / disabled</h3>
+        <div class="lab-row lab-input-col">
+          <div class="lab-item">
+            <zb-select label="Label" placeholder="Selecciona una opción" [options]="selectOptions" [formControl]="selectCtrl"></zb-select>
+            <span class="lab-item__tag">Placeholder</span>
+          </div>
+          <div class="lab-item">
+            <zb-select label="Label" [options]="selectOptions" [formControl]="selectFilled"></zb-select>
+            <span class="lab-item__tag">Filled (click para abrir)</span>
+          </div>
+          <div class="lab-item">
+            <zb-select label="Label" [options]="selectOptions" [formControl]="selectDisabled"></zb-select>
+            <span class="lab-item__tag">Disabled</span>
+          </div>
+          <div class="lab-item">
+            <zb-select label="Label" [options]="selectOptions" [formControl]="selectCtrl" error="Campo requerido"></zb-select>
+            <span class="lab-item__tag">Error</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Con búsqueda interna</h3>
+        <div class="lab-row lab-input-col">
+          <div class="lab-item">
+            <zb-select label="Rol" placeholder="Selecciona rol" [options]="selectRolesOptions" [formControl]="selectCtrl" [searchable]="true"></zb-select>
+            <span class="lab-item__tag">searchable=true</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Con añadir + eliminar ítems</h3>
+        <div class="lab-row lab-input-col">
+          <div class="lab-item">
+            <zb-select label="Etiqueta" placeholder="Selecciona o crea..." [options]="selectRolesOptions" [formControl]="selectCtrl" [searchable]="true" [allowAdd]="true" [allowDelete]="true"></zb-select>
+            <span class="lab-item__tag">searchable + allowAdd + allowDelete</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Checkbox
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Checkbox</h2>
+      <p class="lab-section__desc">
+        <code>zb-checkbox</code> · ControlValueAccessor · focus ring doble · disabled
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Estados (Checkbox option)</h3>
+        <div class="lab-row lab-ctrl-col">
+          <div class="lab-item">
+            <zb-checkbox label="Option" [formControl]="cbxA"></zb-checkbox>
+            <span class="lab-item__tag">Unchecked</span>
+          </div>
+          <div class="lab-item">
+            <zb-checkbox label="Option Selected" [formControl]="cbxB"></zb-checkbox>
+            <span class="lab-item__tag">Checked</span>
+          </div>
+          <div class="lab-item">
+            <zb-checkbox label="Disabled" [formControl]="cbxDisabled"></zb-checkbox>
+            <span class="lab-item__tag">Disabled unchecked</span>
+          </div>
+          <div class="lab-item">
+            <zb-checkbox label="Disabled" [formControl]="cbxDisabledChecked"></zb-checkbox>
+            <span class="lab-item__tag">Disabled checked</span>
+          </div>
+          <div class="lab-item">
+            <!-- Tab hasta aquí para ver el focus ring -->
+            <zb-checkbox label="Focus (tab para ver)"></zb-checkbox>
+            <span class="lab-item__tag">Focus (tab)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Sin label — solo control</h3>
+        <div class="lab-row">
+          <div class="lab-row-inner">
+            <zb-checkbox [formControl]="cbxA"></zb-checkbox>
+            <zb-checkbox [formControl]="cbxB"></zb-checkbox>
+            <zb-checkbox [formControl]="cbxDisabled"></zb-checkbox>
+            <zb-checkbox [formControl]="cbxDisabledChecked"></zb-checkbox>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Radio
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Radio</h2>
+      <p class="lab-section__desc">
+        <code>zb-radio</code> · agrupado via <code>[name]</code> nativo · emite <code>(select)</code>
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Estados (Radius option)</h3>
+        <div class="lab-row lab-ctrl-col">
+          <div class="lab-item">
+            <zb-radio name="demo" value="a" label="Option"          [checked]="radioSelected === 'a'" (select)="radioSelected = $event"></zb-radio>
+            <span class="lab-item__tag">Unselected</span>
+          </div>
+          <div class="lab-item">
+            <zb-radio name="demo" value="b" label="Option Selected" [checked]="radioSelected === 'b'" (select)="radioSelected = $event"></zb-radio>
+            <span class="lab-item__tag">Selected</span>
+          </div>
+          <div class="lab-item">
+            <zb-radio name="demo" value="c" label="Disabled"        [disabled]="true"></zb-radio>
+            <span class="lab-item__tag">Disabled</span>
+          </div>
+          <div class="lab-item">
+            <!-- Tab hasta aquí para ver focus -->
+            <zb-radio name="demo2" value="x" label="Focus (tab para ver)"></zb-radio>
+            <span class="lab-item__tag">Focus (tab)</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Toggle / Switch
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Toggle / Switch</h2>
+      <p class="lab-section__desc">
+        <code>zb-toggle</code> · ControlValueAccessor · animación de deslizamiento · <code>role="switch"</code>
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Estados (Toggle-text)</h3>
+        <div class="lab-row lab-ctrl-col">
+          <div class="lab-item">
+            <zb-toggle label="Option Inactive" [formControl]="tglA"></zb-toggle>
+            <span class="lab-item__tag">Off</span>
+          </div>
+          <div class="lab-item">
+            <zb-toggle label="Option Active" [formControl]="tglB"></zb-toggle>
+            <span class="lab-item__tag">On</span>
+          </div>
+          <div class="lab-item">
+            <zb-toggle label="Disabled" [formControl]="tglDisabled"></zb-toggle>
+            <span class="lab-item__tag">Disabled off</span>
+          </div>
+          <div class="lab-item">
+            <zb-toggle label="Disabled On" [formControl]="tglDisabledOn"></zb-toggle>
+            <span class="lab-item__tag">Disabled on</span>
+          </div>
+          <div class="lab-item">
+            <zb-toggle label="Focus (tab para ver)"></zb-toggle>
+            <span class="lab-item__tag">Focus (tab)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Sin label — solo control</h3>
+        <div class="lab-row">
+          <div class="lab-row-inner">
+            <zb-toggle [formControl]="tglA"></zb-toggle>
+            <zb-toggle [formControl]="tglB"></zb-toggle>
+            <zb-toggle [formControl]="tglDisabled"></zb-toggle>
+            <zb-toggle [formControl]="tglDisabledOn"></zb-toggle>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Date Picker Panel
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Date Picker Panel</h2>
+      <p class="lab-section__desc">
+        <code>zb-date-picker-panel</code> · Selección de rango · hover preview · "hoy" con outline · navegación mensual
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Rango activo (06 jun → 13 jun · hoy = 26 jun)</h3>
+        <div class="lab-row">
+          <zb-date-picker-panel
+            startDate="2026-06-06"
+            endDate="2026-06-13"
+            (apply)="onDpApply($event)"
+            (cancel)="dpResult = 'Cancelado'"
+          ></zb-date-picker-panel>
+          @if (dpResult) {
+            <span class="lab-sub lab-sub--light" style="align-self:center">→ {{ dpResult }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Sin selección previa</h3>
+        <div class="lab-row">
+          <zb-date-picker-panel></zb-date-picker-panel>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Time Picker Panel
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Time Picker Panel</h2>
+      <p class="lab-section__desc">
+        <code>zb-time-picker-panel</code> · AM/PM toggle · spinner horas/minutos · emite <code>HH:MM</code> en 24h
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">9:41 AM</h3>
+        <div class="lab-row">
+          <zb-time-picker-panel
+            value="09:41"
+            (apply)="onTpApply($event)"
+            (cancel)="tpResult = 'Cancelado'"
+          ></zb-time-picker-panel>
+          @if (tpResult) {
+            <span class="lab-sub lab-sub--light" style="align-self:center">→ {{ tpResult }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">PM (14:30)</h3>
+        <div class="lab-row">
+          <zb-time-picker-panel value="14:30"></zb-time-picker-panel>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Sidepanel
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Sidepanel</h2>
+      <p class="lab-section__desc">
+        <code>zb-sidepanel</code> · drawer derecho con scrim · modos <code>create</code> / <code>edit</code> / <code>view</code> · contenido proyectado (<code>ng-content</code>)
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Modos — abre cada uno</h3>
+        <div class="lab-row">
+          <div class="lab-row-inner">
+            <zb-button variant="primary"   (click)="panelCreateOpen.set(true)">Crear</zb-button>
+            <zb-button variant="secondary" (click)="panelEditOpen.set(true)">Editar</zb-button>
+            <zb-button variant="secondary" (click)="panelViewOpen.set(true)">Ver</zb-button>
+            @if (panelResult) {
+              <span class="lab-sub lab-sub--light" style="align-self:center">→ {{ panelResult }}</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- create: Cancelar + Guardar -->
+      <zb-sidepanel
+        [open]="panelCreateOpen()"
+        (openChange)="panelCreateOpen.set($event)"
+        title="Nuevo empleado"
+        mode="create"
+        (save)="onPanelSave()"
+        (cancel)="panelResult = 'Cancelado'"
+      >
+        <zb-input label="Nombre" placeholder="Nombre del empleado" [formControl]="inputEmpty"></zb-input>
+        <zb-input label="Email" placeholder="email@email.com" iconLeft="mail" [formControl]="inputIcon"></zb-input>
+        <zb-select label="Rol" placeholder="Selecciona una opción" [options]="selectRolesOptions" [formControl]="selectCtrl"></zb-select>
+        <zb-checkbox label="Discapacidad" [formControl]="cbxA"></zb-checkbox>
+      </zb-sidepanel>
+
+      <!-- edit: Eliminar + Cancelar + Guardar -->
+      <zb-sidepanel
+        [open]="panelEditOpen()"
+        (openChange)="panelEditOpen.set($event)"
+        title="Alberto Méndez"
+        mode="edit"
+        (save)="onPanelSave()"
+        (delete)="onPanelDelete()"
+        (cancel)="panelResult = 'Cancelado'"
+      >
+        <zb-input label="Nombre" [formControl]="inputDefault"></zb-input>
+        <zb-select label="Zona" [options]="selectRolesOptions" [formControl]="selectFilled"></zb-select>
+        <zb-toggle label="Disponibilidad de traslado" [formControl]="tglB"></zb-toggle>
+      </zb-sidepanel>
+
+      <!-- view: solo Editar -->
+      <zb-sidepanel
+        [open]="panelViewOpen()"
+        (openChange)="panelViewOpen.set($event)"
+        title="Detalle"
+        mode="view"
+        (edit)="onPanelEdit()"
+      >
+        <p>Vista de solo lectura del registro. La única acción es <strong>Editar</strong>.</p>
+      </zb-sidepanel>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Empty State
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Empty State</h2>
+      <p class="lab-section__desc">
+        <code>zb-empty-state</code> · icono Material + título + subtítulo + acciones proyectadas
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Sin empleados — Figma spec</h3>
+        <div class="lab-row">
+          <zb-empty-state
+            icon="person_add"
+            title="Añade empleados para empezar"
+            subtitle="Puedes importarlos usando la plantilla excel o añadirlos uno a uno"
+          >
+            <zb-button variant="secondary" iconRight="download">Descargar plantilla Excel</zb-button>
+            <zb-button variant="primary" iconLeft="add">Nuevo empleado</zb-button>
+          </zb-empty-state>
+        </div>
+      </div>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Sin acciones</h3>
+        <div class="lab-row">
+          <zb-empty-state
+            icon="search_off"
+            title="Sin resultados"
+            subtitle="Prueba a cambiar los filtros de búsqueda"
+          ></zb-empty-state>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Column Menu
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Column Menu</h2>
+      <p class="lab-section__desc">
+        <code>zb-column-menu</code> · selector de columnas visibles · columnas <code>fixed</code> siempre visibles · emite <code>(visibleKeysChange)</code>
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Configurar columnas</h3>
+        <div class="lab-row">
+          <div class="lab-row-inner">
+            <zb-column-menu
+              [columns]="demoColumns"
+              [visibleKeys]="demoVisible()"
+              (visibleKeysChange)="onColsChange($event)"
+              (reset)="onColsReset()"
+            ></zb-column-menu>
+            <span class="lab-sub lab-sub--light" style="align-self:center">
+              visibles → {{ demoVisible().join(', ') || '—' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Dialog
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Dialog</h2>
+      <p class="lab-section__desc">
+        <code>zb-dialog</code> · 3 modos · <code>[(open)]</code> two-way · <code>[html]</code> para mensajes con markup · <code>[saving]</code>
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Modos</h3>
+        <div class="lab-row">
+          <div class="lab-row-inner" style="align-items:center;gap:12px;flex-wrap:wrap">
+            <div class="lab-item">
+              <zb-button variant="secondary" size="md" (click)="dlgDefault.set(true)">Default</zb-button>
+              <span class="lab-item__tag">mode="default"</span>
+            </div>
+            <div class="lab-item">
+              <zb-button variant="secondary" size="md" (click)="dlgWarning.set(true)">Warning</zb-button>
+              <span class="lab-item__tag">mode="warning"</span>
+            </div>
+            <div class="lab-item">
+              <zb-button variant="danger" size="md" (click)="dlgDanger.set(true)">Danger</zb-button>
+              <span class="lab-item__tag">mode="danger"</span>
+            </div>
+            @if (dlgLastAction) {
+              <span class="lab-sub lab-sub--light">→ {{ dlgLastAction }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <zb-dialog
+      [(open)]="dlgDefault"
+      title="Confirmar acción"
+      message="¿Estás seguro de que quieres continuar con esta acción?"
+      mode="default"
+      confirmLabel="Confirmar"
+      cancelLabel="Cancelar"
+      (confirm)="dlgLastAction = 'Confirmado (default)'; dlgDefault.set(false)"
+    ></zb-dialog>
+
+    <zb-dialog
+      [(open)]="dlgWarning"
+      title="Cambios sin guardar"
+      message="Tienes cambios sin guardar. Si continúas, <strong>perderás los cambios</strong> realizados."
+      [html]="true"
+      mode="warning"
+      confirmLabel="Abandonar"
+      cancelLabel="Seguir editando"
+      (confirm)="dlgLastAction = 'Abandonado (warning)'; dlgWarning.set(false)"
+    ></zb-dialog>
+
+    <zb-dialog
+      [(open)]="dlgDanger"
+      title="Eliminar empleado"
+      message="Esta acción es <strong>irreversible</strong>. El empleado y todos sus datos serán eliminados permanentemente."
+      [html]="true"
+      mode="danger"
+      confirmLabel="Eliminar"
+      cancelLabel="Cancelar"
+      (confirm)="dlgLastAction = 'Eliminado (danger)'; dlgDanger.set(false)"
+    ></zb-dialog>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: File Upload
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">File Upload</h2>
+      <p class="lab-section__desc">
+        <code>zb-file-upload</code> · drag & drop · <code>accept</code> · <code>[multiple]</code> · emite <code>(confirm)</code> con <code>File[]</code>
+      </p>
+
+      <div class="lab-group">
+        <h3 class="lab-group__label">Importar archivo</h3>
+        <div class="lab-row">
+          <div class="lab-row-inner" style="align-items:center;gap:12px;flex-wrap:wrap">
+            <div class="lab-item">
+              <zb-button variant="secondary" size="md" iconLeft="upload_file" (click)="fileUploadOpen.set(true)">
+                Importar Excel
+              </zb-button>
+              <span class="lab-item__tag">accept=".xlsx,.xls"</span>
+            </div>
+            @if (uploadedFiles.length) {
+              <span class="lab-sub lab-sub--light">→ {{ uploadedFiles.join(', ') }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <zb-file-upload
+      [(open)]="fileUploadOpen"
+      accept=".xlsx,.xls"
+      [multiple]="false"
+      confirmLabel="Importar"
+      (confirm)="onLabUpload($event)"
+    ></zb-file-upload>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COMPONENT: Skeleton
+    ════════════════════════════════════════════════════════ -->
+    <section class="lab-section">
+      <h2 class="lab-section__title">Skeleton</h2>
+      <p class="lab-section__desc">
+        <code>zb-skeleton</code> · shimmer animado · <code>width</code> / <code>height</code> / <code>radius</code> / <code>[circle]</code>
+      </p>
+
+      <!-- Bones -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Bones</h3>
+        <div class="lab-row">
+          <div class="lab-row-inner" style="flex-direction:column;gap:10px;width:320px">
+            <div class="lab-item" style="align-items:center">
+              <zb-skeleton width="40px" height="40px" [circle]="true"></zb-skeleton>
+              <span class="lab-item__tag">circle</span>
+            </div>
+            <zb-skeleton width="60%" height="14px"></zb-skeleton>
+            <zb-skeleton width="100%" height="14px"></zb-skeleton>
+            <zb-skeleton width="80%" height="14px"></zb-skeleton>
+            <zb-skeleton width="100%" height="38px" radius="8px"></zb-skeleton>
+            <zb-skeleton width="120px" height="36px" radius="9999px"></zb-skeleton>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table skeleton -->
+      <div class="lab-group">
+        <h3 class="lab-group__label">Table layout</h3>
+        <div class="lab-row">
+          <div style="width:100%;max-width:700px">
+            <div class="sk-table-card">
+              <div class="sk-table-row sk-table-row--header">
+                <div class="sk-table-cell sk-table-cell--wide"><zb-skeleton width="45%" height="13px"></zb-skeleton></div>
+                <div class="sk-table-cell"><zb-skeleton width="55%" height="13px"></zb-skeleton></div>
+                <div class="sk-table-cell"><zb-skeleton width="50%" height="13px"></zb-skeleton></div>
+                <div class="sk-table-cell sk-table-cell--icon"></div>
+              </div>
+              @for (_ of [0,1,2,3,4]; track $index) {
+                <div class="sk-table-row">
+                  <div class="sk-table-cell sk-table-cell--wide">
+                    <zb-skeleton height="14px" [width]="$index % 2 === 0 ? '65%' : '50%'"></zb-skeleton>
+                  </div>
+                  <div class="sk-table-cell">
+                    <zb-skeleton height="14px" [width]="$index % 2 === 0 ? '55%' : '70%'"></zb-skeleton>
+                  </div>
+                  <div class="sk-table-cell">
+                    <zb-skeleton height="14px" [width]="$index % 2 === 0 ? '40%' : '60%'"></zb-skeleton>
+                  </div>
+                  <div class="sk-table-cell sk-table-cell--icon">
+                    <zb-skeleton width="32px" height="32px" radius="8px"></zb-skeleton>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lab-section lab-section--placeholder">
+      <h2 class="lab-section__title">Badge / Tag <span class="lab-badge">próximamente</span></h2>
+    </section>
+
+  </main>
+</div>

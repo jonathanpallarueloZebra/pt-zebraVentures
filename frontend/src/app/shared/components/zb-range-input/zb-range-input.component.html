@@ -1,0 +1,14 @@
+<button
+  class="ri-shell"
+  type="button"
+  [class.ri-shell--error]="error"
+  [class.ri-shell--disabled]="disabled"
+  [disabled]="disabled"
+  (click)="open.emit()"
+>
+  <span class="ri-icon material-icons" aria-hidden="true">{{ icon }}</span>
+
+  <span class="ri-value" [class.ri-value--placeholder]="isEmpty">
+    {{ displayValue }}
+  </span>
+</button>

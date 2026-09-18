@@ -1,0 +1,37 @@
+@if (open()) {
+  <div class="dlg-scrim" (click)="onCancel()">
+    <div class="dlg-card" [class.dlg-card--centered]="isCentered" (click)="$event.stopPropagation()">
+
+      <div class="dlg-body">
+        @if (iconName) {
+          <div class="dlg-icon-wrap" [class]="'dlg-icon-wrap--' + mode">
+            <mat-icon class="dlg-icon">{{ iconName }}</mat-icon>
+          </div>
+        }
+        <div class="dlg-text">
+          <!-- Sin título no se pinta el h4: vacío dejaba un hueco muerto encima
+               del contenido (el gap de .dlg-text sigue aplicando). -->
+          @if (title) {
+            <h4 class="dlg-title">{{ title }}</h4>
+          }
+          @if (message) {
+            @if (html) {
+              <!-- div, no p: el mensaje HTML puede traer bloques (listas de
+                   avisos) y un <p> no puede contener <div> — el navegador lo
+                   cerraba antes de tiempo y el formato se perdía. -->
+              <div class="dlg-message" [innerHTML]="message"></div>
+            } @else {
+              <p class="dlg-message">{{ message }}</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="dlg-footer">
+        <zb-button variant="secondary" size="lg" (click)="onCancel()">{{ cancelLabel }}</zb-button>
+        <zb-button [variant]="confirmVariant" size="lg" [loading]="saving" (click)="onConfirm()">{{ confirmLabel }}</zb-button>
+      </div>
+
+    </div>
+  </div>
+}

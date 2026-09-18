@@ -1,0 +1,45 @@
+<div class="dp-wrapper">
+
+  @if (label) {
+    <label class="dp-label" [class.dp-label--error]="!!error">{{ label }}</label>
+  }
+
+  <div class="dp-shell"
+       [class.dp-shell--error]="!!error"
+       [class.dp-shell--disabled]="isDisabled">
+
+    <input
+      #nativeInput
+      class="dp-native"
+      type="date"
+      [value]="value"
+      [disabled]="isDisabled"
+      [min]="min || ''"
+      [max]="max || ''"
+      (change)="handleChange($event)"
+      (blur)="handleBlur()"
+    />
+
+    <button
+      class="dp-icon-btn"
+      type="button"
+      tabindex="-1"
+      [disabled]="isDisabled"
+      (click)="openPicker()"
+      aria-label="Abrir calendario"
+    >
+      <span class="material-icons"
+            [class.dp-icon--error]="!!error"
+            [class.dp-icon--disabled]="isDisabled"
+            aria-hidden="true">calendar_today</span>
+    </button>
+
+  </div>
+
+  @if (error) {
+    <span class="dp-sub dp-sub--error" role="alert">{{ error }}</span>
+  } @else if (hint) {
+    <span class="dp-sub dp-sub--hint">{{ hint }}</span>
+  }
+
+</div>

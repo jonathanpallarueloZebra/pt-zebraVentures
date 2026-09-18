@@ -1,0 +1,18 @@
+@if (isStaff()) {
+  <div class="shell-staff">
+    <app-sidebar />
+    <div class="shell-right">
+      <!-- <app-navbar /> -->
+      <app-notification-toast />
+      <main class="shell-content">
+        <router-outlet />
+      </main>
+    </div>
+  </div>
+} @else {
+  <app-navbar />
+  <app-notification-toast />
+  <main class="shell-content shell-content--no-sidebar">
+    <router-outlet />
+  </main>
+}

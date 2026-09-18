@@ -1,0 +1,144 @@
+// ── Root ──────────────────────────────────────────────────────
+:host {
+  display: block;
+}
+
+.pg-root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 24px;
+  border-top: 1px solid var(--border-base);
+}
+
+// ── Prev / Next nav buttons ────────────────────────────────────
+.pg-nav {
+  // Reset
+  appearance: none;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--ff-body);
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+
+  color: var(--text-primary);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-regular);
+  line-height: 21px;
+
+  transition: opacity var(--transition-fast);
+
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  &[disabled] {
+    cursor: default;
+    pointer-events: none;
+    color: var(--text-disabled);
+
+    .pg-nav__icon {
+      color: var(--icon-disabled);
+    }
+  }
+}
+
+// Flechas = zb-icon (SVG de Figma, arrow_back y su espejo). El tamaño lo
+// fija el componente; el color se hereda del botón.
+.pg-nav__icon {
+  color: inherit;
+}
+
+.pg-nav__label {
+  white-space: nowrap;
+}
+
+// ── Numbers container ─────────────────────────────────────────
+.pg-numbers {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+// ── Individual page button ────────────────────────────────────
+// Figma: 40×40px, border-radius 8px
+// Default: transparent bg, text-secondary, fw-400
+// Active:  accent-alpha-low bg, text-primary, fw-600
+// Hover:   accent-alpha-low bg (same as active)
+
+.pg-number {
+  // Reset
+  appearance: none;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+  font-family: var(--ff-body);
+
+  // Size
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 8px;
+
+  // Layout
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Typography — default (inactive)
+  color: var(--text-secondary);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-regular);
+  line-height: 21px;
+  text-align: center;
+
+  background: transparent;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    font-weight var(--transition-fast);
+
+  &:hover:not(&--active) {
+    background: var(--accent-alpha-low);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: -2px;
+  }
+
+  // ── Active (current page) ──────────────────────────────────
+  &--active {
+    background: var(--accent-alpha-low);
+    color: var(--text-primary);
+    font-weight: var(--fw-semibold);
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+// ── Ellipsis ──────────────────────────────────────────────────
+.pg-ellipsis {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--text-secondary);
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-medium);
+  line-height: 20px;
+  text-align: center;
+
+  user-select: none;
+}

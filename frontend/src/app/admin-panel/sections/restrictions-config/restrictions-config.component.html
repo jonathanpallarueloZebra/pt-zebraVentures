@@ -1,0 +1,813 @@
+﻿<div class="section-container"
+     (dragover)="onDragOver($event)"
+     (dragleave)="onDragLeave($event)"
+     (drop)="onDrop($event)">
+
+  @if (dragOver()) {
+    <div class="drop-overlay">
+      <mat-icon>upload_file</mat-icon>
+      <span>Suelta el JSON para importar restricciones</span>
+    </div>
+  }
+
+  <div class="section-header">
+    <div>
+      <h2>Restricciones</h2>
+      <p class="subtitle">Motor de reglas configurable. Crea restricciones combinando motores, sin tocar código. Las violaciones aparecen en la planificación con severidad error (rojo) o aviso (amarillo).</p>
+    </div>
+    <div class="header-actions">
+      <button mat-stroked-button (click)="downloadTemplate()" matTooltip="Descarga un JSON de ejemplo con todos los tipos de restricción documentados">
+        <mat-icon>description</mat-icon> Plantilla JSON
+      </button>
+      <button mat-stroked-button (click)="exportAll()" matTooltip="Descarga todas las restricciones como JSON" [disabled]="restrictions().length === 0">
+        <mat-icon>download</mat-icon> Exportar todas
+      </button>
+      <button mat-stroked-button (click)="importInput.click()" matTooltip="Sube un JSON con una o varias restricciones">
+        <mat-icon>upload</mat-icon> Importar JSON
+      </button>
+      <input #importInput type="file" accept=".json,application/json" style="display:none" (change)="onImportFile($event)">
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container"><mat-spinner diameter="40"></mat-spinner></div>
+  } @else {
+
+    <!-- ── TABLE ─────────────────────────────────────────────────────── -->
+    @if (restrictions().length === 0 && !creating()) {
+      <div class="empty-state">
+        <mat-icon>rule</mat-icon>
+        <p>No hay restricciones aún. Crea la primera para empezar a validar planes.</p>
+      </div>
+    } @else {
+      <div class="zb-table-card">
+        <div class="zb-table-scroll">
+      <table mat-table [dataSource]="pagedRestrictions()" class="full-width restrictions-table zb-data-table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Restricción</th>
+          <td mat-cell *matCellDef="let r">
+            <div class="restriction-info">
+              <span class="restriction-name">{{ r.name }}</span>
+              @if (r.scope_records?.length) {
+                <span class="scope-badge" matTooltip="Solo aplica a: {{ getScopeLabel(r) }}">
+                  <mat-icon class="scope-icon">storefront</mat-icon>{{ getScopeLabel(r) }}
+                </span>
+              }
+              @if (r.description) {
+                <span class="restriction-desc">{{ r.description }}</span>
+              }
+              <span class="restriction-config">{{ getConfigSummary(r) }}</span>
+            </div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="engine">
+          <th mat-header-cell *matHeaderCellDef>Motor</th>
+          <td mat-cell *matCellDef="let r">
+            <span class="engine-badge" [class]="'engine-' + r.engine">{{ getEngineLabel(r.engine) }}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Tipo</th>
+          <td mat-cell *matCellDef="let r">
+            <span class="type-badge" [class.type-badge--custom]="r.customizable"
+                  [matTooltip]="r.customizable
+                    ? 'El cliente puede editar sus valores, duplicarla y asignarla a tiendas'
+                    : 'El cliente solo puede activarla o desactivarla'">
+              {{ r.customizable ? 'Personalizable' : 'Fija' }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="severity">
+          <th mat-header-cell *matHeaderCellDef>Severidad</th>
+          <td mat-cell *matCellDef="let r">
+            <span class="severity-badge" [class]="'severity-' + r.severity">
+              <mat-icon class="sev-icon">{{ r.severity === 'warning' ? 'warning' : 'error' }}</mat-icon>
+              {{ r.severity === 'warning' ? 'Aviso' : 'Error' }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>Activa</th>
+          <td mat-cell *matCellDef="let r">
+            <mat-slide-toggle [checked]="r.active" (change)="toggleActive(r)" color="primary"></mat-slide-toggle>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let r" class="actions-cell">
+            <zb-button variant="icon-only" size="sm" icon="download" ariaLabel="Exportar como JSON" matTooltip="Exportar como JSON" (click)="exportOne(r)"></zb-button>
+            <button type="button" class="zb-action" aria-label="Editar" title="Editar" (click)="startEdit(r)">
+              <svg class="zb-action__icon" viewBox="-2.5 -2.5 20 20" fill="none" aria-hidden="true">
+                <path d="M0 11.8771V15.0021H3.125L12.3417 5.78542L9.21667 2.66042L0 11.8771ZM14.7583 3.36875C15.0833 3.04375 15.0833 2.51875 14.7583 2.19375L12.8083 0.24375C12.4833 -0.08125 11.9583 -0.08125 11.6333 0.24375L10.1083 1.76875L13.2333 4.89375L14.7583 3.36875Z" fill="currentColor"/>
+              </svg>
+            </button>
+            <zb-button variant="icon-only" size="sm" icon="delete" ariaLabel="Eliminar" matTooltip="Eliminar" (click)="deleteRestriction(r)"></zb-button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns; let odd = odd"
+            [class.editing-row]="editingId() === row.id"
+            [class.zb-row--alt]="odd"></tr>
+      </table>
+        </div>
+        <zb-paginator
+          class="zb-table-card__pager"
+          [currentPage]="page() + 1"
+          [totalPages]="totalPages()"
+          (pageChange)="page.set($event - 1)"
+        ></zb-paginator>
+      </div>
+    }
+
+    @if (!creating()) {
+      <div class="add-row">
+        <button mat-stroked-button class="add-btn" (click)="startCreate()">
+          <mat-icon>add</mat-icon> Nueva restricción
+        </button>
+        <button mat-stroked-button class="chat-btn" (click)="toggleChat()">
+          <mat-icon>smart_toy</mat-icon> Crear con asistente
+        </button>
+        @if (importing()) {
+          <span class="importing-hint">
+            <mat-spinner diameter="16"></mat-spinner>
+            Importando...
+          </span>
+        }
+      </div>
+    }
+
+    <!-- ── CREATE FORM ───────────────────────────────────────────────── -->
+    @if (creating()) {
+      <mat-card class="form-card">
+        <mat-card-header>
+          <mat-card-title>Nueva restricción</mat-card-title>
+          <mat-card-subtitle>Configura el motor y los parámetros. Puedes activarla o desactivarla en cualquier momento.</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <ng-container *ngTemplateOutlet="ruleForm; context: { $implicit: createForm(), isCreate: true }"></ng-container>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button (click)="cancelCreate()">Cancelar</button>
+          <button mat-flat-button color="primary" [disabled]="!createForm().name?.trim()" (click)="saveCreate()">Guardar restricción</button>
+        </mat-card-actions>
+      </mat-card>
+    }
+
+    <!-- ── EDIT FORM ─────────────────────────────────────────────────── -->
+    @if (editingId() !== null) {
+      <mat-card class="form-card edit-card">
+        <mat-card-header>
+          <mat-card-title>Editar: {{ editForm().name }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <ng-container *ngTemplateOutlet="ruleForm; context: { $implicit: editForm(), isCreate: false }"></ng-container>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button (click)="cancelEdit()">Cancelar</button>
+          <button mat-flat-button color="primary" (click)="saveEdit()">Guardar cambios</button>
+        </mat-card-actions>
+      </mat-card>
+    }
+
+  }
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- REUSABLE RULE FORM                                                      -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<ng-template #ruleForm let-form let-isCreate="isCreate">
+
+  <!-- ── BÁSICO ── -->
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="flex-2">
+      <mat-label>Nombre *</mat-label>
+      <input matInput [value]="form.name || ''" (input)="updateField(isCreate, 'name', $any($event.target).value)" placeholder="Ej: Máximo 3 trabajadores por turno">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Severidad</mat-label>
+      <mat-select [value]="form.severity || 'error'" (selectionChange)="updateField(isCreate, 'severity', $event.value)">
+        <mat-option value="error">
+          <span class="sev-opt"><mat-icon class="sev-icon-opt error">error</mat-icon> Error — bloquea el guardado</span>
+        </mat-option>
+        <mat-option value="warning">
+          <span class="sev-opt"><mat-icon class="sev-icon-opt warning">warning</mat-icon> Aviso — alerta pero permite guardar</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width-field">
+      <mat-label>Descripción (opcional)</mat-label>
+      <textarea matInput rows="2" [value]="form.description || ''" (input)="updateField(isCreate, 'description', $any($event.target).value)" placeholder="Para qué sirve esta restricción"></textarea>
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width-field">
+      <mat-label>Mensaje personalizado (opcional)</mat-label>
+      <input matInput [value]="form.message || ''" (input)="updateField(isCreate, 'message', $any($event.target).value)"
+             placeholder="Ej: {worker} no puede estar en {area}">
+      <mat-hint>Placeholders disponibles: &#123;worker&#125; &#123;count&#125; &#123;limit&#125; &#123;area&#125; &#123;shift&#125; &#123;entity&#125; &#123;worker1&#125; &#123;worker2&#125;</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <!-- ── ALCANCE (scope de planificación) ── -->
+  @if (planningScopeRecords().length) {
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width-field">
+        <mat-label>Aplica a ({{ planningScopeEt()?.name || 'Ámbito' }})</mat-label>
+        <mat-select multiple
+          [value]="form.scope_records || []"
+          (selectionChange)="updateField(isCreate, 'scope_records', $event.value)">
+          @for (rec of planningScopeRecords(); track rec.id) {
+            <mat-option [value]="rec.id">{{ recordLabel(rec, planningScopeEt()) }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Vacío = aplica a todos. Selecciona registros específicos para limitar el alcance.</mat-hint>
+      </mat-form-field>
+    </div>
+  }
+
+  <!-- ── PERSONALIZABLE ── -->
+  <div class="form-row">
+    <div class="customizable-field">
+      <mat-checkbox color="primary"
+        [checked]="!!form.customizable"
+        (change)="updateField(isCreate, 'customizable', $event.checked)">
+        Personalizable por el cliente
+      </mat-checkbox>
+      <span class="customizable-hint">
+        @if (form.customizable) {
+          El cliente podrá editar los valores de la regla, la severidad, el mensaje y el ámbito
+          desde su panel de Restricciones, además de duplicarla y asignarla a las
+          {{ (planningScopeEt()?.name || 'tiendas').toLowerCase() }} que quiera.
+          El motor y el tipo de regla quedan fijos.
+        } @else {
+          Restricción fija: el cliente solo podrá activarla o desactivarla.
+        }
+      </span>
+    </div>
+  </div>
+
+  <mat-divider class="engine-divider"></mat-divider>
+  <h4 class="engine-title">
+    <mat-icon>settings_suggest</mat-icon> Motor de evaluación
+  </h4>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Motor</mat-label>
+      <mat-select [value]="form.engine || 'count'" (selectionChange)="onEngineChange(isCreate, $event.value)">
+        <mat-option value="count">
+          <span class="engine-opt">Conteo — cuenta entidades y aplica un límite (máx/mín)</span>
+        </mat-option>
+        <mat-option value="exclusion">
+          <span class="engine-opt">Exclusión — impide coexistencias (turnos consecutivos, incompatibilidades…)</span>
+        </mat-option>
+        <mat-option value="match">
+          <span class="engine-opt">Coincidencia — valida que un campo de un lado coincida con el del otro</span>
+        </mat-option>
+        <mat-option value="condition">
+          <span class="engine-opt">Condición avanzada — árbol AND/OR/NOT sobre cualquier campo EAV, scope configurable</span>
+        </mat-option>
+        <mat-option value="closed_day">
+          <span class="engine-opt">Cierre — bloquea asignaciones en días marcados como cierre (festivos locales)</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (form.engine === 'closed_day') {
+    <p class="hint-text info">
+      <mat-icon>info_outline</mat-icon>
+      Esta restricción no tiene configuración: se dispara automáticamente si hay alguna asignación en una fecha
+      marcada como día de cierre. Gestiona las fechas de cierre (festivos locales, cierres puntuales) desde
+      <strong>Panel Interno &gt; Días de cierre</strong>.
+    </p>
+  }
+
+  <!-- ══════════════════════════════════════════ COUNT CONFIG ══════════════════════════════════════════ -->
+  @if (form.engine === 'count') {
+    <div class="config-section">
+
+      <!-- Paso 1: Entidad de ámbito -->
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width-field">
+          <mat-label>Entidad de ámbito</mat-label>
+          <mat-select [value]="getConfig(form, 'scopeEntityType', '')"
+                      (selectionChange)="onScopeEntityChange(form, $event.value)">
+            <mat-option value="">Sin entidad (solo turno / trabajador)</mat-option>
+            @for (et of scopeEntityTypes(); track et.slug) {
+              <mat-option [value]="et.slug"><mat-icon>{{ et.icon }}</mat-icon> {{ et.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-hint>¿La regla se aplica sobre alguna entidad? Ej: Tienda, Zona, Departamento…</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <!-- Paso 2: Tipo de regla -->
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width-field">
+          <mat-label>Tipo de regla</mat-label>
+          <mat-select [value]="getRuleType(form)" (selectionChange)="onRuleTypeChange(form, $event.value)">
+            <mat-option value="workers__shift">Limitar trabajadores por turno</mat-option>
+            @if (getConfig(form, 'scopeEntityType')) {
+              <mat-option value="workers__shift_area">Limitar trabajadores por turno y {{ scopeEntityName(form).toLowerCase() }}</mat-option>
+              <mat-option value="areas__shift_worker">Limitar {{ scopeEntityName(form).toLowerCase() }}s por trabajador en cada turno</mat-option>
+            }
+            <mat-option value="shifts__day_worker">Limitar turnos al día por trabajador</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Condición: operador + umbral -->
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Condición</mat-label>
+          <mat-select [value]="getConfig(form, 'operator', 'lte')" (selectionChange)="updateConfig(form, 'operator', $event.value)">
+            <mat-option value="lte">Máximo (no puede superar)</mat-option>
+            <mat-option value="gte">Mínimo (debe alcanzar)</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="threshold-field">
+          <mat-label>Cantidad</mat-label>
+          <input matInput type="number" min="0" max="100"
+                 [value]="getConfig(form, 'threshold', 1)"
+                 (input)="updateConfig(form, 'threshold', +$any($event.target).value)">
+        </mat-form-field>
+      </div>
+
+      <!-- Filtro por campo del trabajador (entidades + catálogos) -->
+      <mat-divider class="sub-divider"></mat-divider>
+      <h5 class="sub-title">
+        <mat-icon>filter_alt</mat-icon> ¿Solo ciertos trabajadores? (opcional)
+        <span class="sub-hint">Filtra por cualquier campo del empleado: entidad, catálogo, etc.</span>
+      </h5>
+
+      @if (workerFields().length === 0) {
+        <p class="hint-text">No hay campos filtrables. Añade campos de tipo entidad o catálogo al trabajador en la sección de Entidades.</p>
+      } @else {
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Campo del trabajador</mat-label>
+            <mat-select [value]="getConfig(form, 'filterField', '')"
+                        (selectionChange)="onFilterFieldChange(form, $event.value)">
+              <mat-option value="">Todos los trabajadores</mat-option>
+              @for (wf of workerFields(); track wf.key) {
+                <mat-option [value]="wf.key">{{ wf.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          @if (getConfig(form, 'filterField')) {
+            <mat-form-field appearance="outline">
+              <mat-label>con valor igual a</mat-label>
+              <mat-select [value]="getFilterValue(form)"
+                          (selectionChange)="onFilterValueChange(form, $event.value)">
+                <mat-option [value]="null">— Cualquier valor —</mat-option>
+                @for (opt of getFilterOptions(form); track opt.value) {
+                  <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+              @if (getFilterOptions(form).length === 0) {
+                <mat-hint class="warn-hint">Sin valores. Crea registros de esta entidad o valores de catálogo.</mat-hint>
+              }
+            </mat-form-field>
+          }
+        </div>
+      }
+
+      <!-- Limitar a registros concretos (cuando hay entidad de ámbito) -->
+      @if (getConfig(form, 'scopeEntityType') && (getRuleType(form) === 'workers__shift_area' || getRuleType(form) === 'areas__shift_worker')) {
+        <mat-divider class="sub-divider"></mat-divider>
+        <h5 class="sub-title">
+          <mat-icon>place</mat-icon> ¿Solo en {{ scopeEntityName(form).toLowerCase() }}s concretas? (opcional)
+          <span class="sub-hint">Si no seleccionas ninguna, se aplica a todas</span>
+        </h5>
+        @if (scopeRecords(form).length === 0) {
+          <p class="hint-text">No hay {{ scopeEntityName(form).toLowerCase() }}s creadas aún.</p>
+        } @else {
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width-field">
+              <mat-label>{{ scopeEntityName(form) }}s a evaluar</mat-label>
+              <mat-select multiple
+                          [value]="getConfig(form, 'filterAreaNames', [])"
+                          (selectionChange)="updateConfig(form, 'filterAreaNames', $event.value)">
+                @for (a of scopeRecords(form); track a.id) {
+                  <mat-option [value]="recordLabel(a, entityTypeFor(getConfig(form, 'scopeEntityType')))">{{ recordLabel(a, entityTypeFor(getConfig(form, 'scopeEntityType'))) }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        }
+      }
+
+      <!-- Preview sentence -->
+      <div class="rule-preview">
+        <mat-icon>visibility</mat-icon>
+        <span class="preview-text">
+          @switch (getRuleType(form)) {
+            @case ('workers__shift') {
+              En cada turno,
+              {{ getConfig(form, 'operator', 'lte') === 'lte' ? 'máximo' : 'mínimo' }}
+              <strong>{{ getConfig(form, 'threshold', 1) }}</strong> trabajadores
+              @if (getConfig(form, 'filterField')) {
+                con <strong>{{ getFilterLabel(form) }}</strong>
+              }
+            }
+            @case ('workers__shift_area') {
+              En cada turno y {{ scopeEntityName(form).toLowerCase() }},
+              {{ getConfig(form, 'operator', 'lte') === 'lte' ? 'máximo' : 'mínimo' }}
+              <strong>{{ getConfig(form, 'threshold', 1) }}</strong> trabajadores
+              @if (getConfig(form, 'filterField')) {
+                con <strong>{{ getFilterLabel(form) }}</strong>
+              }
+            }
+            @case ('shifts__day_worker') {
+              Cada trabajador puede tener
+              {{ getConfig(form, 'operator', 'lte') === 'lte' ? 'máximo' : 'mínimo' }}
+              <strong>{{ getConfig(form, 'threshold', 1) }}</strong> turnos al día
+            }
+            @case ('areas__shift_worker') {
+              Cada trabajador puede estar en
+              {{ getConfig(form, 'operator', 'lte') === 'lte' ? 'máximo' : 'mínimo' }}
+              <strong>{{ getConfig(form, 'threshold', 1) }}</strong> {{ scopeEntityName(form).toLowerCase() }}s por turno
+            }
+          }
+        </span>
+      </div>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════ EXCLUSION CONFIG ══════════════════════════════════════════ -->
+  @if (form.engine === 'exclusion') {
+    <div class="config-section">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width-field">
+          <mat-label>Tipo de exclusión</mat-label>
+          <mat-select [value]="getConfig(form, 'exclusionType', '')" (selectionChange)="updateConfig(form, 'exclusionType', $event.value)">
+            <mat-option value="consecutive_shifts">Turnos consecutivos — un mismo trabajador no puede hacer turno A un día y turno B al siguiente</mat-option>
+            <mat-option value="worker_pair">Parejas incompatibles — dos trabajadores específicos no pueden coincidir en el mismo turno</mat-option>
+            <mat-option value="rest_conflict">Descanso en turno — un trabajador en descanso no puede aparecer asignado en ningún turno ese día</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      @if (getConfig(form, 'exclusionType') === 'consecutive_shifts') {
+        <p class="hint-text info">
+          <mat-icon>info_outline</mat-icon>
+          Si un trabajador está en el <strong>turno A</strong> el día N, no puede estar en el <strong>turno B</strong> el día N+1.
+        </p>
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Turno A (día N)</mat-label>
+            <mat-select [value]="getConfig(form, 'shiftA', '')" (selectionChange)="updateConfig(form, 'shiftA', $event.value)">
+              @for (s of shiftSlots(); track s.code) {
+                <mat-option [value]="s.code">{{ s.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Turno B (día N+1)</mat-label>
+            <mat-select [value]="getConfig(form, 'shiftB', '')" (selectionChange)="updateConfig(form, 'shiftB', $event.value)">
+              @for (s of shiftSlots(); track s.code) {
+                <mat-option [value]="s.code">{{ s.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      }
+
+      @if (getConfig(form, 'exclusionType') === 'worker_pair') {
+        <p class="hint-text info">
+          <mat-icon>info_outline</mat-icon>
+          Define parejas de trabajadores que no pueden coincidir en el mismo turno. Útil para gestionar incompatibilidades personales o de rol.
+        </p>
+        <div class="pairs-section">
+          @for (pair of getConfig(form, 'workerPairs', []); track $index) {
+            <div class="pair-row">
+              <mat-form-field appearance="outline" class="pair-field">
+                <mat-label>Trabajador 1</mat-label>
+                <mat-select [value]="pair[0]" (selectionChange)="updateWorkerPair(form, $index, 0, $event.value)">
+                  @for (w of workers(); track w.id) {
+                    <mat-option [value]="w.id">{{ w.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <mat-icon class="pair-sep">swap_horiz</mat-icon>
+              <mat-form-field appearance="outline" class="pair-field">
+                <mat-label>Trabajador 2</mat-label>
+                <mat-select [value]="pair[1]" (selectionChange)="updateWorkerPair(form, $index, 1, $event.value)">
+                  @for (w of workers(); track w.id) {
+                    <mat-option [value]="w.id">{{ w.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <button mat-icon-button color="warn" (click)="removeWorkerPair(form, $index)" matTooltip="Eliminar pareja"><mat-icon>remove_circle_outline</mat-icon></button>
+            </div>
+          }
+          <button mat-stroked-button (click)="addWorkerPair(form)">
+            <mat-icon>add</mat-icon> Añadir pareja incompatible
+          </button>
+        </div>
+      }
+
+      @if (getConfig(form, 'exclusionType') === 'rest_conflict') {
+        <p class="hint-text info">
+          <mat-icon>info_outline</mat-icon>
+          Automático: detecta cualquier trabajador marcado como descanso ese día que aparezca también en un turno. No necesita configuración adicional.
+        </p>
+      }
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════ MATCH CONFIG ══════════════════════════════════════════ -->
+  @if (form.engine === 'match') {
+    <div class="config-section">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width-field">
+          <mat-label>Tipo de coincidencia</mat-label>
+          <mat-select [value]="getConfig(form, 'matchType', '')" (selectionChange)="updateConfig(form, 'matchType', $event.value)">
+            <mat-option value="worker_preference">Preferencia de turno — avisa cuando un trabajador es asignado a un turno que no es su preferido</mat-option>
+            <mat-option value="area_role">Entidad requerida por {{ matchEntityName(form).toLowerCase() }} — valida que el trabajador tenga la entidad que el {{ matchEntityName(form).toLowerCase() }} requiere</mat-option>
+            <mat-option value="area_membership">La sección/rol asignado pertenece al trabajador — valida que la pill asignada esté entre los valores del trabajador (polivalencia)</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      @if (getConfig(form, 'matchType') === 'area_membership') {
+        <p class="hint-text info">
+          <mat-icon>info_outline</mat-icon>
+          Comprueba que la sección/rol asignada en el horario esté entre TODOS los valores del campo elegido del trabajador
+          (no solo el principal). Útil para validar la polivalencia: si asignas a alguien a una sección que no tiene en su lista, avisa o bloquea.
+        </p>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width-field">
+            <mat-label>Campo del trabajador (polivalencia)</mat-label>
+            <mat-select [value]="getConfig(form, 'workerField', '')" (selectionChange)="updateConfig(form, 'workerField', $event.value)">
+              @for (wf of workerFields(); track wf.key) {
+                <mat-option [value]="wf.key">{{ wf.label }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint>Campo multi-selección del trabajador que contiene sus secciones/roles posibles</mat-hint>
+          </mat-form-field>
+        </div>
+      }
+
+      @if (getConfig(form, 'matchType') === 'worker_preference') {
+        <p class="hint-text info">
+          <mat-icon>info_outline</mat-icon>
+          Los turnos preferidos de cada trabajador se configuran en la sección <strong>Empleados</strong>. Esta regla avisa (no bloquea) cuando la asignación no respeta la preferencia.
+        </p>
+      }
+
+      @if (getConfig(form, 'matchType') === 'area_role') {
+        <p class="hint-text info">
+          <mat-icon>info_outline</mat-icon>
+          Compara un campo del trabajador con un campo del {{ matchEntityName(form).toLowerCase() }}. Ambos deben apuntar al mismo tipo de entidad. Por ejemplo: el trabajador tiene "Especialidad = Farmacia" y el {{ matchEntityName(form).toLowerCase() }} requiere "Especialidad = Farmacia".
+        </p>
+
+        <mat-expansion-panel class="advanced-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title><mat-icon>tune</mat-icon> Configurar campos</mat-panel-title>
+            <mat-panel-description>Indica qué campos del trabajador y del {{ matchEntityName(form).toLowerCase() }} deben coincidir</mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="form-row advanced-row">
+            <mat-form-field appearance="outline">
+              <mat-label>EntityType de {{ matchEntityName(form).toLowerCase() }}s</mat-label>
+              <mat-select [value]="getConfig(form, 'areaEntityType', '')"
+                          (selectionChange)="updateConfig(form, 'areaEntityType', $event.value)">
+                <mat-option value="">— Selecciona —</mat-option>
+                @for (et of entityTypes(); track et.slug) {
+                  <mat-option [value]="et.slug"><mat-icon>{{ et.icon }}</mat-icon> {{ et.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>EntityType a comparar</mat-label>
+              <mat-select [value]="getConfig(form, 'roleEntityType', '')"
+                          (selectionChange)="updateConfig(form, 'roleEntityType', $event.value)">
+                <mat-option value="">— Selecciona —</mat-option>
+                @for (et of entityTypes(); track et.slug) {
+                  <mat-option [value]="et.slug"><mat-icon>{{ et.icon }}</mat-icon> {{ et.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-row advanced-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Campo del trabajador</mat-label>
+              <mat-select [value]="getConfig(form, 'workerRoleField', '')"
+                          (selectionChange)="updateConfig(form, 'workerRoleField', $event.value)">
+                @for (wf of workerFields(); track wf.key) {
+                  <mat-option [value]="wf.key">{{ wf.label }}</mat-option>
+                }
+              </mat-select>
+              <mat-hint>Campo en el empleado</mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Campo del {{ matchEntityName(form).toLowerCase() }}</mat-label>
+              <input matInput [value]="getConfig(form, 'areaRoleField', '')"
+                     (input)="updateConfig(form, 'areaRoleField', $any($event.target).value)">
+              <mat-hint>Clave en datos del {{ matchEntityName(form).toLowerCase() }}</mat-hint>
+            </mat-form-field>
+          </div>
+        </mat-expansion-panel>
+      }
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════ CONDITION CONFIG ══════════════════════════════════════════════ -->
+  @if (form.engine === 'condition') {
+    <div class="config-section">
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Ámbito de evaluación</mat-label>
+          <mat-select [value]="getConfig(form, 'scope', 'per_shift')" (selectionChange)="updateConfig(form, 'scope', $event.value)">
+            <mat-option value="per_shift">Por turno — cuenta trabajadores en cada turno</mat-option>
+            <mat-option value="per_day">Por día — cuenta trabajadores únicos en todo el día</mat-option>
+            <mat-option value="per_day_worker">Por trabajador y día — cuenta turnos del trabajador en el día</mat-option>
+            <mat-option value="per_week_worker">Por trabajador y semana — acumula turnos en toda la semana</mat-option>
+            <mat-option value="per_week_worker_hours">Horas por trabajador y semana — suma la duración de sus turnos (contratos de 30/35/40h)</mat-option>
+            <mat-option value="per_week_worker_shift">Por trabajador, semana y tipo de turno — ej: máx 3 turnos de noche</mat-option>
+            <mat-option value="per_shift_worker">Por trabajador y turno — áreas o asignaciones por turno</mat-option>
+            <mat-option value="per_shift_area">Por turno y área — cuenta trabajadores en cada turno+área</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Día de la semana (opcional)</mat-label>
+          <mat-select [value]="getConfig(form, 'dayOfWeek', null)" (selectionChange)="updateConfig(form, 'dayOfWeek', $event.value)">
+            <mat-option [value]="null">Todos los días</mat-option>
+            <mat-option [value]="0">Lunes</mat-option>
+            <mat-option [value]="1">Martes</mat-option>
+            <mat-option [value]="2">Miércoles</mat-option>
+            <mat-option [value]="3">Jueves</mat-option>
+            <mat-option [value]="4">Viernes</mat-option>
+            <mat-option [value]="5">Sábado</mat-option>
+            <mat-option [value]="6">Domingo</mat-option>
+          </mat-select>
+          <mat-hint>Solo evaluar ese día de la semana</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Operador</mat-label>
+          <mat-select [value]="getConfig(form, 'operator', 'lte')" (selectionChange)="updateConfig(form, 'operator', $event.value)">
+            <mat-option value="lte">Máximo (≤)</mat-option>
+            <mat-option value="gte">Mínimo (≥)</mat-option>
+            <mat-option value="eq">Exactamente (=)</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Umbral</mat-label>
+          <input matInput type="number" min="0" [value]="getConfig(form, 'threshold', 1)"
+                 (input)="updateConfig(form, 'threshold', +$any($event.target).value)">
+        </mat-form-field>
+      </div>
+
+      @if (getConfig(form, 'scope') === 'per_week_worker_shift') {
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width-field">
+            <mat-label>Turno específico (opcional)</mat-label>
+            <mat-select [value]="getConfig(form, 'targetShift', null)" (selectionChange)="updateConfig(form, 'targetShift', $event.value)">
+              <mat-option [value]="null">Todos los turnos por separado</mat-option>
+              @for (s of shiftSlots(); track s.code) {
+                <mat-option [value]="s.code">{{ s.label }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint>Ej: selecciona "Noche" para aplicar la regla solo al turno de noche</mat-hint>
+          </mat-form-field>
+        </div>
+      }
+
+      @if (getConfig(form, 'scope') === 'per_week_worker' || getConfig(form, 'scope') === 'per_week_worker_hours') {
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width-field">
+            <mat-label>Campo de umbral individual (opcional)</mat-label>
+            <mat-select [value]="getConfig(form, 'thresholdField', '')" (selectionChange)="updateConfig(form, 'thresholdField', $event.value)">
+              <mat-option value="">— Usar el umbral fijo de arriba para todos —</mat-option>
+              @for (wf of workerFields(); track wf.key) {
+                <mat-option [value]="wf.key">{{ wf.label }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint>Campo del trabajador con su tope propio (ej: horas semanales de contrato 30/35/40). Si el trabajador no lo tiene relleno, se usa el umbral fijo.</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Margen sobre el umbral individual: política de empresa (igual para
+             todos) en vez de un dato por ficha, así se cambia en un solo sitio. -->
+        @if (getConfig(form, 'thresholdField', '')) {
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width-field">
+              <mat-label>Margen sobre el umbral individual</mat-label>
+              <input matInput type="number" min="0"
+                     [value]="getConfig(form, 'thresholdOffset', 0)"
+                     (input)="updateConfig(form, 'thresholdOffset', +$any($event.target).value)">
+              <mat-hint>Se suma al campo del trabajador: con 40h de contrato y margen 5, el tope es 45h. 0 = sin horas extra permitidas.</mat-hint>
+            </mat-form-field>
+          </div>
+        }
+      }
+
+      <mat-divider class="sub-divider"></mat-divider>
+      <h5 class="sub-title">
+        <mat-icon>filter_alt</mat-icon> Condición sobre trabajadores
+        <span class="sub-hint">JSON AND/OR/NOT sobre campos EAV. Deja vacío para contar todos.</span>
+      </h5>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width-field">
+          <mat-label>Condición (JSON)</mat-label>
+          <textarea matInput rows="7" class="json-textarea"
+                    [value]="getConditionJson(form)"
+                    (blur)="setConditionJson(form, $any($event.target).value)"
+                    placeholder='{ "and": [
+  { "field": "tipo_de_contrato", "op": "eq", "value": "plantilla" },
+  { "field": "zona", "op": "in", "value": [8, 9] }
+] }'></textarea>
+          <mat-hint>Operadores: eq, neq, in, nin, gt, gte, lt, lte. Nodos: and, or, not.</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <p class="hint-text info">
+        <mat-icon>info_outline</mat-icon>
+        Ejemplo: contar mín 2 trabajadores de tipo <code>plantilla</code> <strong>AND</strong> de zona <code>Huesca</code> por turno.
+        Usa el botón <strong>Plantilla JSON</strong> del encabezado para ver todos los ejemplos documentados.
+      </p>
+    </div>
+  }
+
+</ng-template>
+
+<!-- ── CHAT PANEL ──────────────────────────────────────────────── -->
+@if (chatOpen()) {
+  <div class="chat-overlay" (click)="toggleChat()"></div>
+  <div class="chat-panel card-surface">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <mat-icon>smart_toy</mat-icon>
+        <span>Asistente de restricciones</span>
+      </div>
+      <div class="chat-header-actions">
+        <button mat-icon-button matTooltip="Limpiar chat" (click)="clearChat()">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Cerrar" (click)="toggleChat()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="chat-messages" #chatScroll>
+      @for (msg of chatMessages(); track $index) {
+        <div class="chat-msg" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+          @if (msg.role === 'assistant') {
+            <mat-icon class="msg-avatar">smart_toy</mat-icon>
+          }
+          <div class="msg-bubble" [innerHTML]="formatChatMessage(msg.content)"></div>
+        </div>
+      }
+      @if (chatLoading()) {
+        <div class="chat-msg assistant">
+          <mat-icon class="msg-avatar">smart_toy</mat-icon>
+          <div class="msg-bubble typing">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+        </div>
+      }
+      @if (chatProposal()) {
+        <div class="chat-proposal">
+          <p><strong>¿Quieres crear esta restricción?</strong></p>
+          <div class="proposal-summary">
+            <span class="proposal-name">{{ chatProposal()?.name }}</span>
+            <span class="proposal-engine">{{ getEngineLabel(chatProposal()?.engine || '') }}</span>
+            <span class="proposal-severity" [class.error]="chatProposal()?.severity === 'error'" [class.warning]="chatProposal()?.severity === 'warning'">{{ chatProposal()?.severity }}</span>
+          </div>
+          <div class="proposal-actions">
+            <button mat-flat-button color="primary" (click)="applyChatProposal()">
+              <mat-icon>check</mat-icon> Crear restricción
+            </button>
+            <button mat-stroked-button (click)="chatProposal.set(null)">
+              Descartar
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="chat-input-row">
+      <input class="chat-input"
+             [value]="chatInput()"
+             (input)="chatInput.set($any($event.target).value)"
+             (keydown.enter)="sendChat()"
+             placeholder="Describe la restricción que quieres crear..."
+             [disabled]="chatLoading()">
+      <button mat-icon-button (click)="sendChat()" [disabled]="!chatInput().trim() || chatLoading()" class="send-btn">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </div>
+}

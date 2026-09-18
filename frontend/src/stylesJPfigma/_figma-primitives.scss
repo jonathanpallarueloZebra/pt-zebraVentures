@@ -1,0 +1,915 @@
+// ============================================================
+// FIGMA PRIMITIVES — Planificador de turnos
+// Fuente: https://www.figma.com/design/wJ9Hm81QhKUmctgaUEKdE1/Planificador-de-turnos
+//
+// Primitivas puras de MEDIDA y TIPOGRAFÍA (sin nombre de uso: nada
+// de "Button", "danger", "hover"...). Los COLORES no se duplican
+// aquí: cada valor de botón de Figma coincide exactamente con una
+// primitiva de color ya existente en
+// cabrero-client/src/styles/_primitives.scss (--p-brand-300 =
+// #fccf3f, --p-red-800 = #912018, --p-neutral-800 = #27292e, etc.),
+// así que las variables semánticas de _figma-components.scss
+// referencian esas directamente, sin capa de alias intermedia.
+// ============================================================
+
+:root {
+  // ── Tamaño: botón (px) — Nodo 2434:18087 / 2090:172 ───────────
+  --p-btn-height-small:  28px;
+  --p-btn-height-medium: 34px;
+  --p-btn-height-big:    40px;
+
+  --p-btn-padding-small:  14px;
+  --p-btn-padding-medium: 20px;
+  --p-btn-padding-big:    28px;
+
+  --p-btn-radius: 9999px;
+
+  // ── Tamaño: espaciado (px) ─────────────────────────────────────
+  --p-btn-spacing-xs: 4px;
+  --p-btn-spacing-s:  8px;
+  --p-btn-spacing-l:  24px;
+
+  // ── Tipografía: componente botón ──────────────────────────────
+  --p-btn-font-family: Inter;
+  --p-btn-font-weight-medium: 600;
+
+  --p-btn-font-size-small:  12px;
+  --p-btn-font-size-medium: 14px;
+  --p-btn-font-size-big:    16px;
+
+  --p-btn-line-height-big: 11px;
+
+  // ── Tamaño: "Button text & text link" (px) — Nodo 2088:3639 ───
+  // Botón tipo texto/link (sin fondo ni borde), 3 tamaños. Reutiliza
+  // --p-btn-font-size-small/medium/big (12/14/16px, ya definidos
+  // arriba); aquí solo lo que es propio de ESTE componente: el
+  // padding vertical y el line-height (distintos a los del botón
+  // "pill" normal) y los tamaños de icono.
+  --p-btn-text-padding-y-small:  4px;
+  --p-btn-text-padding-y-medium: 6px;
+  --p-btn-text-padding-y-big:    8px;
+
+  --p-btn-text-line-height-small:  22px;
+  --p-btn-text-line-height-medium: 24px;
+  --p-btn-text-line-height-big:    26px;
+
+  --p-btn-text-letter-spacing-small:  0.46px;
+  --p-btn-text-letter-spacing-medium: 0.4px;
+  --p-btn-text-letter-spacing-big:    0.46px;
+
+  --p-btn-text-icon-size-small:  18px;
+  --p-btn-text-icon-size-medium: 20px;
+  --p-btn-text-icon-size-big:    24px;
+
+  // ── Tamaño: "Table" — Action bar / filtros (px) — Nodo 2378:23347 ──
+  // Barra "Mostrar / Columnas / Filtros / chips estado / Importar
+  // Excel / Descargar Excel / + Nuevo" que corona la tabla.
+
+  // Input/dropdown (Mostrar, Columnas, Filtros)
+  --p-table-input-padding-x: 8px;  // spacing/S
+  --p-table-input-padding-y: 4px;  // spacing/XS
+  --p-table-input-gap:       4px;  // box/inner/gap/XS
+  --p-table-input-radius:    4px;  // br-forms
+  --p-table-input-font-size: 12px; // fontSize/caption
+  --p-table-input-icon-size: 16px;
+
+  // Textos "Mostrar" (Body/1) y valores de dropdown (Caption)
+  --p-table-label-font-size: 16px; // fontSize/body/1
+  --p-table-label-line-height: 1.4;
+  --p-table-input-line-height: 1.2;
+
+  // Chip (Todas/Pendientes/Aprobadas/Rechazadas)
+  --p-table-chip-height:      22px;
+  --p-table-chip-padding-x:   10px;
+  --p-table-chip-padding-y:   2px;  // spacing/XXS
+  --p-table-chip-gap:         4px;  // spacing/XS
+  --p-table-chip-radius:      9999px; // radius/btn
+  --p-table-chip-border-width-selected: 2px;
+  --p-table-chip-border-width-default:  1px;
+
+  // Layout general de la barra
+  --p-table-bar-radius:   8px;
+  --p-table-bar-gap:      8px;  // spacing/S
+  --p-table-actions-gap:  16px; // spacing/M (actions right)
+  --p-table-config-gap:   16px; // spacing/M (Table Configuration)
+
+  // ── Tamaño: "Table/Pagination" (px) — Nodo 2120:13001 ─────────
+  --p-pagination-padding-x:     24px;
+  --p-pagination-padding-y:     8px;  // S
+  --p-pagination-number-size:   40px; // ancho/alto de cada número
+  --p-pagination-number-radius: 8px;  // br-containers
+  --p-pagination-number-gap:    2px;  // gap entre números
+  --p-pagination-nav-gap:       8px;  // gap icono-texto en Anterior/Siguiente
+  --p-pagination-icon-size:     20px; // arrow_back / arrow-right
+  --p-pagination-font-size:     14px; // fontSize/body/2
+  --p-pagination-line-height:   1.4;
+
+  // ── Tamaño: "Alert" (px) — Nodo 2112:2223 / 2182:28743 ────────
+  // (confirmado con design context del nodo 2112:2222, spacing=default)
+  // Dos variantes de spacing: default (Título + Descripción, 2 líneas)
+  // y compact (más compacto, ver symbols "spacing=compact" del frame).
+  --p-alert-radius: 8px; // br-containers
+
+  --p-alert-default-padding-outer: 8px; // box/inner/padding/S (contenedor)
+  --p-alert-default-padding-inner: 8px; // box/inner/padding/S (pr del bloque Content)
+  --p-alert-default-gap-outer:     4px; // XS (icono+texto ↔ botón cerrar)
+  --p-alert-default-gap-inner:     8px; // box/inner/gap/S (icono ↔ texto)
+  --p-alert-default-title-font-size:   14px; // fontSize/body/2
+  --p-alert-default-title-line-height: 1.4;
+  --p-alert-default-desc-font-size:    12px; // fontSize/caption
+  --p-alert-default-desc-line-height:  1.2;
+
+  --p-alert-icon-size:       16px; // warning/info/success/error icon
+  --p-alert-close-size:      24px; // contenedor del botón "close"
+  --p-alert-close-icon-size: 16px; // vector visible dentro (inset 22.53%)
+  --p-alert-link-icon-size:  14px; // arrow_forward del link opcional
+  --p-alert-link-gap:        2px;  // spacing/XXS
+
+  // ── Tamaño: "Input/text" (px) — Nodo 2112:2447 ────────────────
+  // Estados: filled/placeholder/Active/focused/Error/disabled.
+  // Reutilizable por otros inputs del frame "Form" (area/calendar
+  // comparten casi toda esta tipografía y padding).
+  --p-input-width:            362px;
+  --p-input-padding:          8px;  // box/inner/padding/S, las 4 direcciones
+  --p-input-gap:              8px;  // gap entre texto e icono dentro de Content
+  --p-input-label-gap:        6px;  // gap label ↔ caja input
+  --p-input-radius:           4px;  // br-forms
+  --p-input-border-width:       1px; // filled/placeholder/focused/disabled
+  --p-input-border-width-active: 2px; // Active/Error (borde más grueso)
+  --p-input-icon-size:        16px; // icono opcional a la derecha (help_outline/error)
+
+  --p-input-label-font-size:    12px; // fontSize/caption
+  --p-input-label-line-height:  1.2;
+  --p-input-label-letter-spacing: 0.12px;
+
+  --p-input-value-font-size:   14px; // fontSize/body/2
+  --p-input-value-line-height: 1.11;
+
+  --p-input-hint-font-size:    14px; // fontSize/body/2
+  --p-input-hint-line-height:  1.4;
+
+  --p-input-shadow: 0 1px 2px rgba(10, 13, 18, 0.05); // Shadow/xs
+  --p-input-focus-ring: 0 0 0 3px var(--p-neutral-0), 0 0 0 5px var(--p-blue-light-600);
+
+  // ── Tamaño: "Input/area" / textarea (px) — Nodo 2394:15821 ────
+  // Reutiliza --p-input-* de arriba (padding/radius/label/tipografía
+  // idénticos a Input/text); lo único propio es la altura fija de
+  // la caja y el layout distinto del estado Error (items-start).
+  --p-input-area-height:        56px; // placeholder/Active/focused/disabled
+  --p-input-area-content-min-h: 40px; // alto mínimo del texto (= 56px - 2×8px padding)
+  --p-input-area-error-gap:     8px;  // gap texto↔icono en Error (items-start)
+
+  // ── Tamaño: "Input/calendar" (px) — Nodo 2112:2406 ────────────
+  // Reutiliza --p-input-* de arriba (padding/radius/label/tipografía/
+  // gap/focus-ring/shadow idénticos a Input/text); lo propio: ancho
+  // distinto (438px) e icono de calendario siempre visible que
+  // cambia de color según estado (no solo aparece en error, como
+  // en Input/text).
+  --p-input-calendar-width:    438px;
+  --p-input-calendar-icon-size: 16px; // calendar_today
+  --p-input-calendar-help-icon-size: 20px; // help_outline opcional
+
+  // ── Tamaño: "Input/dropdown" (px) — Nodo 2112:3686 ────────────
+  // 2 tallas: default (5 estados) y compact (3 estados: filled/
+  // placeholder/active — sin focused ni disabled documentados).
+  --p-dropdown-width: 438px;
+
+  // Talla default
+  --p-dropdown-padding-x-default:   8px;  // spacing/S
+  --p-dropdown-padding-y-default:   8px;  // box/inner/padding/S
+  --p-dropdown-gap-default:         8px;
+  --p-dropdown-font-size-default:  14px;  // fontSize/body/2
+  --p-dropdown-line-height-default: 1.11;
+  --p-dropdown-icon-left-size-default: 20px; // settings (opcional)
+  --p-dropdown-icon-chevron-size-default: 16px; // expand_more/less
+  --p-dropdown-icon-help-size-default:    20px; // help_outline (opcional)
+
+  // Talla compact
+  --p-dropdown-padding-x-compact:   8px;  // spacing/S
+  --p-dropdown-padding-y-compact:   4px;  // spacing/XS / box/inner/padding/XS
+  --p-dropdown-gap-compact:         4px;  // box/inner/gap/XS
+  --p-dropdown-font-size-compact:  12px;  // fontSize/caption
+  --p-dropdown-line-height-compact: 1.2;
+  --p-dropdown-icon-left-size-compact: 16px;
+  --p-dropdown-icon-chevron-size-compact: 16px;
+
+  // Comunes a ambas tallas
+  --p-dropdown-radius: 4px; // br-forms
+  --p-dropdown-label-gap: 6px;
+  --p-dropdown-hint-font-size: 14px;
+  --p-dropdown-hint-line-height: 1.4;
+
+  // ── Tamaño: "Input/search" (px) — Nodo 2357:10050 ─────────────
+  // Único tamaño: 364px × 32px. Estados: placeholder/filled/Active/
+  // focused (sin disabled documentado).
+  --p-search-width:  364px;
+  --p-search-height: 32px;
+  --p-search-padding: 8px;  // spacing/S horizontal, box/inner/padding/S vertical
+  --p-search-gap:      8px;
+  --p-search-radius:   4px; // br-forms
+  --p-search-icon-size: 16px; // lupa y "x" de limpiar
+  --p-search-font-size: 14px; // fontSize/body/2
+  --p-search-line-height: 1.11;
+  --p-search-shadow: 0 1px 1px rgba(10, 13, 18, 0.05); // drop-shadow propio (radius 1, no Shadow/xs)
+
+  // ── Tamaño: "Input/time" (px) — Nodo 2190:8950 ────────────────
+  // Único tamaño: 364px × 32px. Estados: placeholder/filled/Active/
+  // focused (sin disabled documentado). Padding UNIFORME (no separa
+  // horizontal/vertical, a diferencia de search/dropdown).
+  --p-time-width:  364px;
+  --p-time-height: 32px;
+  --p-time-padding: 8px; // box/inner/padding/S, las 4 direcciones
+  --p-time-gap:      8px;
+  --p-time-radius:   4px; // radius/small = br-forms
+  --p-time-icon-size: 16px; // schedule (reloj), siempre visible
+  --p-time-delete-icon-size: 20px; // "x" de borrar, opcional
+  --p-time-font-size: 14px; // fontSize/body/2
+  --p-time-line-height: 1.11;
+  --p-time-shadow: 0 1px 1px rgba(10, 13, 18, 0.05); // idem search
+
+  // ── Tamaño: "Input/date" (px) — Nodo 2205:8445 ────────────────
+  // Único componente cuyo ANCHO varía por estado (por el borde 2px
+  // en Active y el gap que se añade cuando hay icono "x" potencial).
+  // Estados: placeholder/filled/Active/focused (sin disabled).
+  --p-date-width-placeholder: 158px;
+  --p-date-width-filled:      163px; // filled/Active/focused
+  --p-date-height: 32px;
+  --p-date-padding: 8px; // box/inner/padding/S, las 4 direcciones (uniforme, como time)
+  --p-date-gap:      8px;
+  --p-date-radius:   4px; // radius/small = br-forms
+  --p-date-icon-size: 16px; // calendar_today, siempre visible
+  --p-date-delete-icon-size: 20px; // "x" de borrar, opcional
+  --p-date-font-size: 14px; // fontSize/body/2
+  --p-date-line-height: 1.11;
+  --p-date-shadow: 0 1px 1px rgba(10, 13, 18, 0.05); // idem search/time
+  --p-date-label-font-size: 12px; // fontSize/caption (label opcional)
+  --p-date-label-line-height: 1.2;
+  --p-date-label-gap: 6px;
+
+  // ── Tamaño: "Checkbox" (px) — Nodo 2126:23516 ─────────────────
+  --p-checkbox-size:   20px;
+  --p-checkbox-radius:  4px; // br-forms
+  --p-checkbox-border-width: 1px;
+  // El icono check se posiciona con inset asimétrico en Figma
+  // (15% / 14.58% / 15% / 15.42%); en CSS se aproxima centrando
+  // un icono de este tamaño dentro del control de 20px.
+  --p-checkbox-check-icon-size: 14px;
+
+  // ── Tamaño: "Radio" (px) — Nodo 2126:23592 ────────────────────
+  --p-radio-size:   20px;
+  --p-radio-radius: 10px; // círculo — literal en Figma, no usa br-forms
+  --p-radio-border-width: 1px;
+  --p-radio-dot-size: 8px; // inset 30% de 20px → 20 × (1 - 0.30×2)
+
+  // ── Tamaño: "Toggle" (switch) (px) — Nodo 2101:854 ────────────
+  --p-toggle-track-width-s:  36px;
+  --p-toggle-track-height-s: 20px;
+  --p-toggle-thumb-size-s:   16px;
+
+  --p-toggle-track-width-m:  44px;
+  --p-toggle-track-height-m: 24px;
+  --p-toggle-thumb-size-m:   20px;
+
+  --p-toggle-track-padding: 2px; // el mismo en ambas tallas
+  --p-toggle-track-radius:  12px; // el mismo en ambas tallas
+
+  // Focus ring (compartido por checkbox/radio/toggle)
+  --p-control-focus-ring: 0 0 0 3px var(--p-neutral-0), 0 0 0 5px var(--p-blue-light-600);
+
+  // ── Tamaño: "*_text" — Checkbox_text / Radius_text / Toggle_text ─
+  --p-control-text-gap: 8px; // spacing/S, entre control y label
+  --p-control-text-font-size: 14px;   // fontSize/body/2
+  --p-control-text-line-height: 1.4;
+  --p-control-text-font-weight: 600;  // Body/2-emphasis (Semi Bold)
+
+  // ── Tamaño: "Chip" (px) — Nodo 2373:11617 ─────────────────────
+  // 2 tallas (S/M) × default/selected. Nota Figma: padding horizontal
+  // de S es literal 10px (no un token de spacing).
+  --p-chip-height-s: 22px;
+  --p-chip-height-m: 32px;
+  --p-chip-padding-x-s: 10px; // literal en Figma, no token
+  --p-chip-padding-x-m: 16px; // spacing/M
+  --p-chip-padding-y:   2px;  // spacing/XXS, ambas tallas
+  --p-chip-gap:         4px;  // spacing/XS
+  --p-chip-radius:      9999px; // radius/btn
+  --p-chip-border-width-default:  1px;
+  --p-chip-border-width-selected: 2px;
+  --p-chip-font-size-s: 12px; // fontSize/caption
+  --p-chip-font-size-m: 14px; // fontSize/body/2
+  --p-chip-line-height-s: 1.2;
+  --p-chip-line-height-m: 1.11;
+  --p-chip-notification-size: 16px; // badge circular de error
+  --p-chip-close-icon-size:   20px; // icono "x" opcional
+
+  // Grupo de chips (Chip_group)
+  --p-chip-group-gap-x: 8px; // spacing/S (column-gap)
+  --p-chip-group-gap-y: 0px; // row-gap
+
+  // ── Tamaño: "Dropdown_menu" (px) — Símbolo 2133:8854 ──────────
+  // Panel desplegable que contiene N _Dropdown_list-item apilados.
+  --p-dropdown-menu-radius: 4px; // radius/forms
+  --p-dropdown-menu-border-width: 1px;
+  // Shadow/lg de Figma (dos capas), literal — no existe ya en el
+  // proyecto una variable equivalente a esta combinación exacta.
+  --p-dropdown-menu-shadow:
+    0 4px 6px -2px rgba(10, 13, 18, 0.03),
+    0 12px 16px -4px rgba(10, 13, 18, 0.08);
+
+  // ── Tamaño: "_Dropdown_list-item" (px) — Nodo 2357:10229 ──────
+  --p-list-item-width: 188px;
+  --p-list-item-height-default: 40px; // Default/Hover/Selected/delete
+  --p-list-item-height-search:  48px;
+  --p-list-item-height-add-tag: 35px; // "add item+tag"
+  --p-list-item-height-add:     32px; // "add item"
+
+  --p-list-item-padding-x: 16px;
+  --p-list-item-padding-y: 10px;
+  --p-list-item-padding-compact: 8px; // Search/delete (uniforme)
+  --p-list-item-padding-add-x: 8px;   // add item / add item+tag
+  --p-list-item-padding-add-y: 4px;
+
+  --p-list-item-font-size: 14px; // Body/2
+  --p-list-item-line-height: 1.4;
+  --p-list-item-font-size-compact: 12px; // Caption (add item, delete)
+  --p-list-item-line-height-compact: 1.2;
+
+  --p-list-item-search-input-height: 32px;
+  --p-list-item-search-input-radius: 4px; // radius/small
+  --p-list-item-search-input-border-width: 2px; // activo por defecto
+  --p-list-item-search-icon-size: 16px;
+
+  --p-list-item-add-btn-size: 20px;   // icono dentro del círculo "add"
+  --p-list-item-add-btn-padding: 2px; // spacing/XXS
+  --p-list-item-add-btn-radius: 9999px; // radius/btn
+
+  --p-list-item-badge-radius: 3px; // literal, no token
+  --p-list-item-badge-font-size: 7px;
+  --p-list-item-badge-letter-spacing: 0.54px;
+  --p-list-item-badge-padding-x: 4px;
+  --p-list-item-badge-padding-y: 2px;
+
+  // ── Tamaño: "Date picker" (px) — Nodo 2419:23828 ──────────────
+  // 2 variantes: type=whole-week (2134:11223) y type=free-range
+  // (2419:23827). Ambas: ancho fijo 328px, celda de día 40×40px.
+  --p-datepicker-width: 328px;
+  --p-datepicker-radius: 8px; // br-containers
+  --p-datepicker-shadow:
+    0 8px 4px rgba(10, 13, 18, 0.03),
+    0 20px 12px rgba(10, 13, 18, 0.08);
+
+  --p-datepicker-content-padding-x: 24px; // spacing/L
+  --p-datepicker-content-padding-y: 16px; // spacing/M
+  --p-datepicker-calendar-gap:      16px; // spacing/M
+
+  --p-datepicker-cell-size:   40px;
+  --p-datepicker-cell-radius: 20px; // círculo
+
+  --p-datepicker-input-row-height: 40px;
+  --p-datepicker-input-row-gap:    12px;
+
+  --p-datepicker-month-font-size: 16px; // fontSize/body/1
+  --p-datepicker-month-line-height: 1.4;
+  --p-datepicker-nav-icon-size: 24px;
+  --p-datepicker-nav-btn-padding: 8px; // box/inner/padding/S
+
+  --p-datepicker-footer-padding-x: 24px; // spacing/L
+  --p-datepicker-footer-padding-y: 16px; // spacing/M
+  --p-datepicker-footer-btn-height:  34px; // Button/height/medium
+  --p-datepicker-footer-btn-padding: 20px; // Button/padding/medium
+
+  // ── Tamaño: "Time picker" (px) — Símbolo 2190:8895 ────────────
+  // Ancho fijo 328px (mismo que Date picker); reutiliza también el
+  // radio/shadow/footer del datepicker (--p-datepicker-radius,
+  // --p-datepicker-footer-*) ya que son idénticos en Figma.
+  --p-timepicker-width: 328px;
+  --p-timepicker-content-padding-x: 24px; // spacing/L
+  --p-timepicker-content-padding-top: 16px; // spacing/M
+  --p-timepicker-content-padding-bottom: 24px; // spacing/L
+  --p-timepicker-content-gap: 16px; // spacing/M
+
+  --p-timepicker-title-font-size: 16px; // fontSize/body/1
+  --p-timepicker-title-line-height: 1.4;
+  --p-timepicker-header-icon-area: 44px; // área vacía de iconos junto al título
+
+  --p-timepicker-selection-gap: 16px; // spacing/M, entre input y AM/PM
+  --p-timepicker-grid-gap: 8px; // spacing/S, entre columnas HORAS/MINUTOS
+
+  --p-timepicker-controls-gap: 8px; // spacing/S, entre flecha/valor/flecha/label
+  --p-timepicker-arrow-btn-padding: 8px; // box/inner/padding/S
+  --p-timepicker-arrow-icon-size: 24px;
+
+  --p-timepicker-value-padding: 16px; // spacing/M, las 4 direcciones
+  --p-timepicker-value-radius:  8px;  // literal, no token
+  --p-timepicker-value-font-size: 32px; // fontSize/heading/1
+  --p-timepicker-value-line-height: 1.1;
+
+  --p-timepicker-label-font-size: 12px; // fontSize/caption (Overline)
+  --p-timepicker-label-letter-spacing: 0.12px;
+
+  --p-timepicker-separator-font-size: 32px; // ":"  entre horas y minutos
+
+  // AM/PM selector (segmented control), símbolo 2190:8753
+  --p-ampm-width-active: 55px;
+  --p-ampm-height: 32px;
+  --p-ampm-padding-x: 16px;
+  --p-ampm-padding-y: 4px; // box/inner/padding/XS
+  --p-ampm-radius: 8px; // radius/default, solo esquinas del lado correspondiente
+  --p-ampm-border-width-active: 2px;
+  --p-ampm-border-width-inactive: 1px;
+  --p-ampm-font-size: 14px; // fontSize/body/2
+  --p-ampm-line-height: 1.4;
+  --p-ampm-shadow: 0 1px 1px rgba(10, 13, 18, 0.05);
+
+  // ── Tamaño: "Nav/Tabs" (px) — Nodo 2419:19321 / item 2419:19331 ─
+  --p-navtabs-item-height: 40px;
+  --p-navtabs-item-padding-y-default: 11px; // solo estado default (selected no lo lleva, el subrayado ocupa ese espacio)
+  --p-navtabs-item-underline-width: 3px; // border-b-3
+  --p-navtabs-font-size: 14px; // fontSize/body/2
+  --p-navtabs-line-height: 1.4;
+
+  // ── Tamaño: "Side-panel" (px) — Sección 2134:2818 ─────────────
+  // _Header (2112:2331) + _sidepanel-actions (2112:2332, 3 tipos).
+  --p-sidepanel-width: 600px;
+  --p-sidepanel-shadow: 0 32px 64px -12px rgba(10, 13, 18, 0.2); // Shadow/3xl
+
+  // Header
+  --p-sidepanel-header-padding-left:   32px; // spacing/XL
+  --p-sidepanel-header-padding-right:  16px; // spacing/M
+  --p-sidepanel-header-padding-top:    16px; // spacing/M
+  --p-sidepanel-header-padding-bottom: 8px;  // spacing/S
+  --p-sidepanel-header-gap: 16px;
+  --p-sidepanel-header-title-font-size: 18px; // fontSize/heading/4
+  --p-sidepanel-header-title-line-height: 1.2;
+  --p-sidepanel-header-close-padding: 8px; // S
+  --p-sidepanel-header-close-radius:  8px;
+  --p-sidepanel-header-close-icon-size: 32px;
+
+  // Actions (footer)
+  --p-sidepanel-actions-padding-x: 32px; // spacing/XL
+  --p-sidepanel-actions-padding-y: 24px; // spacing/L
+  --p-sidepanel-actions-gap-left:  8px;  // spacing/S, entre Eliminar y nada (grupo izq)
+  --p-sidepanel-actions-gap-right: 16px; // spacing/M, entre Cancelar y Guardar (grupo der)
+
+  // Botones de acciones — talla "big" (comparten --figma-btn-height-lg
+  // / --figma-btn-padding-lg / --figma-btn-font-size-lg ya definidos
+  // para el resto de botones del sistema; no se redeclaran aquí).
+  --p-sidepanel-delete-icon-size: 24px;
+  --p-sidepanel-edit-icon-size:   24px;
+
+  // ── Tamaño: "Modal" (px) — Sección 2134:15352 ─────────────────
+  // 4 tipos: confirmation (2134:15349), destructive-confirmation
+  // (2134:15350), save changes (2207:11324), upload-file (2134:15351).
+  --p-modal-overlay-blur: 8px; // backdrop-blur
+  --p-modal-card-radius: 8px; // br-containers
+  --p-modal-card-padding: 24px;
+  --p-modal-card-gap: 32px; // entre Content y _Modal actions
+  --p-modal-card-shadow:
+    0 8px 8px -4px rgba(10, 13, 18, 0.03),
+    0 20px 24px -4px rgba(10, 13, 18, 0.08); // Shadow/xl
+
+  --p-modal-card-width-sm: 400px; // confirmation, destructive-confirmation, save changes
+  --p-modal-card-width-lg: 480px; // upload-file
+
+  --p-modal-content-gap: 20px;
+  --p-modal-content-gap-title: 8px; // entre título y párrafo/subtítulo
+
+  --p-modal-icon-size: 48px; // error/warning, centrado (destructive/save-changes)
+  --p-modal-title-font-size: 16px; // fontSize/heading/5
+  --p-modal-title-line-height: 1.2;
+  --p-modal-body-font-size: 16px; // fontSize/body/1
+  --p-modal-body-line-height: 1.4;
+
+  // Listados dentro del cuerpo (avisos de planificación: "Falta plantilla",
+  // "Puedes cubrirlo"). Figma no diseña este bloque, así que se apoya en la
+  // escala tipográfica del sistema un paso por debajo de Body/1: los listados
+  // de 15 líneas a 16px no caben en pantalla.
+  --p-modal-list-font-size: 14px;        // fontSize/body/2
+  --p-modal-list-label-font-size: 12px;  // fontSize/caption
+  --p-modal-list-row-padding-y: 6px;
+  --p-modal-list-item-gap: 2px;          // entre cabecera y detalle de una ficha
+
+  // Actions (footer) — reutiliza --figma-btn-height-lg/-padding-lg/
+  // -font-size-lg (talla "big", igual que Side-panel).
+
+  // File upload (dropzone)
+  --p-modal-upload-title-font-size: 16px; // fontSize/heading/5
+  --p-modal-upload-title-line-height: 1.2;
+  --p-modal-upload-gap: 16px; // entre dropzone y file queue
+  --p-modal-upload-zone-padding-x: 24px;
+  --p-modal-upload-zone-padding-y: 16px;
+  --p-modal-upload-zone-radius: 8px; // br-containers
+  --p-modal-upload-zone-border-width: 1px;
+  --p-modal-upload-zone-content-gap: 12px;
+  --p-modal-upload-icon-wrapper-size: 48px;
+  --p-modal-upload-icon-wrapper-radius: 24px; // círculo
+  --p-modal-upload-icon-size: 24px;
+  --p-modal-upload-action-gap: 4px; // entre "click para subir" y "o arrástralos aquí"
+  --p-modal-upload-text-gap: 4px; // entre Action y el texto de tipos de archivo
+  --p-modal-upload-cta-font-size: 14px; // fontSize/body/2
+  --p-modal-upload-hint-font-size: 14px; // fontSize/body/2
+
+  // File queue (lista de archivos subidos)
+  --p-modal-upload-queue-gap: 12px; // entre items de la cola
+  --p-modal-upload-item-padding: 16px;
+  --p-modal-upload-item-radius: 8px; // br-containers
+  --p-modal-upload-item-border-width: 1px;
+  --p-modal-upload-item-gap: 4px;
+  --p-modal-upload-item-content-gap: 16px;
+  --p-modal-upload-item-text-gap: 4px;
+  --p-modal-upload-item-font-size: 14px; // fontSize/body/2
+  --p-modal-upload-item-line-height: 1.4;
+
+  --p-modal-upload-progress-gap: 12px; // entre barra y "%"
+  --p-modal-upload-progress-height: 8px;
+  --p-modal-upload-progress-radius: 4px;
+
+  --p-modal-upload-checkbox-size: 16px;
+  --p-modal-upload-checkbox-radius: 8px; // literal, no br-forms (más redondeado)
+  --p-modal-upload-checkbox-check-icon-size: 10px;
+
+  --p-modal-upload-delete-btn-size: 20px;
+  --p-modal-upload-delete-btn-padding: 8px;
+  --p-modal-upload-delete-btn-radius: 8px;
+
+  // ── Tamaño: "Side-menu" (px) — Símbolo 2085:4677 ──────────────
+  // Sidebar de navegación completo: header + lista de items +
+  // submenú "Configuración" + footer (Mi cuenta/Salir + Powered by).
+  --p-sidemenu-width: 195px; // 194.8px redondeado
+  --p-sidemenu-border-width: 0.8px;
+
+  --p-sidemenu-header-height: 56px;
+  --p-sidemenu-header-padding-x: 16px; // spacing/M
+  --p-sidemenu-header-padding-top: 12px;
+  --p-sidemenu-header-padding-bottom: 12.8px;
+  --p-sidemenu-header-gap: 8px; // spacing/S
+  --p-sidemenu-header-logo-size: 24px;
+  --p-sidemenu-header-brand-font-size: 13px;
+  --p-sidemenu-header-brand-line-height: 16.9px;
+  --p-sidemenu-header-tagline-font-size: 10px;
+  --p-sidemenu-header-tagline-line-height: 13px;
+  --p-sidemenu-header-tagline-letter-spacing: 0.6px;
+
+  --p-sidemenu-list-padding-left: 8px;
+  --p-sidemenu-list-padding-right: 16px; // spacing/M
+  --p-sidemenu-list-padding-y: 10px;
+  --p-sidemenu-list-item-gap: 1px;
+
+  --p-sidemenu-link-radius: 8px; // br-containers
+  --p-sidemenu-link-padding: 8px; // spacing/S
+  --p-sidemenu-link-gap: 4px; // spacing/XS
+  --p-sidemenu-link-icon-size: 18px;
+  --p-sidemenu-link-font-size: 14px; // fontSize/body/2
+  --p-sidemenu-link-line-height: 1.4;
+
+  // Botón "Configuración" (con chevron) — mismo look que un link,
+  // pero padding distinto (10px/9px en vez de 8px uniforme) y radio
+  // menor (6px en vez de 8px)
+  --p-sidemenu-toggle-radius: 6px;
+  --p-sidemenu-toggle-padding-x: 10px;
+  --p-sidemenu-toggle-padding-y: 9px;
+  --p-sidemenu-toggle-gap: 8px; // spacing/S
+  --p-sidemenu-toggle-chevron-size: 20px;
+
+  // Submenú (Empleados/Roles/Turnos/Tiendas/Localidad/Zonas/Restricciones)
+  --p-sidemenu-submenu-padding-left: 32px; // spacing/XL
+  --p-sidemenu-submenu-item-gap: 8px; // spacing/S
+  --p-sidemenu-submenu-link-padding-x: 8px; // spacing/S
+  --p-sidemenu-submenu-link-padding-y: 6px;
+  --p-sidemenu-submenu-link-gap: 4px; // spacing/XS
+  --p-sidemenu-submenu-font-size: 14px;
+
+  // Footer (Mi cuenta / Salir + Powered by)
+  --p-sidemenu-footer-padding-x: 8px;
+  --p-sidemenu-footer-padding-bottom: 8px; // spacing/S
+  --p-sidemenu-footer-padding-top: 8.8px;
+  --p-sidemenu-footer-gap: 8px; // spacing/S
+  --p-sidemenu-footer-item-padding-x: 10px;
+  --p-sidemenu-footer-item-padding-y: 9px;
+  --p-sidemenu-footer-item-gap: 8px; // spacing/S
+  --p-sidemenu-footer-item-icon-size: 18px;
+
+  --p-sidemenu-poweredby-width: 131px;
+  --p-sidemenu-poweredby-height: 16px;
+  --p-sidemenu-poweredby-padding-y-bottom: 8px;
+  --p-sidemenu-poweredby-padding-y-top: 8.8px;
+
+  // ── Tamaño: "_side-menu" toggle (colapsar) — Nodo 2684:4966 ───
+  // Lengüeta que sobresale del borde derecho del sidebar (el nodo va a
+  // x=-1 respecto al header, de ahí que solo lleve bordes y radio a la
+  // derecha). Medidas leídas del componente I2497:30629;2158:9907.
+  --p-sidemenu-collapse-btn-width: 16px;
+  --p-sidemenu-collapse-btn-height: 24px;
+  --p-sidemenu-collapse-btn-padding-y: 2px; // spacing/XXS
+  --p-sidemenu-collapse-btn-padding-x: 0;
+  --p-sidemenu-collapse-btn-radius: 4px;    // radius/small (solo esquinas derechas)
+  --p-sidemenu-collapse-btn-gap: 8px;       // sp-S
+  --p-sidemenu-collapse-btn-icon-size: 16px;
+  --p-sidemenu-collapse-btn-shadow: 1px 1px 8px 0 rgba(0, 14, 28, 0.16); // elevation/drop-shadow #000e1c29
+
+  // ── Empty state ("Empty state container" + empty-state_img) ───
+  // Nodos 2464:44424 (empleados) · 2139:7847 (turnos) · 2139:8257 (tiendas).
+  // Los tres comparten el mismo contenedor y la misma ilustración compuesta
+  // (2138:7849); solo cambia el glifo central.
+  --p-emptystate-padding-y: 64px;   // spacing/5XL
+  --p-emptystate-gap: 8px;          // spacing/S
+  --p-emptystate-img-size: 200px;
+  --p-emptystate-title-size: 18px;  // Heading/4
+  --p-emptystate-title-line-height: 1.2;
+  --p-emptystate-desc-size: 14px;   // fontSize/body/2
+  --p-emptystate-desc-line-height: 1.4;
+  --p-emptystate-desc-padding-bottom: 4px; // spacing/XS
+  --p-emptystate-actions-gap: 16px; // spacing/M
+  --p-emptystate-actions-padding-y: 8px; // spacing/S
+
+  // ── Tamaño: "Header" de página (px) — Nodo 2294:11298 ─────────
+  // Título de página + selector de fecha/rango (chip "Hoy" + flechas
+  // + input de rango de fechas).
+  --p-pageheader-title-font-size: 16px; // fontSize/heading/5
+  --p-pageheader-title-line-height: 1.2;
+  --p-pageheader-today-chip-radius: 9999px; // radius/full-rounded
+  --p-pageheader-today-chip-padding-x: 16px; // spacing/M
+  --p-pageheader-today-chip-padding-y: 2px; // spacing/XXS (Chip-today de Figma)
+  --p-pageheader-today-chip-font-size: 14px; // fontSize/body/2
+  --p-pageheader-nav-icon-size: 20px; // "icon only button" de Figma = 20px
+  --p-pageheader-nav-padding: 4px; // box/inner/padding/XS
+  --p-pageheader-date-input-padding-x: 8px; // box/inner/padding/S
+  --p-pageheader-date-input-padding-y: 8px; // box/inner/padding/S
+  --p-pageheader-date-input-gap: 8px; // gap interno icono↔texto (Figma)
+  --p-pageheader-date-input-radius: 4px; // radius/small
+  --p-pageheader-date-input-icon-size: 16px; // calendar_today
+  --p-pageheader-date-input-font-size: 14px; // fontSize/body/2
+  --p-pageheader-date-input-line-height: 1.11;
+  --p-pageheader-date-input-shadow: 0 1px 1px rgba(10, 13, 18, 0.05); // drop-shadow de Figma
+
+  // ── Tamaño: "worker" — celdas de horario (px) — Nodo 2236:3311 ──
+  // Celda de turno de trabajador: texto de horas + badge de
+  // ocupación (icono + número), en varios estados (default, hover,
+  // Add-active, skeleton-loading, warning, error) y 2 tags (none/ett).
+  --p-worker-cell-radius: 4px; // radius/small
+  --p-worker-cell-padding-x: 8px; // box/inner/padding/S
+  --p-worker-cell-padding-y: 4px; // box/inner/padding/XS
+  --p-worker-cell-font-size: 12px; // fontSize/caption
+  --p-worker-cell-line-height: 1.2;
+  --p-worker-badge-gap: 2px; // spacing/XXS
+  --p-worker-badge-add-icon-size: 16px;
+  --p-worker-tag-radius: 4px; // literal (badge "ETT")
+  --p-worker-tag-font-size: 9px; // aprox, ver Figma
+  --p-worker-warning-icon-size: 16px;
+
+  // ── Tamaño: "#Dropdown_menu" instancia — buscador de empleados
+  //    (px) — Nodo 2483:29781. Extiende Dropdown_menu genérico con
+  //    un input de búsqueda arriba y filas "Nombre + botón añadir".
+  --p-dropdown-search-input-height: 32px;
+  --p-dropdown-search-input-padding: 8px;
+  --p-dropdown-search-input-gap: 8px;
+  --p-dropdown-search-input-radius: 4px; // radius/small
+  --p-dropdown-search-icon-size: 16px;
+  --p-dropdown-employee-row-padding-x: 8px; // box/inner/padding/S
+  --p-dropdown-employee-row-padding-y: 4px; // box/inner/padding/XS
+  --p-dropdown-employee-row-font-size: 12px; // fontSize/caption
+  --p-dropdown-employee-add-btn-size: 20px;
+  --p-dropdown-employee-add-btn-padding: 2px; // spacing/XXS
+  --p-dropdown-employee-add-btn-radius: 9999px; // radius/btn
+
+  // ── Tamaño: "horario" — texto de turno M/T (px) — Nodo 2463:30976 ─
+  // Texto plano "9:00-15:30" / "16:30-20:30", sin contenedor propio
+  // más allá de la tipografía (reutiliza --p-worker-cell-font-size).
+
+  // ── Tamaño: "Inicio - Dashboard" (px) — Nodo 2424:18371 ───────
+  // Layout de secciones (Urgente/secondary/tertiary) + patrón
+  // repetido "Caja" (card blanca con borde, 3 variantes): fila de
+  // planificación, fila de horas-extra con separador, stat-card
+  // (número grande + label).
+  --p-dashboard-section-gap: 24px; // spacing/L, entre columnas de cada fila
+  --p-dashboard-section-padding-bottom: 32px; // spacing/XL
+  --p-dashboard-column-gap: 8px; // entre título de sección y su lista
+  --p-dashboard-column-padding-bottom: 16px; // spacing/M
+
+  --p-dashboard-section-title-gap: 4px; // spacing/XS, icono↔texto
+  --p-dashboard-section-title-padding-y: 8px; // spacing/S
+  --p-dashboard-section-title-icon-size: 20px;
+  --p-dashboard-section-title-font-size: 16px; // fontSize/heading/5
+  --p-dashboard-section-title-line-height: 1.2;
+
+  --p-dashboard-card-radius: 8px; // radius/containers
+  --p-dashboard-card-border-width: 1px;
+  --p-dashboard-card-padding: 16px; // box/inner/padding/M
+  --p-dashboard-card-gap: 2px; // spacing/XXS
+
+  // Fila de planificación (icono + fecha + texto + flecha)
+  --p-dashboard-row-gap: 16px; // spacing/M, entre filas "Caja"
+  --p-dashboard-planrow-gap: 8px; // spacing/S, entre icono/fecha/texto/flecha
+  --p-dashboard-planrow-icon-size: 16px;
+
+  // Fila de horas-extra (con separador entre empleados)
+  --p-dashboard-hourrow-gap: 8px; // spacing/S
+  --p-dashboard-hourrow-padding-y: 8px; // spacing/S
+  --p-dashboard-hourrow-icon-size: 16px;
+
+  // Título dentro de la card (Esta Semana / Próxima + rango de fechas)
+  --p-dashboard-card-title-gap: 4px; // spacing/XS
+  --p-dashboard-card-title-padding-bottom: 2px; // spacing/XXS
+  --p-dashboard-card-title-font-size: 12px; // fontSize/caption
+  --p-dashboard-card-title-line-height: 1.2;
+  --p-dashboard-card-title-letter-spacing: 0.12px;
+
+  // Stat-card (número grande + label) — Ausencias / Empleados ETT
+  --p-dashboard-stat-width: 200px; // Ausencias
+  --p-dashboard-stat-width-ett: 242px; // Empleados ETT
+  --p-dashboard-stat-gap: 8px; // spacing/S
+  --p-dashboard-stat-number-font-size: 24px; // fontSize/heading/2
+  --p-dashboard-stat-number-line-height: 1.2;
+
+  // ── Extensión: stat-card CON icono (implementación real Cabrero) ─
+  // No existe mockup 1:1 en Figma para esta variante (el mockup
+  // genérico de Inicio-Dashboard no lleva icono en sus stat-cards);
+  // se reutilizan --p-dashboard-card-* / --p-dashboard-stat-* de
+  // arriba para el contenedor, y solo se añaden aquí las medidas
+  // propias del icono, siguiendo el mismo patrón de "icon wrapper
+  // circular/redondeado con fondo de color pálido" ya usado en
+  // Modal (--p-modal-upload-icon-wrapper-*) y list-item (add-btn).
+  --p-dashboard-stat-icon-wrapper-size: 40px;
+  --p-dashboard-stat-icon-wrapper-radius: 8px; // radius/small, no círculo
+  --p-dashboard-stat-icon-size: 20px;
+
+  // ── Extensión: calendario mensual grande (implementación real
+  //    Cabrero, sin mockup 1:1 en Figma). Reutiliza --p-datepicker-*
+  //    (radio contenedor, sombra, tipografía de celda) del Date
+  //    picker ya construido, ya que es el mismo lenguaje visual de
+  //    calendario del design system; solo añade lo propio de la
+  //    vista de mes completo (grid de 7 columnas ancho, cabecera
+  //    de días de semana con fondo, celdas rectangulares no 40x40).
+  --p-monthcalendar-header-padding-y: 8px; // spacing/S
+  --p-monthcalendar-header-font-size: 11px; // aprox., uppercase caption pequeño
+  --p-monthcalendar-cell-min-height: 90px;
+  --p-monthcalendar-cell-padding: 8px; // box/inner/padding/S
+  --p-monthcalendar-cell-border-width: 1px;
+  --p-monthcalendar-day-number-font-size: 14px; // fontSize/body/2
+  --p-monthcalendar-today-badge-size: 24px;
+  --p-monthcalendar-today-badge-radius: 9999px; // radius/full-rounded
+
+  // ── Extensión: leyenda de turnos (círculo de color + etiqueta) —
+  //    sin mockup 1:1; reutiliza --p-worker-* (tipografía/tamaños de
+  //    celda de turno) ya construido para "worker".
+  --p-shiftlegend-gap: 16px; // spacing/M, entre items de leyenda
+  --p-shiftlegend-item-gap: 4px; // spacing/XS, entre punto y etiqueta
+  --p-shiftlegend-dot-size: 16px;
+  --p-shiftlegend-font-size: 12px; // fontSize/caption
+
+  // ── Tamaño: "Tabla de planificación" (px) — Nodo 2464:40401 ────
+  // Tabla con columnas de sección (Encargada/Caja/Panadería...),
+  // filas día×turno (Mañana/Tarde), columna Ausencias amarilla.
+  --p-plantable-border-width: 0.8px; // border-b/border-r de celdas
+  --p-plantable-th-tienda-height: 32px; // cabecera de tienda (Hu T01)
+  --p-plantable-th-tienda-padding-x: 16px;
+  --p-plantable-th-tienda-gap: 6px;
+  --p-plantable-th-tienda-font-size: 12px;
+
+  --p-plantable-header-cell-height: 28px; // cabecera de columna (DÍA/TURNOS/...)
+  --p-plantable-header-cell-padding-y: 8px; // spacing/S
+  --p-plantable-header-cell-font-size: 8px; // bold uppercase pequeño
+  --p-plantable-header-cell-letter-spacing: 0.88px;
+
+  --p-plantable-day-cell-height: 72px; // celda de día (Mañana o Tarde)
+  --p-plantable-day-cell-height-tall: 136px; // sábado (Mañana con varias filas)
+  --p-plantable-day-cell-padding-x: 2px;   // Figma deja 5px, pero con MAYUSCULAS el texto necesita mas hueco
+  --p-plantable-day-cell-padding-y: 6px;
+  --p-plantable-daynum-size: 32px; // círculo del número de día
+  --p-plantable-daynum-border-width: 2px; // borde azul del día "hoy"
+  --p-plantable-daynum-font-size: 16px; // fontSize/body/1
+  --p-plantable-dayname-font-size: 8px; // nombre del día bajo el número
+  --p-plantable-dayname-letter-spacing: 0.4px;
+
+  --p-plantable-cell-padding: 6px; // celda de datos (Table Cell)
+  --p-plantable-cell-gap: 9px; // gap entre workers dentro de una celda
+
+  --p-plantable-worker-height: 24px; // chip de trabajador/horario
+  --p-plantable-worker-min-height: 24px;
+  --p-plantable-worker-padding-x: 8px; // box/inner/padding/S
+  --p-plantable-worker-padding-y: 4px; // box/inner/padding/XS
+  --p-plantable-worker-gap: 4px;
+  --p-plantable-worker-radius: 4px; // radius/small
+  --p-plantable-worker-name-font-size: 10px;
+  --p-plantable-worker-qty-font-size: 11px; // "2x"
+  --p-plantable-worker-time-font-size: 10px; // "9:00-15:30"
+  // Nombre en la cajita indigo del modo EDICIÓN (Figma 2435:18950)
+  --p-plantable-name-font-size: 14px; // body/1
+
+  // Chip de horario en modo EDICIÓN (cajita con borde punteado amarillo)
+  --p-plantable-chip-height: 24px;
+  --p-plantable-chip-padding-x: 9.6px; // box/inner/padding/S (edición)
+  --p-plantable-chip-padding-y: 1.6px;
+  --p-plantable-chip-gap: 4px; // box/inner/padding/xs
+  --p-plantable-chip-inner-gap: 2px; // spacing/xxs (2x ↔ horario)
+  --p-plantable-chip-radius: 4px; // radius/small
+  --p-plantable-chip-border-width: 1.6px;
+  --p-plantable-chip-font-size: 11px;
+
+  --p-plantable-badge-radius: 4px; // badges error/warning en cabecera tienda
+  --p-plantable-badge-padding: 5px;
+  --p-plantable-badge-gap: 2px; // box/inner/gap/XS
+  --p-plantable-badge-icon-size: 10px;
+  --p-plantable-badge-font-size: 10px;
+
+  // Anchos de columna (px exactos de Figma 2434:19085 / content)
+  // Dia y Turnos: la MITAD que una columna de seccion (112px). El nombre del
+  // dia se comprime con scaleX para caber (ver .figma-plantable__dayname) y el
+  // ancho liberado va a Caja/Pescaderia, que son las que necesitan sitio.
+  --p-plantable-col-dia: 72px;
+  --p-plantable-col-turnos: 78px;
+  --p-plantable-col-ausencias: 100px;
+  --p-plantable-col-section: 112px;        // ancho base de sección (Encargada/Panadería/Carnicería)
+  // Sección ancha (Caja/Pescadería): son las que se parten en 2 subcolumnas.
+  // Figma especifica 220px, pero ese valor deja ~92px por subcolumna y con la
+  // plantilla real de Cabrero (nombres de hasta 31 caracteres) los nombres
+  // quedaban en "C…", "D…". 300px da ~18-25 caracteres por subcolumna según la
+  // resolución, sin robar demasiado ancho a las secciones de una columna.
+  // Caja/Pescaderia: el DOBLE que una columna normal ya en Figma (220 vs 112).
+  // Aqui se les da mas todavia porque se parten en 2 subcolumnas y los nombres
+  // de Cabrero llegan a 31 caracteres.
+  --p-plantable-col-section-wide: 230px;
+  --p-plantable-col-section-narrow: 100px;  // sección estrecha (Frutería/Charcutería)
+
+  // ── Tamaño: "Table/ausencias" — tabla de DATOS (px) — Nodo 2374:17894 ──
+  // La tabla de datos genérica (cabecera con orden/filtro + filas zebra +
+  // columna de acciones). Distinta de "Table — Action bar" (2378:23347,
+  // barra Mostrar/Columnas de arriba) y de "Table/Pagination" (2120:13001),
+  // que ya tienen sus propias primitivas más arriba.
+  --p-datatable-radius: 8px;            // radius/default (contenedor)
+  --p-datatable-border-width: 1px;
+
+  // Cabecera (Table/header-cell)
+  --p-datatable-header-height:    32px;
+  --p-datatable-header-padding-l: 16px; // spacing/M
+  --p-datatable-header-padding-r: 8px;  // spacing/S
+  --p-datatable-header-padding-y: 8px;  // box/inner/padding/S
+  --p-datatable-header-text-gap:  4px;  // spacing/XS (label ↔ icono orden)
+  --p-datatable-header-font-size: 12px; // fontSize/caption (Overline)
+  --p-datatable-header-line-height: 1.2;
+  --p-datatable-header-letter-spacing: 0.12px;
+  --p-datatable-header-sort-icon-size:   12px; // arrow_downward
+  --p-datatable-header-filter-icon-size: 16px; // filter_list
+  --p-datatable-header-actions-gap: 12px; // gap en cabecera ACCIONES
+
+  // Celda de datos (Table cell)
+  --p-datatable-cell-height:    52px;
+  --p-datatable-cell-padding-x: 16px; // spacing/M
+  --p-datatable-cell-padding-y: 16px; // box/inner/padding/M
+  --p-datatable-cell-font-size: 14px; // fontSize/body/2 (Table text)
+  --p-datatable-cell-line-height: 1.11;
+
+  // Celda de acciones + botón icon-only interior
+  --p-datatable-actions-padding-y: 8px;  // box/inner/padding/S
+  --p-datatable-actions-gap:       16px; // spacing/M
+  --p-datatable-action-btn-padding: 4px; // box/inner/padding/XS
+  --p-datatable-action-btn-radius:  9999px; // radius/btn
+  --p-datatable-action-icon-size:   20px; // edit
+
+  // Anchos de columna
+  --p-datatable-col-actions-width: 92px; // ACCIONES (fija; el resto flex:1)
+
+  // Paginación embebida (separador superior propio de esta tabla)
+  --p-datatable-pagination-border-width: 1px;
+
+  // ── Modal / Dialog (px) — Nodos Figma 2464:44452 (warning) /
+  //    2591:2403 (danger) / 2464:44453 (overlay) ───────────────────
+  --p-modal-radius:       8px;   // br-containers
+  --p-modal-padding:      24px;  // padding interno de la card
+  --p-modal-gap:          32px;  // gap body ↔ footer
+  --p-modal-body-gap:     20px;  // gap icono ↔ texto
+  --p-modal-text-gap:     8px;   // gap título ↔ mensaje (spacing/S)
+  --p-modal-footer-gap:   16px;  // gap entre botones (spacing/M)
+  --p-modal-max-width:    420px; // ancho máximo de la card
+  --p-modal-icon-size:    48px;  // círculo/icono de estado
+  --p-modal-scrim-padding: 16px; // aire alrededor de la card
+  --p-modal-blur:         16px;  // Background blur/md del overlay
+  // Título Heading/5 · Mensaje Body/1
+  --p-modal-title-font-size:   16px; // heading/5
+  --p-modal-title-line-height: 1.2;
+  --p-modal-message-font-size: 16px; // body/1
+  --p-modal-message-line-height: 1.4;
+
+  // ── PDF planificación (px) — Nodos Figma 2445:23224 (plan) /
+  //    2464:42412 (ausencias). Tabla impresa A4. ────────────────────
+  --p-pdf-border-width:  1px;    // todos los bordes de celda
+  --p-pdf-radius:        8px;    // radius/default (esquinas del contenedor tabla)
+  --p-pdf-cell-padding-x: 8px;   // spacing/S
+  --p-pdf-cell-padding-y: 4px;   // spacing/XS
+  --p-pdf-header-height:  28px;  // alto cabecera de columna
+  --p-pdf-row-height:     40px;  // alto fila de empleado
+  --p-pdf-header-font-size: 8px; // Overline pequeño (cabecera día/rol)
+  --p-pdf-cell-font-size:   9px; // horario / nombre
+  --p-pdf-header-letter-spacing: 0.4px;
+  --p-pdf-clock-icon-size:  10px; // icono reloj del horario
+  --p-pdf-daynum-gap:       4px;  // gap nombre-día ↔ número (spacing/XS)
+  // Cabecera del documento
+  --p-pdf-doc-title-font-size: 16px;
+  --p-pdf-doc-range-font-size: 14px;
+  --p-pdf-doc-page-font-size:  12px;
+  --p-pdf-doc-title-gap: 16px;   // spacing/M
+  --p-pdf-doc-padding-b: 20px;
+  // Banda de título "Ausencias"
+  --p-pdf-band-padding-x: 16px;  // spacing/M
+  --p-pdf-band-padding-y: 8px;
+  --p-pdf-section-title-font-size: 13px;
+}

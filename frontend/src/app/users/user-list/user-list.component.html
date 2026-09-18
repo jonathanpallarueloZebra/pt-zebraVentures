@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Gestión de usuarios</h1>
+  </div>
+
+  @if (loading()) {
+    <p class="loading-text">Cargando usuarios...</p>
+  } @else {
+    <div class="zb-table-card">
+      <div class="zb-table-scroll">
+        <table mat-table [dataSource]="users()" class="zb-data-table">
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="username">
+            <th mat-header-cell *matHeaderCellDef>Usuario</th>
+            <td mat-cell *matCellDef="let user">{{ user.username }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+            <td mat-cell *matCellDef="let user">{{ user.first_name }} {{ user.last_name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="active">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let user">
+              <span class="status-badge"
+                    [class.status-badge--active]="user.is_active"
+                    [class.status-badge--inactive]="!user.is_active">
+                {{ user.is_active ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let user" class="actions-cell">
+              <zb-button variant="secondary" size="sm" (click)="toggleActive(user)">
+                {{ user.is_active ? 'Desactivar' : 'Activar' }}
+              </zb-button>
+              <zb-button variant="danger-outlined" size="sm" (click)="deleteUser(user)">Eliminar</zb-button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns; let odd = odd"
+              [class.zb-row--alt]="odd"></tr>
+        </table>
+      </div>
+    </div>
+  }
+</div>

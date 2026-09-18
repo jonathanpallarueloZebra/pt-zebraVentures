@@ -1,0 +1,26 @@
+<div class="alert-root">
+
+  <!-- ── Icon + text ── -->
+  <div class="alert-body">
+    <span class="alert-icon material-icons" aria-hidden="true">{{ typeIcons[type] }}</span>
+    <div class="alert-text">
+      <span class="alert-title">{{ title }}</span>
+      @if (description) {
+        <span class="alert-desc">{{ description }}</span>
+      }
+    </div>
+  </div>
+
+  <!-- ── Dismiss button ── -->
+  @if (dismissible) {
+    <button
+      class="alert-close"
+      type="button"
+      [attr.aria-label]="'Cerrar alerta ' + type"
+      (click)="dismissed.emit()"
+    >
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  }
+
+</div>

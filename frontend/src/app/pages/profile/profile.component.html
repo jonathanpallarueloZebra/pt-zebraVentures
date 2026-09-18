@@ -1,0 +1,138 @@
+<zb-page-header [title]="'Mi perfil'" [showSidebarToggle]="true" [sidebarCollapsed]="false"></zb-page-header>
+<div class="page-container">
+
+  @if (message) {
+    <div class="alert alert-success">{{ message }}</div>
+  }
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (loading()) {
+    <div class="sk-page">
+      <div class="sk-form-card">
+        <zb-skeleton width="160px" height="18px"></zb-skeleton>
+        <div class="sk-form-row">
+          <div class="sk-form-field">
+            <zb-skeleton height="12px" width="30%"></zb-skeleton>
+            <zb-skeleton height="40px"></zb-skeleton>
+          </div>
+          <div class="sk-form-field">
+            <zb-skeleton height="12px" width="30%"></zb-skeleton>
+            <zb-skeleton height="40px"></zb-skeleton>
+          </div>
+        </div>
+        <div class="sk-form-row">
+          <div class="sk-form-field">
+            <zb-skeleton height="12px" width="30%"></zb-skeleton>
+            <zb-skeleton height="40px"></zb-skeleton>
+          </div>
+          <div class="sk-form-field">
+            <zb-skeleton height="12px" width="30%"></zb-skeleton>
+            <zb-skeleton height="40px"></zb-skeleton>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end">
+          <zb-skeleton width="100px" height="40px" radius="8px"></zb-skeleton>
+        </div>
+      </div>
+      <div class="sk-form-card">
+        <zb-skeleton width="140px" height="18px"></zb-skeleton>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <zb-skeleton width="120px" height="14px"></zb-skeleton>
+          <zb-skeleton width="44px" height="24px" radius="12px"></zb-skeleton>
+        </div>
+      </div>
+      <div class="sk-form-card">
+        <zb-skeleton width="160px" height="18px"></zb-skeleton>
+        <div class="sk-form-field">
+          <zb-skeleton height="12px" width="35%"></zb-skeleton>
+          <zb-skeleton height="40px"></zb-skeleton>
+        </div>
+        <div style="display:flex;justify-content:flex-end">
+          <zb-skeleton width="140px" height="40px" radius="8px"></zb-skeleton>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="card-surface form-card">
+      <h3>Datos personales</h3>
+      <div class="form-row">
+        <zb-input label="Email" [ngModel]="profile.email" disabled [ngModelOptions]="{standalone: true}"></zb-input>
+        <zb-input label="Usuario" [(ngModel)]="profile.username" [ngModelOptions]="{standalone: true}"></zb-input>
+        <zb-input label="Nombre" [(ngModel)]="profile.first_name" [ngModelOptions]="{standalone: true}"></zb-input>
+        <zb-input label="Apellidos" [(ngModel)]="profile.last_name" [ngModelOptions]="{standalone: true}"></zb-input>
+      </div>
+      <div class="form-actions">
+        <zb-button variant="primary" (click)="saveProfile()" [disabled]="saving()">
+          {{ saving() ? 'Guardando...' : 'Guardar' }}
+        </zb-button>
+      </div>
+    </div>
+
+    <div class="card-surface form-card appearance-card">
+      <h3>Apariencia</h3>
+      <div class="pref-row">
+        <div class="pref-info">
+          <span class="pref-label">Tema oscuro</span>
+          <span class="text-secondary pref-desc">Cambia entre tema claro y oscuro</span>
+        </div>
+        <zb-toggle
+          [ngModel]="themeService.theme() === 'dark'"
+          (ngModelChange)="themeService.toggle()"
+          [ngModelOptions]="{standalone: true}">
+        </zb-toggle>
+      </div>
+    </div>
+
+    <div class="card-surface form-card" style="margin-top: 16px;">
+      <h3>Contraseña</h3>
+      @if (!showPasswordForm) {
+        <zb-button variant="secondary" iconLeft="lock" (click)="showPasswordForm = true">Cambiar contraseña</zb-button>
+      } @else {
+        <div class="form-row">
+          <div class="field-with-action">
+            <zb-input label="Contraseña actual"
+              [type]="hideOldPassword ? 'password' : 'text'"
+              [(ngModel)]="passwordForm.old_password"
+              [ngModelOptions]="{standalone: true}">
+            </zb-input>
+            <zb-button variant="icon-only"
+              [icon]="hideOldPassword ? 'visibility_off' : 'visibility'"
+              (click)="hideOldPassword = !hideOldPassword">
+            </zb-button>
+          </div>
+          <div class="field-with-action">
+            <zb-input label="Nueva contraseña"
+              [type]="hideNewPassword ? 'password' : 'text'"
+              [(ngModel)]="passwordForm.new_password"
+              [ngModelOptions]="{standalone: true}"
+              hint="Mínimo 8 caracteres. No puede ser solo numérica ni demasiado común.">
+            </zb-input>
+            <zb-button variant="icon-only"
+              [icon]="hideNewPassword ? 'visibility_off' : 'visibility'"
+              (click)="hideNewPassword = !hideNewPassword">
+            </zb-button>
+          </div>
+          <div class="field-with-action">
+            <zb-input label="Confirmar nueva contraseña"
+              [type]="hideConfirmPassword ? 'password' : 'text'"
+              [(ngModel)]="passwordForm.new_password_confirm"
+              [ngModelOptions]="{standalone: true}">
+            </zb-input>
+            <zb-button variant="icon-only"
+              [icon]="hideConfirmPassword ? 'visibility_off' : 'visibility'"
+              (click)="hideConfirmPassword = !hideConfirmPassword">
+            </zb-button>
+          </div>
+        </div>
+        <div class="form-actions">
+          <zb-button variant="text" (click)="showPasswordForm = false">Cancelar</zb-button>
+          <zb-button variant="primary" (click)="changePassword()" [disabled]="changingPassword()">
+            {{ changingPassword() ? 'Cambiando...' : 'Cambiar contraseña' }}
+          </zb-button>
+        </div>
+      }
+    </div>
+  }
+</div>

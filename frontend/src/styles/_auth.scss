@@ -1,0 +1,294 @@
+// ── Auth pages shared styles ──────────────────────────────────
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-subtle);
+  padding: 24px;
+}
+
+// ── Card ──────────────────────────────────────────────────────
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface-raised);
+  border-radius: 8px;
+  border: 1px solid var(--border-low);
+  box-shadow:
+    0px 8px 8px -4px rgba(10, 13, 18, 0.03),
+    0px 20px 24px -4px rgba(10, 13, 18, 0.08);
+  overflow: hidden;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: authFadeIn 0.3s ease-out;
+}
+
+@keyframes authFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Logo section ──────────────────────────────────────────────
+.auth-logo-section {
+  padding: 24px 0;
+  // Reserva el hueco del logo (48px + padding) para que la tarjeta no salte
+  // mientras se resuelve GET /branding/.
+  min-height: 96px;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--divider-default);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Logo de Cabrero (PNG 415x100). Se limita por ALTO para que ocupe lo mismo
+// que ocupaba el wordmark de texto; el ancho se ajusta solo y nunca desborda
+// la tarjeta en pantallas estrechas.
+.auth-logo {
+  height: 48px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+// (.auth-wordmark se retiró: las 4 pantallas de auth usan ya el logo.)
+
+// ── Form (wraps title + fields + button) ──────────────────────
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-title {
+  font-family: var(--ff-body);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+}
+
+.auth-subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--text-secondary);
+  margin: 0;
+  text-align: center;
+}
+
+// ── Field group ───────────────────────────────────────────────
+.auth-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12px;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+// ── Input ─────────────────────────────────────────────────────
+.auth-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 8px 14px;
+  font-size: 16px;
+  font-family: var(--ff-body);
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--text-primary);
+  background: var(--surface-raised);
+  border: none;
+  border-radius: 4px;
+  outline: 1px solid var(--border-high);
+  outline-offset: -1px;
+  box-shadow: 0px 1px 2px rgba(10, 13, 18, 0.05);
+  transition: outline-color 150ms ease;
+
+  &::placeholder { color: var(--text-secondary); }
+
+  &:focus {
+    outline: 2px solid var(--brand-base);
+    outline-offset: -2px;
+  }
+
+  &--icon { padding-right: 44px; }
+}
+
+.auth-input-toggle {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--icon-neutral-high);
+  padding: 4px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+  }
+
+  &:hover { color: var(--icon-neutral-highest); }
+}
+
+.auth-field-hint {
+  font-size: 12px;
+  color: var(--text-disabled);
+  line-height: 1.4;
+}
+
+// ── "Recuperar contraseña" row ────────────────────────────────
+.auth-forgot-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0;
+}
+
+// ── Links ─────────────────────────────────────────────────────
+.auth-link {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--text-link);
+  text-decoration: underline;
+  transition: opacity 150ms ease;
+
+  &:hover { opacity: 0.75; }
+}
+
+// ── Submit button ─────────────────────────────────────────────
+.auth-btn {
+  width: 100%;
+  height: 42px;
+  padding: 8px 24px;
+  background: var(--brand-base);
+  color: var(--text-primary);
+  font-family: var(--ff-body);
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: filter 150ms ease;
+
+  &:hover:not(:disabled) { filter: brightness(0.94); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.auth-action { padding-bottom: 8px; }
+
+// ── Alerts ────────────────────────────────────────────────────
+.auth-alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 20px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  &--error   { background: var(--error-surface);   color: var(--text-primary); }
+  &--success { background: var(--success-surface); color: var(--text-primary); }
+}
+
+// ── Footer row ────────────────────────────────────────────────
+.auth-footer-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
+}
+
+.auth-footer-text {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--text-secondary);
+}
+
+// ── Back row (with icon) ──────────────────────────────────────
+.auth-back-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0 24px;
+}
+
+// ── Success state ─────────────────────────────────────────────
+.auth-success-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.auth-success-icon {
+  font-size: 48px !important;
+  width: 48px !important;
+  height: 48px !important;
+  line-height: 1 !important;
+  color: var(--success-text, #027A48);
+}
+
+// ── Loading / validating ──────────────────────────────────────
+.auth-loading {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+// ── Account email (set-password) ──────────────────────────────
+.auth-account {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+
+  strong { color: var(--text-primary); }
+}

@@ -1,0 +1,108 @@
+// ── Fixed full-viewport layer ─────────────────────────────────
+// Always rendered (enables slide-in AND slide-out). When closed the
+// whole layer is inert + pointer-events:none so it never blocks the page.
+.zb-sidepanel {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  font-family: var(--ff-body);
+}
+
+// ── Scrim ─────────────────────────────────────────────────────
+.zb-sidepanel__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--modal-overlay);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+// ── Panel ─────────────────────────────────────────────────────
+.zb-sidepanel__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  max-width: 100vw;
+  background: var(--figma-sidepanel-bg); // Surface/raised (Figma 2134:2818)
+  box-shadow: var(--figma-sidepanel-shadow); // Shadow/3xl
+  transform: translateX(100%);
+  transition: transform var(--transition-normal);
+  pointer-events: none;
+}
+
+// ── Open state ────────────────────────────────────────────────
+.zb-sidepanel--open {
+  .zb-sidepanel__scrim { opacity: 1; pointer-events: auto; }
+  .zb-sidepanel__panel { transform: translateX(0); pointer-events: auto; }
+}
+
+// ── Header ────────────────────────────────────────────────────
+// Header — padding asimétrico del Figma: 32/16/16/8 (izq/der/top/bottom).
+// Más aire a la izquierda (donde va el título), pegado al botón cerrar.
+.zb-sidepanel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--figma-sidepanel-header-gap); // 16
+  flex-shrink: 0;
+  padding:
+    var(--figma-sidepanel-header-padding-top)      // 16
+    var(--figma-sidepanel-header-padding-right)    // 16
+    var(--figma-sidepanel-header-padding-bottom)   // 8
+    var(--figma-sidepanel-header-padding-left);    // 32
+  border-bottom: 1px solid var(--figma-sidepanel-divider);
+}
+
+.zb-sidepanel__title {
+  margin: 0;
+  font-family: var(--figma-btn-font-family); // Inter
+  font-size: var(--figma-sidepanel-header-title-font-size); // 18px (heading/4)
+  font-weight: var(--fw-semibold);
+  line-height: var(--figma-sidepanel-header-title-line-height); // 1.2
+  color: var(--figma-sidepanel-header-title-color); // Text/primary
+  // Los títulos ahora llevan el nombre del registro ("Editar turno: Refuerzo
+  // Navidad 2026"), así que uno largo desbordaba la cabecera. min-width:0 es
+  // necesario para que un hijo flex pueda encogerse por debajo de su texto.
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zb-sidepanel__close { flex-shrink: 0; }
+
+// ── Body (scrollable, projected content) ──────────────────────
+// Gap 24px (spacing/L) entre campos — patrón de form del sidepanel en Figma.
+// Es la MISMA separación en todo el sidepanel (dynamic-fields y .abs-form
+// también a 24px) → uniforme y con aire (formularios largos no se apelotonan).
+.zb-sidepanel__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-l);
+  padding: var(--sp-l);
+  color: var(--text-primary);
+  font-size: var(--fs-14);
+}
+
+// ── Footer (action bar) ───────────────────────────────────────
+// Footer (action bar) — Figma 2112:2332: padding 32×24, gap 16 (Cancelar↔Guardar).
+.zb-sidepanel__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--figma-sidepanel-actions-gap-right); // 16
+  flex-shrink: 0;
+  padding:
+    var(--figma-sidepanel-actions-padding-y)   // 24
+    var(--figma-sidepanel-actions-padding-x);  // 32
+  border-top: 1px solid var(--figma-sidepanel-divider);
+}
+
+.zb-sidepanel__spacer { flex: 1; }

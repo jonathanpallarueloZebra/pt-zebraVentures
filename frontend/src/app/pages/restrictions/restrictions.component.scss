@@ -1,0 +1,261 @@
+// ════════════════════════════════════════════════════════════
+// Restricciones — tabla (zb-data-table + zb-table-card, tokens
+// --figma-datatable-*). Aquí solo lo específico de las celdas, con los
+// tokens/valores de stylesJPfigma (nada hardcodeado).
+// ════════════════════════════════════════════════════════════
+
+// Layout de página: el contenedor es la clase GLOBAL .page-container
+// (styles.scss), igual que /absences y /entities/*. El toolbar del sistema
+// lleva la MISMA clase y valor que esas páginas para separarse de la tabla.
+.records-toolbar {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--sp-m);
+  // .page-container tiene padding-top:0 y en el resto de páginas el aire
+  // superior lo da .page-actions. Aquí no hay acciones de página (las
+  // restricciones no se crean desde el cliente), así que el toolbar asume
+  // ese mismo espacio (12px) para no quedar pegado a la cabecera.
+  padding-top: 12px;
+}
+
+// ── Anchos de columna estables ──────────────────────────────────
+// zb-data-table es width:100% con table-layout:auto, así que sin anchos
+// propios las columnas se reparten según el contenido de las filas VISIBLES:
+// al cambiar "Mostrar" (10 → 25) entran descripciones más largas y la tabla
+// se recolocaba entera. Con table-layout:fixed los anchos ya no dependen de
+// las filas que toque ver. La de acciones mantiene sus 92px del token.
+.restrictions-table {
+  table-layout: fixed;
+  width: 100%;
+
+  .cdk-column-name     { width: 30%; }
+  .cdk-column-engine   { width: 22%; }
+  .cdk-column-kind     { width: 12%; }
+  .cdk-column-severity { width: 10%; }
+  .cdk-column-scope    { width: 14%; }
+  .cdk-column-active   { width: 80px; }
+}
+
+// ── Celda "Restricción": nombre + descripción apilados ──────────
+.cell-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 0;
+}
+// El SemiBold del nombre lo aporta la base zb-data-table (1ª celda).
+.cell-primary {
+  color: var(--figma-datatable-cell-text);   // Text/primary
+}
+// La descripción NO hereda la negrita de la celda: peso normal explícito.
+// Texto secundario = 12px (fontSize/caption del Figma), común a todas las tablas.
+.cell-secondary {
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-12);
+  color: var(--text-secondary);              // Text/secondary #060f19a8
+}
+
+// ── Celda "Motor" ───────────────────────────────────────────────
+.engine-label {
+  font-weight: var(--fw-semibold);
+  margin-right: var(--sp-xs, 4px);
+  color: var(--figma-datatable-cell-text);
+}
+.config-text {
+  font-size: var(--fs-12);
+  color: var(--text-secondary);
+}
+
+// ── Celda de ámbito (tiendas a las que aplica) ───────────────────
+.scope-text {
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-12);
+  color: var(--text-secondary);
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ── Badges (Severidad y Tipo) — tokens de Alert del Figma ────────
+// Mismo patrón: 12px caption, SemiBold, MAYÚS, letter-spacing Overline.
+.severity-badge,
+.kind-badge {
+  display: inline-block;
+  padding: var(--figma-chip-padding-y) var(--figma-chip-padding-x-sm);
+  border-radius: var(--figma-chip-radius);   // full-rounded 9999
+  font-size: var(--figma-chip-font-size-sm);  // 12px (caption)
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--figma-datatable-header-letter-spacing); // 0.12 (Overline)
+  white-space: nowrap;
+}
+.severity-error {
+  background: var(--figma-alert-error-surface);
+  color: var(--figma-alert-error-text);
+}
+.severity-warning {
+  background: var(--figma-alert-warning-surface);
+  color: var(--figma-alert-warning-text);
+}
+
+// Tipo: Fija = neutro, Personalizable = info (azul).
+.kind-badge {
+  background: var(--figma-surface-subtle);
+  color: var(--text-secondary);
+
+  &--custom {
+    background: var(--figma-alert-info-surface);
+    color: var(--figma-alert-info-text);
+  }
+}
+
+// ── Celda de acciones ───────────────────────────────────────────
+// El ancho (92px), el centrado, el nowrap y el estilo de .zb-action/
+// .zb-action__icon los pone zb-data-table. Aquí solo: hueco entre los tres
+// botones y que zb-icon respete los 20px del token (su tamaño va inline en el
+// host, así que necesita !important para que gane .zb-action__icon).
+.actions-cell {
+  .zb-action + .zb-action { margin-left: 2px; }
+
+  zb-icon.zb-action__icon {
+    width: var(--figma-datatable-action-icon-size) !important;
+    height: var(--figma-datatable-action-icon-size) !important;
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// SIDEPANELS (editar / duplicar)
+// Gap entre campos = 16px, igual que el resto de sidepanels.
+// ════════════════════════════════════════════════════════════
+.panel-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── Motor / tipo de regla en solo lectura ───────────────────────
+.readonly-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border: var(--figma-input-border-width) solid var(--figma-input-border);
+  border-radius: var(--figma-input-radius);
+  background: var(--figma-surface-subtle);
+}
+.readonly-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.readonly-label {
+  font-size: var(--fs-12);
+  color: var(--text-secondary);
+  min-width: 100px;
+}
+.readonly-value {
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  color: var(--figma-datatable-cell-text);
+}
+
+// ── Fila de dos campos (condición + cantidad) ───────────────────
+.panel-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  > * { flex: 1; min-width: 0; }
+}
+
+// ── Parejas de trabajadores incompatibles ───────────────────────
+.pairs-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pairs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pairs-title {
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  color: var(--figma-datatable-cell-text);
+}
+.pairs-hint,
+.pairs-empty {
+  font-size: var(--fs-12);
+  color: var(--text-secondary);
+}
+.pairs-error {
+  font-size: var(--fs-12);
+  color: var(--figma-alert-error-text);
+}
+.pair-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  // Los dos selects se reparten el ancho; el botón de borrar no crece.
+  zb-select { flex: 1; min-width: 0; }
+}
+.pair-sep {
+  font-size: var(--fs-12);
+  color: var(--text-secondary);
+  flex: 0 0 auto;
+}
+
+// ── Ámbito: lista de checkboxes de tiendas ──────────────────────
+.scope-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.scope-title {
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  color: var(--figma-datatable-cell-text);
+}
+.scope-hint {
+  font-size: var(--fs-12);
+  color: var(--text-secondary);
+}
+.scope-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 8px;
+  border: var(--figma-input-border-width) solid var(--figma-input-border);
+  border-radius: var(--figma-input-radius);
+}
+
+// ── Intro del panel de duplicar ─────────────────────────────────
+.dup-intro {
+  margin: 0;
+  font-size: var(--fs-14);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+// ── Dark theme: badges (variante dark del Figma) ────────────────
+:host-context(.dark-theme) {
+  .severity-error {
+    background: var(--figma-alert-dark-error-surface);
+    color: var(--figma-alert-dark-error-text);
+  }
+  .severity-warning {
+    background: var(--figma-alert-dark-warning-surface);
+    color: var(--figma-alert-dark-warning-text);
+  }
+  .kind-badge--custom {
+    background: var(--figma-alert-dark-info-surface);
+    color: var(--figma-alert-dark-info-text);
+  }
+}

@@ -1,0 +1,54 @@
+<mat-toolbar class="navbar">
+  <!-- Admin: sidebar toggle -->
+  @if (isStaff()) {
+    <button mat-icon-button (click)="sidebar.toggleCollapse()" class="menu-btn desktop-only">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <button mat-icon-button (click)="sidebar.toggleMobile()" class="menu-btn mobile-only">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+
+  <span class="brand-identity">
+    @if (brandingService.branding().logo_url) {
+      <img class="brand-logo" [src]="brandingService.branding().logo_url" [alt]="brandingService.branding().company_name">
+    }
+    <span class="brand">{{ brandingService.branding().company_name }}</span>
+  </span>
+
+  <span class="spacer"></span>
+
+  <!-- Employee: absence request button -->
+  @if (!isStaff()) {
+    <button mat-icon-button matTooltip="Solicitar ausencia" routerLink="/absence-request">
+      <mat-icon>event_busy</mat-icon>
+    </button>
+  }
+
+  <!-- Admin: bell notification -->
+  @if (isStaff()) {
+    <button mat-icon-button matTooltip="Ausencias pendientes" (click)="goToAbsences()"
+            [matBadge]="pendingCount()" [matBadgeHidden]="pendingCount() === 0"
+            matBadgeColor="warn" matBadgeSize="medium" class="bell-btn">
+      <mat-icon>notifications</mat-icon>
+    </button>
+  }
+
+  <button mat-icon-button [matMenuTriggerFor]="userMenu">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #userMenu="matMenu">
+    <button mat-menu-item routerLink="/profile">
+      <mat-icon>person</mat-icon>
+      <span>Mi perfil</span>
+    </button>
+    <button mat-menu-item (click)="themeService.toggle()">
+      <mat-icon>{{ themeService.theme() === 'light' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+      <span>Cambiar tema</span>
+    </button>
+    <button mat-menu-item (click)="onLogout()">
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar sesion</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

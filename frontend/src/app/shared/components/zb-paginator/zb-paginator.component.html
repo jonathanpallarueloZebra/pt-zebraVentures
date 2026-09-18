@@ -1,0 +1,45 @@
+<div class="pg-root">
+
+  <!-- ── Anterior ── -->
+  <button
+    class="pg-nav pg-nav--prev"
+    type="button"
+    [disabled]="isPrevDisabled"
+    [attr.aria-label]="'Página anterior'"
+    (click)="prevPage()"
+  >
+    <zb-icon class="pg-nav__icon" name="arrow_back" size="20"></zb-icon>
+    <span class="pg-nav__label">Anterior</span>
+  </button>
+
+  <!-- ── Números ── -->
+  <div class="pg-numbers" role="navigation" aria-label="Paginación">
+    @for (page of pages; track $index) {
+      @if (isNumber(page)) {
+        <button
+          class="pg-number"
+          type="button"
+          [class.pg-number--active]="page === currentPage"
+          [attr.aria-label]="'Página ' + page"
+          [attr.aria-current]="page === currentPage ? 'page' : null"
+          (click)="goTo(page)"
+        >{{ page }}</button>
+      } @else {
+        <span class="pg-ellipsis" aria-hidden="true">...</span>
+      }
+    }
+  </div>
+
+  <!-- ── Siguiente ── -->
+  <button
+    class="pg-nav pg-nav--next"
+    type="button"
+    [disabled]="isNextDisabled"
+    [attr.aria-label]="'Página siguiente'"
+    (click)="nextPage()"
+  >
+    <span class="pg-nav__label">Siguiente</span>
+    <zb-icon class="pg-nav__icon" name="arrow_forward" size="20"></zb-icon>
+  </button>
+
+</div>

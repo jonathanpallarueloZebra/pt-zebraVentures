@@ -1,0 +1,290 @@
+@if (loading()) {
+  <!-- Sin indicador de carga (ni skeleton ni spinner): la tabla aparece al
+       llegar los datos. -->
+} @else if (entityType()) {
+
+  <zb-page-header
+    [title]="entityType()!.name"
+    [subtitle]="filteredRecords().length !== records().length
+      ? filteredRecords().length + ' de ' + records().length + ' registros'
+      : records().length + ' registros'"
+    [showSidebarToggle]="true"
+    [sidebarCollapsed]="false"
+  ></zb-page-header>
+
+  <div class="page-container">
+
+    <!-- Botones de la barra: size="sm" = 28px de alto, la medida del Figma
+         (2368:10501 → Button h=28, padding 14px, texto 12px MAYÚS). -->
+    <div class="page-actions">
+      <zb-button variant="secondary" size="sm" iconRight="file_download" (click)="downloadExcel()">Descargar Excel</zb-button>
+      <zb-button variant="primary" size="sm" iconLeft="add" (click)="openAdd()">{{ newLabel() }}</zb-button>
+    </div>
+
+    @if (records().length > 0) {
+
+      <!-- Toolbar: Mostrar [N] + Columnas + filtros -->
+      <zb-table-toolbar
+        class="records-toolbar"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="pageSizeOptions"
+        [showPageSize]="true"
+        [showColumnsToggle]="false"
+        (pageSizeChange)="onPageSizeChange($event)"
+      >
+        <zb-column-menu
+          toolbar-left
+          [columns]="candidateColumns()"
+          [visibleKeys]="visibleColumns()"
+          (visibleKeysChange)="onColumnsChange($event)"
+          (reset)="onColumnsReset()"
+        ></zb-column-menu>
+
+        <!-- Filtros (campos con "Mostrar como filtro") -->
+        @for (f of filterableFields(); track f.key) {
+          <zb-select
+            toolbar-left
+            class="toolbar-filter"
+            [placeholder]="f.label"
+            [options]="filterSelectOptions(f)"
+            [ngModel]="getFilterValue(f.key)"
+            (ngModelChange)="setFilter(f.key, $event)"
+          ></zb-select>
+        }
+      </zb-table-toolbar>
+
+      <div class="zb-table-card">
+        <div class="zb-table-scroll">
+          <table mat-table [dataSource]="pagedRecords()" class="records-table zb-data-table full-width">
+
+            @for (col of displayedColumns(); track col) {
+              @if (col !== 'actions' && col !== 'validity') {
+                <ng-container [matColumnDef]="col">
+                  <th mat-header-cell *matHeaderCellDef>{{ getColumnLabel(col) }}</th>
+                  <td mat-cell *matCellDef="let row">
+                    @if (fieldTypeOf(col.slice(3)) === 'icon') {
+                      @if (iconSrc(row, col.slice(3)); as src) {
+                        <img class="record-cell-icon" [src]="src" alt="" aria-hidden="true" />
+                      } @else if (iconValue(row, col.slice(3))) {
+                        <mat-icon class="record-cell-icon record-cell-icon--material">{{ iconValue(row, col.slice(3)) }}</mat-icon>
+                      } @else {
+                        —
+                      }
+                    } @else {
+                      {{ getLabel(row, col.slice(3)) }}
+                    }
+                  </td>
+                </ng-container>
+              }
+            }
+
+            <!-- Columna Vigencia (solo turnos): estado + rango de fechas -->
+            <ng-container matColumnDef="validity">
+              <th mat-header-cell *matHeaderCellDef>Vigencia</th>
+              <td mat-cell *matCellDef="let row">
+                @if (validityStatus(row); as v) {
+                  <span class="validity-badge" [class]="'validity-badge--' + v.code">{{ v.label }}</span>
+                  @if (v.range) {
+                    <span class="validity-range">{{ v.range }}</span>
+                  }
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let row" class="actions-cell">
+                <!-- Icono editar = SVG real de Figma (nodo 2374:17894, edit 20x20),
+                     igual que la tabla de Ausencias. Inline, sin fuente Material. -->
+                <button type="button" class="zb-action" aria-label="Editar" (click)="startEdit(row)">
+                  <svg class="zb-action__icon" viewBox="-2.5 -2.5 20 20" fill="none" aria-hidden="true">
+                    <path d="M0 11.8771V15.0021H3.125L12.3417 5.78542L9.21667 2.66042L0 11.8771ZM14.7583 3.36875C15.0833 3.04375 15.0833 2.51875 14.7583 2.19375L12.8083 0.24375C12.4833 -0.08125 11.9583 -0.08125 11.6333 0.24375L10.1083 1.76875L13.2333 4.89375L14.7583 3.36875Z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns(); let odd = odd"
+                [class.editing-row]="editingId() === row.id"
+                [class.zb-row--alt]="odd"></tr>
+          </table>
+        </div>
+
+        <zb-paginator
+          class="zb-table-card__pager"
+          [currentPage]="page() + 1"
+          [totalPages]="totalPages()"
+          (pageChange)="page.set($event - 1)"
+        ></zb-paginator>
+      </div>
+
+    } @else {
+      <div class="empty-center">
+        <!-- Turnos y tiendas tienen ilustración propia en Figma (2139:7847 /
+             2139:8257); el resto de maestros se quedan con el icono genérico. -->
+        <zb-empty-state
+          [illustration]="emptyIllustration()"
+          [icon]="emptyIllustration() ? '' : 'inbox'"
+          [title]="emptyTitle()"
+          [subtitle]="emptyIllustration() ? '' : 'Crea el primer registro para empezar a trabajar.'"
+        >
+          <zb-button variant="primary" iconLeft="add" (click)="openAdd()">{{ newLabel() }}</zb-button>
+        </zb-empty-state>
+      </div>
+    }
+
+    <!-- ── Create sidepanel ── -->
+    <zb-sidepanel
+      [open]="showAdd()"
+      (openChange)="showAdd.set($event)"
+      [title]="newLabel()"
+      [showClose]="false"
+      mode="create"
+      (save)="saveAdd()"
+    >
+      @if (showAdd()) {
+        @if (slug === 'shift') {
+          <div class="shift-days-field">
+            <label class="days-label">Días operativos</label>
+            <div class="days-checkboxes">
+              @for (day of WEEKDAY_LABELS; track day.value) {
+                <zb-checkbox
+                  [label]="day.label"
+                  [ngModel]="isDaySelected(day.value, 'new')"
+                  (ngModelChange)="toggleDay(day.value, 'new')">
+                </zb-checkbox>
+              }
+            </div>
+          </div>
+          <div class="shift-validity-field">
+            <label class="days-label">Vigencia (opcional — turnos extra)</label>
+            <div class="shift-indefinite">
+              <zb-checkbox
+                label="Indefinida (sin fecha de fin)"
+                [ngModel]="isShiftIndefinite('new')"
+                (ngModelChange)="setShiftIndefinite('new', $event)"
+                [ngModelOptions]="{standalone: true}">
+              </zb-checkbox>
+            </div>
+            <div class="validity-inputs">
+              <div class="validity-item">
+                <label class="validity-item__label">Vigente desde</label>
+                <input type="date" class="validity-item__input"
+                  [ngModel]="newData()['_valid_from']"
+                  (ngModelChange)="setValidity('new', 'from', $event)">
+              </div>
+              <!-- "Vigente hasta" siempre visible; se DESHABILITA (gris) si es
+                   indefinida, igual que "Fecha de fin" en ausencias. -->
+              <div class="validity-item" [class.validity-item--disabled]="isShiftIndefinite('new')">
+                <label class="validity-item__label">Vigente hasta</label>
+                <input type="date" class="validity-item__input"
+                  [ngModel]="newData()['_valid_to']"
+                  [disabled]="isShiftIndefinite('new')"
+                  (ngModelChange)="setValidity('new', 'to', $event)">
+              </div>
+            </div>
+          </div>
+        }
+        <app-dynamic-fields
+          [fields]="fieldSchema()"
+          [values]="newData()"
+          (valuesChange)="newData.set($event)">
+        </app-dynamic-fields>
+      }
+    </zb-sidepanel>
+
+    <!-- ── Edit sidepanel ── -->
+    <zb-sidepanel
+      [open]="editingId() !== null"
+      (openChange)="!$event && cancelEdit()"
+      [title]="editTitle()"
+      [showClose]="false"
+      mode="edit"
+      (save)="saveEdit()"
+      (delete)="deleteEditing()"
+    >
+      @if (editingId() !== null) {
+        @if (slug === 'shift') {
+          <div class="shift-days-field">
+            <label class="days-label">Días operativos</label>
+            <div class="days-checkboxes">
+              @for (day of WEEKDAY_LABELS; track day.value) {
+                <zb-checkbox
+                  [label]="day.label"
+                  [ngModel]="isDaySelected(day.value, 'edit')"
+                  (ngModelChange)="toggleDay(day.value, 'edit')">
+                </zb-checkbox>
+              }
+            </div>
+          </div>
+          <div class="shift-validity-field">
+            <label class="days-label">Vigencia (opcional — turnos extra)</label>
+            <div class="shift-indefinite">
+              <zb-checkbox
+                label="Indefinida (sin fecha de fin)"
+                [ngModel]="isShiftIndefinite('edit')"
+                (ngModelChange)="setShiftIndefinite('edit', $event)"
+                [ngModelOptions]="{standalone: true}">
+              </zb-checkbox>
+            </div>
+            <div class="validity-inputs">
+              <div class="validity-item">
+                <label class="validity-item__label">Vigente desde</label>
+                <input type="date" class="validity-item__input"
+                  [ngModel]="editData()['_valid_from']"
+                  (ngModelChange)="setValidity('edit', 'from', $event)">
+              </div>
+              <!-- "Vigente hasta" siempre visible; se DESHABILITA (gris) si es
+                   indefinida, igual que "Fecha de fin" en ausencias. -->
+              <div class="validity-item" [class.validity-item--disabled]="isShiftIndefinite('edit')">
+                <label class="validity-item__label">Vigente hasta</label>
+                <input type="date" class="validity-item__input"
+                  [ngModel]="editData()['_valid_to']"
+                  [disabled]="isShiftIndefinite('edit')"
+                  (ngModelChange)="setValidity('edit', 'to', $event)">
+              </div>
+            </div>
+          </div>
+        }
+        <app-dynamic-fields
+          [fields]="fieldSchema()"
+          [values]="editData()"
+          (valuesChange)="editData.set($event)">
+        </app-dynamic-fields>
+      }
+    </zb-sidepanel>
+
+    <!-- ── Confirmación de borrado (modal del sistema, overlay de página
+         completa por encima del sidepanel) ── -->
+    <zb-dialog
+      [(open)]="showDeleteConfirm"
+      title="Eliminar registro"
+      message="¿Eliminar este registro? Esta acción no se puede deshacer."
+      mode="danger"
+      confirmLabel="Eliminar"
+      cancelLabel="Cancelar"
+      (confirm)="confirmDelete()"
+    ></zb-dialog>
+
+    <!-- ── Error: no se puede eliminar (dependencias) ── -->
+    <zb-dialog
+      [(open)]="showDeleteError"
+      title="No se puede eliminar"
+      [message]="deleteErrorMessage"
+      [html]="true"
+      mode="danger"
+      confirmLabel="Entendido"
+      cancelLabel="Cerrar"
+      (confirm)="showDeleteError = false"
+    ></zb-dialog>
+
+  </div>
+
+} @else {
+  <zb-empty-state
+    icon="error_outline"
+    title="Entidad no encontrada"
+    subtitle="Revisa la dirección o vuelve al listado."
+  ></zb-empty-state>
+}

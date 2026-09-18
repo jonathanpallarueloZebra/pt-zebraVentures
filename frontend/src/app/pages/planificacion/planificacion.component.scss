@@ -1,0 +1,470 @@
+// ============================================================
+// Diagnóstico de planificación (/planificacion) — solo lectura.
+// Usa los tokens del sistema (--figma-*) igual que el resto de tablas.
+// ============================================================
+
+.diag-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-s);
+  margin-bottom: var(--sp-m);
+  flex-wrap: wrap;
+
+  &__spacer { flex: 1 1 auto; }
+}
+
+// Selector de fecha con el patrón Input/text de Figma.
+.diag-week {
+  appearance: none;
+  padding: var(--figma-input-padding);
+  background: var(--figma-input-surface);
+  border: var(--figma-input-border-width) solid var(--figma-input-border);
+  border-radius: var(--figma-input-radius);
+  box-shadow: var(--figma-input-shadow);
+  font-family: var(--ff-body);
+  font-size: var(--figma-input-value-font-size);
+  color: var(--figma-input-text);
+
+  &:focus { outline: none; border-color: var(--figma-input-border-active); }
+}
+
+/* ── Resumen ─────────────────────────────────────────────── */
+.diag-stats {
+  display: flex;
+  gap: var(--sp-m);
+  margin-bottom: var(--sp-m);
+  flex-wrap: wrap;
+}
+
+.diag-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs, 4px);
+  min-width: 140px;
+  padding: var(--sp-m);
+  background: var(--fondo-card, #fff);
+  border: 1px solid var(--borde-general, #d6d8dc);
+  border-radius: var(--radius-containers, 8px);
+
+  &__value {
+    font-family: var(--ff-display, Inter);
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: var(--fw-semibold);
+    color: var(--texto-principal);
+  }
+  &__label {
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.12px;
+    text-transform: uppercase;
+    color: var(--texto-secundario);
+  }
+
+  // Destaca los planes guardados pero vacíos: son el caso a revisar.
+  &--warn {
+    background: var(--figma-alert-warning-surface);
+    border-color: var(--figma-alert-warning-border);
+    .diag-stat__value, .diag-stat__label { color: var(--figma-alert-warning-text); }
+  }
+}
+
+/* ── Tabla de tiendas ────────────────────────────────────── */
+.diag-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--ff-body);
+
+  th {
+    height: var(--figma-datatable-header-height);
+    padding: var(--figma-datatable-header-padding-y) var(--figma-datatable-header-padding-l);
+    text-align: left;
+    background: var(--figma-datatable-header-bg);
+    color: var(--figma-datatable-header-text);
+    font-size: var(--figma-datatable-header-font-size);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--figma-datatable-header-letter-spacing);
+    border-bottom: 1px solid var(--figma-datatable-border);
+    white-space: nowrap;
+  }
+  td {
+    padding: var(--figma-datatable-cell-padding-y) var(--figma-datatable-cell-padding-x);
+    font-size: var(--figma-datatable-cell-font-size);
+    color: var(--figma-datatable-cell-text);
+    border-bottom: 1px solid var(--figma-datatable-border);
+  }
+  .num { text-align: right; white-space: nowrap; }
+}
+
+.diag-row {
+  cursor: pointer;
+  transition: background var(--transition-fast);
+
+  &--alt td { background: var(--figma-datatable-row-bg-even); }
+  &:hover td { background: var(--accent-alpha-low); }
+  &--open td { background: var(--accent-alpha-low); }
+}
+
+.diag-name { font-weight: var(--fw-semibold); }
+
+.diag-chevron {
+  color: var(--icon-neutral-high);
+  transition: transform var(--transition-fast);
+  &--open { transform: rotate(180deg); }
+}
+
+/* ── Badges de estado ────────────────────────────────────── */
+.diag-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--figma-chip-padding-y) var(--figma-chip-padding-x-sm);
+  border-radius: var(--figma-chip-radius);
+  font-size: var(--figma-chip-font-size-sm);
+  font-weight: var(--fw-semibold);
+  line-height: var(--figma-chip-line-height-sm);
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &--ok {
+    background: var(--figma-alert-success-surface);
+    color: var(--figma-alert-success-text);
+  }
+  &--empty {
+    background: var(--figma-alert-warning-surface);
+    color: var(--figma-alert-warning-text);
+  }
+  &--none {
+    background: var(--figma-datatable-header-bg);
+    color: var(--figma-datatable-header-text);
+  }
+}
+
+/* ── Detalle desplegado ──────────────────────────────────── */
+.diag-detail-row td {
+  padding: 0;
+  background: var(--surface-base, #fafafa);
+}
+
+.diag-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-m);
+  padding: var(--sp-m) var(--sp-l);
+}
+
+.diag-day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs, 4px);
+  padding: var(--sp-s) var(--sp-m);
+  background: var(--fondo-card, #fff);
+  border: 1px solid var(--borde-general, #d6d8dc);
+  border-radius: var(--radius-containers, 8px);
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-s);
+    flex-wrap: wrap;
+    padding-bottom: var(--sp-xs, 4px);
+  }
+  &__name {
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-14);
+    color: var(--texto-principal);
+    text-transform: capitalize;
+  }
+  &__count {
+    font-size: var(--fs-12);
+    color: var(--texto-secundario);
+  }
+}
+
+/* ── Leyenda del código de colores ───────────────────────── */
+.diag-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs, 4px);
+  flex-wrap: wrap;
+  padding: var(--sp-s) var(--sp-m);
+  background: var(--fondo-card, #fff);
+  border: 1px solid var(--borde-general, #d6d8dc);
+  border-radius: var(--radius-containers, 8px);
+
+  &__text {
+    font-size: var(--fs-12);
+    color: var(--texto-secundario);
+    margin-right: var(--sp-s);
+  }
+  // En la leyenda la etiqueta de sección no necesita ancho fijo.
+  .diag-group__area { width: auto; }
+}
+
+/* ── Turno ───────────────────────────────────────────────── */
+.diag-shift {
+  padding: var(--sp-s) 0;
+  border-top: 1px solid var(--border-low, #f1f2f3);
+
+  &:first-of-type { border-top: 0; }
+
+  &__head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-s);
+    margin-bottom: var(--sp-xs, 4px);
+  }
+  &__label {
+    font-size: var(--fs-13);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.12px;
+    color: var(--texto-principal);
+  }
+  &__count {
+    font-size: var(--fs-12);
+    color: var(--texto-secundario);
+  }
+}
+
+/* ── Una fila por sección ────────────────────────────────── */
+.diag-group {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-s);
+  padding: 3px 0;
+
+  // Etiqueta de la sección, ancho fijo para que las filas se alineen.
+  &__area {
+    flex-shrink: 0;
+    width: 120px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--figma-chip-radius);
+    background: var(--surface-subtle, #f1f2f3);
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semibold);
+    color: var(--texto-secundario);
+
+    // Sección al tope: no caben más, es la causa de que alguien quede fuera.
+    &--full {
+      background: var(--figma-alert-warning-surface);
+      color: var(--figma-alert-warning-text);
+    }
+  }
+  &__cap {
+    font-weight: var(--fw-regular);
+    opacity: 0.8;
+    white-space: nowrap;
+  }
+}
+
+.diag-workers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-xs, 4px);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ── Persona ─────────────────────────────────────────────── */
+// Plantilla de la tienda → azul (accent). De otra tienda → índigo, el mismo
+// color que la parrilla usa para los trabajadores. Se distinguen por COLOR,
+// no por un punteado gris que parecía "deshabilitado".
+.diag-worker {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: var(--figma-input-radius, 4px);
+  border: 1px solid transparent;
+  background: var(--accent-alpha-low);
+  border-color: var(--border-accent, transparent);
+  font-size: var(--fs-12);
+  color: var(--texto-principal);
+  white-space: nowrap;
+
+  &__name { font-weight: var(--fw-semibold); }
+  &__meta {
+    font-size: 11px;
+    color: var(--texto-secundario);
+  }
+
+  // Personal de otra tienda que cubre la zona.
+  &--out {
+    background: var(--figma-alert-info-surface);
+    border-color: var(--figma-alert-info-border);
+    .diag-worker__name { font-weight: var(--fw-regular); font-style: italic; }
+  }
+}
+
+.diag-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-xs, 4px);
+  font-size: var(--fs-12);
+  padding-top: var(--sp-xs, 4px);
+
+  &--muted { color: var(--texto-secundario); }
+  &--warn {
+    padding: var(--sp-s) var(--sp-m);
+    background: var(--figma-alert-warning-surface);
+    color: var(--figma-alert-warning-text);
+    border-radius: var(--radius-containers, 8px);
+  }
+}
+
+/* ── Sin asignar, agrupados por causa ────────────────────── */
+.diag-unassigned {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs, 4px);
+  padding: var(--sp-s) var(--sp-m);
+  background: var(--surface-subtle, #f1f2f3);
+  border-radius: var(--radius-containers, 8px);
+
+  &__title {
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.12px;
+    color: var(--texto-secundario);
+  }
+}
+
+.diag-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-s);
+  padding: 3px 0;
+
+  &__label {
+    flex-shrink: 0;
+    width: 230px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: var(--fs-12);
+    color: var(--texto-secundario);
+  }
+  // Contador del motivo, para ver de un vistazo cuál pesa más.
+  &__count {
+    min-width: 22px;
+    padding: 1px 6px;
+    border-radius: var(--figma-chip-radius);
+    background: var(--fondo-card, #fff);
+    border: 1px solid var(--borde-general, #d6d8dc);
+    font-weight: var(--fw-semibold);
+    text-align: center;
+    color: var(--texto-principal);
+  }
+  &__workers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+.diag-chip {
+  padding: 1px 6px;
+  border-radius: var(--figma-chip-radius);
+  background: var(--fondo-card, #fff);
+  border: 1px solid var(--borde-general, #d6d8dc);
+  font-size: var(--fs-12);
+  white-space: nowrap;
+
+  // Sección de la persona: explica por qué no cupo.
+  &__area {
+    margin-left: 4px;
+    padding-left: 4px;
+    border-left: 1px solid var(--borde-general, #d6d8dc);
+    color: var(--texto-secundario);
+    font-size: 11px;
+  }
+
+  &--more { font-weight: var(--fw-semibold); }
+}
+
+/* ── Resumen final: qué queda sin cubrir ─────────────────── */
+.diag-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-s);
+  padding: var(--sp-m);
+  background: var(--fondo-card, #fff);
+  border: 1px solid var(--borde-general, #d6d8dc);
+  border-radius: var(--radius-containers, 8px);
+
+  &__title {
+    font-size: var(--fs-13);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.12px;
+    color: var(--texto-principal);
+  }
+
+  &__ok {
+    margin: 0;
+    font-size: var(--fs-12);
+    color: var(--figma-alert-success-text);
+  }
+
+  // Un bloque por tipo de hueco: ámbar los cubribles (acción del planificador),
+  // azul los estructurales (acción de RRHH).
+  &__block {
+    padding: var(--sp-s) var(--sp-m);
+    border-radius: var(--radius-containers, 8px);
+    font-size: var(--fs-12);
+
+    &--warn {
+      background: var(--figma-alert-warning-surface);
+      color: var(--figma-alert-warning-text);
+    }
+    &--info {
+      background: var(--figma-alert-info-surface);
+      color: var(--figma-alert-info-text);
+    }
+  }
+
+  &__why {
+    margin: 2px 0 var(--sp-xs, 4px);
+    opacity: 0.85;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+}
+
+.diag-empty {
+  padding: var(--sp-l);
+  text-align: center;
+  color: var(--texto-secundario);
+  font-size: var(--fs-14);
+}
+
+/* ── Dark theme ──────────────────────────────────────────── */
+:host-context(.dark-theme) {
+  .diag-badge--ok {
+    background: var(--figma-alert-dark-success-surface);
+    color: var(--figma-alert-dark-success-text);
+  }
+  .diag-badge--empty, .diag-area--full, .diag-line--warn, .diag-stat--warn {
+    background: var(--figma-alert-dark-warning-surface);
+    color: var(--figma-alert-dark-warning-text);
+  }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .diag-shift { flex-direction: column; }
+  .diag-shift__label { min-width: 0; }
+}

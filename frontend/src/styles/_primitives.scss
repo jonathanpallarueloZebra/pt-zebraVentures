@@ -1,0 +1,280 @@
+// ============================================================
+// LAYER 1 — Primitives
+// Raw values only. No references to other variables.
+// NEVER use --p-* directly in components — use semantic tokens.
+// ============================================================
+
+:root {
+
+  // ── Color: Neutral ───────────────────────────────────────
+  --p-neutral-0:   #ffffff;
+  --p-neutral-25:  #fcfcfc;
+  --p-neutral-50:  #fafafa;
+  --p-neutral-100: #f1f2f3;
+  --p-neutral-200: #d6d8dc;
+  --p-neutral-300: #b3b6bd;
+  --p-neutral-400: #9599a3;
+  --p-neutral-500: #767c89;
+  --p-neutral-600: #5c616a;
+  --p-neutral-700: #42454c;
+  --p-neutral-800: #27292e;
+  --p-neutral-900: #1c1f21;
+
+  // ── Color: Alpha Black (transparent black overlays) ───────
+  --p-alpha-black-50:  #000e1c05;
+  --p-alpha-black-100: #000e1c0d;
+  --p-alpha-black-200: #000e1c29;
+  --p-alpha-black-300: #000e1c4d;
+  --p-alpha-black-400: #000d1a6b;
+  --p-alpha-black-500: #0312208c;
+  --p-alpha-black-600: #060f19a8;
+  --p-alpha-black-700: #040e18c4;
+  --p-alpha-black-800: #080e14e0;
+
+  // ── Color: Alpha White (transparent white overlays) ───────
+  --p-alpha-white-50:  #fafafa;
+  --p-alpha-white-100: #fafafaf7;
+  --p-alpha-white-200: #f8fafcde;
+  --p-alpha-white-300: #f5faffbd;
+  --p-alpha-white-400: #f5faff9c;
+  --p-alpha-white-500: #f5faff80;
+  --p-alpha-white-600: #f5faff66;
+  --p-alpha-white-700: #f5faff45;
+  --p-alpha-white-800: #f5faff29;
+  --p-alpha-white-900: #f5faff1a;
+
+  // ── Color: Brand — yellowZebra (client-themeable) ─────────
+  --p-brand-50:  #fff9e9;
+  --p-brand-100: #fef1cc;
+  --p-brand-200: #fde398;
+  --p-brand-300: #fccf3f;
+  --p-brand-400: #e9bc2e;
+  --p-brand-500: #d8ab29;
+  --p-brand-600: #ba8b21;
+  --p-brand-700: #956416;
+  --p-brand-800: #774b0f;
+  --p-brand-900: #623c0a;
+  --p-brand-950: #372203;
+
+  // ── Color: Blue Light (accent / interactive) ──────────────
+  --p-blue-light-25:  #f5fbff;
+  --p-blue-light-50:  #f0f9ff;
+  --p-blue-light-100: #e0f2fe;
+  --p-blue-light-200: #b9e6fe;
+  --p-blue-light-300: #81d6f8;
+  --p-blue-light-400: #52c0ef;
+  --p-blue-light-500: #0ba5ec;
+  --p-blue-light-600: #0086c9;
+  --p-blue-light-700: #026aa2;
+  --p-blue-light-800: #065986;
+  --p-blue-light-900: #0b4a6f;
+
+  // ── Color: Accent Alpha (transparencias de --p-blue-light-500) ─
+  --p-accent-alpha-low:  #0ba5ec1a; // 10% — Figma "Accent/alpha/low"
+  --p-accent-alpha-high: #0ba5ec33; // 20% — Figma "Accent/alpha/high"
+
+  // ── Color: Red (error / danger) ───────────────────────────
+  --p-red-25:  #fffbfa;
+  --p-red-50:  #fef3f2;
+  --p-red-100: #fee4e2;
+  --p-red-200: #fecdca;
+  --p-red-300: #fda29b;
+  --p-red-400: #f97066;
+  --p-red-500: #f04438;
+  --p-red-600: #d92d20;
+  --p-red-700: #b42318;
+  --p-red-800: #912018;
+  --p-red-900: #7a271a;
+
+  // ── Color: Green (success) ────────────────────────────────
+  --p-green-25:  #f6fef9;
+  --p-green-50:  #ecfdf3;
+  --p-green-100: #d1fadf;
+  --p-green-200: #a6f4c5;
+  --p-green-300: #6ce9a6;
+  --p-green-400: #32d583;
+  --p-green-500: #12b76a;
+  --p-green-600: #039855;
+  --p-green-700: #027a48;
+  --p-green-800: #05603a;
+  --p-green-900: #054f31;
+
+  // ── Color: Orange (warning) ───────────────────────────────
+  --p-orange-25:  #fffaf5;
+  --p-orange-50:  #fff6ed;
+  --p-orange-100: #ffead5;
+  --p-orange-200: #fddcab;
+  --p-orange-300: #fcb67e;
+  --p-orange-400: #fb9846;
+  --p-orange-500: #e7700d;
+  --p-orange-600: #c85f09;
+  --p-orange-700: #a14f0c;
+  --p-orange-800: #7d3f0c;
+  --p-orange-900: #5f310c;
+
+  // ── Color: Pink ───────────────────────────────────────────
+  --p-pink-25:  #fef6fb;
+  --p-pink-50:  #fdf2fa;
+  --p-pink-100: #fce7f6;
+  --p-pink-200: #fcceee;
+  --p-pink-300: #faa7e0;
+  --p-pink-400: #f670c7;
+  --p-pink-500: #ee46bc;
+  --p-pink-600: #dd2590;
+  --p-pink-700: #c11574;
+  --p-pink-800: #9e165f;
+  --p-pink-900: #851651;
+
+  // ── Color: Purple ─────────────────────────────────────────
+  --p-purple-25:  #fafaff;
+  --p-purple-50:  #f4f3ff;
+  --p-purple-100: #ebe9fe;
+  --p-purple-200: #d9d6fe;
+  --p-purple-300: #bdb4fe;
+  --p-purple-400: #9b8afb;
+  --p-purple-500: #7a5af8;
+  --p-purple-600: #6938ef;
+  --p-purple-700: #5925dc;
+  --p-purple-800: #4a1fb8;
+  --p-purple-900: #3e1c96;
+
+  // ── Color: Blue ───────────────────────────────────────────
+  --p-blue-25:  #f5faff;
+  --p-blue-50:  #eff8ff;
+  --p-blue-100: #d1e9ff;
+  --p-blue-200: #b2ddff;
+  --p-blue-300: #84caff;
+  --p-blue-400: #55b1fc;
+  --p-blue-500: #2e90fa;
+  --p-blue-600: #1570ef;
+  --p-blue-700: #175cd3;
+  --p-blue-800: #1849a9;
+  --p-blue-900: #194185;
+
+  // ── Color: Blue Gray ──────────────────────────────────────
+  --p-blue-gray-25:  #fcfcfd;
+  --p-blue-gray-50:  #f8f9fc;
+  --p-blue-gray-100: #eaecf5;
+  --p-blue-gray-200: #d5d9eb;
+  --p-blue-gray-300: #afb5d9;
+  --p-blue-gray-400: #717bbc;
+  --p-blue-gray-500: #4e5ba6;
+  --p-blue-gray-600: #3e4784;
+  --p-blue-gray-700: #363f72;
+  --p-blue-gray-800: #293056;
+  --p-blue-gray-900: #101323;
+
+  // ── Color: Indigo ─────────────────────────────────────────
+  --p-indigo-0:   #ffffff;
+  --p-indigo-25:  #f5f8ff;
+  --p-indigo-50:  #eef4ff;
+  --p-indigo-100: #e0eaff;
+  --p-indigo-200: #c7d7fe;
+  --p-indigo-300: #a4bcfd;
+  --p-indigo-400: #8098f9;
+  --p-indigo-500: #6172f3;
+  --p-indigo-600: #444ce7;
+  --p-indigo-700: #3538cd;
+  --p-indigo-800: #2d31a6;
+  --p-indigo-900: #2d3282;
+
+  // ── Spacing ───────────────────────────────────────────────
+  --sp-xxs: 2px;
+  --sp-xs:  4px;
+  --sp-s:   8px;
+  --sp-m:   16px;
+  --sp-l:   24px;
+  --sp-xl:  32px;
+  --sp-2xl: 40px;
+  --sp-3xl: 48px;
+  --sp-4xl: 56px;
+  --sp-5xl: 64px;
+  --sp-6xl: 80px;
+  --sp-7xl: 120px;
+
+  // ── Border Radius ─────────────────────────────────────────
+  --r-small:   4px;
+  --r-default: 8px;
+  --r-large:   12px;
+  --r-full:    9999px;
+
+  // ── Typography: Families ──────────────────────────────────
+  --ff-display: 'Inter', sans-serif;
+  --ff-body:    'Inter', sans-serif;
+
+  // ── Typography: Weights ───────────────────────────────────
+  --fw-light:     300;
+  --fw-regular:   400;
+  --fw-medium:    500;
+  --fw-semibold:  600;
+  --fw-bold:      700;
+  --fw-extrabold: 800;
+
+  // ── Typography: Sizes (rem) ───────────────────────────────
+  --fs-12: 0.75rem;
+  --fs-13: 0.8125rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-20: 1.25rem;
+  --fs-22: 1.375rem;
+  --fs-24: 1.5rem;
+  --fs-28: 1.75rem;
+  --fs-32: 2rem;
+  --fs-40: 2.5rem;
+  --fs-48: 3rem;
+  --fs-56: 3.5rem;
+  --fs-64: 4rem;
+
+  // ── Typography: Line Heights ──────────────────────────────
+  --lh-none:   1;
+  --lh-tight:  1.1;
+  --lh-snug:   1.2;
+  --lh-normal: 1.5;
+
+  // ── Effects: Shadows ──────────────────────────────────────
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.10), 0 2px 4px -2px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.10);
+
+  // ── Effects: Transitions ──────────────────────────────────
+  --transition-fast:   150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow:   500ms ease;
+
+  // ── Typography: Responsive scales (mobile-first default) ──
+  --fs-display-2:  var(--fs-48);
+  --fs-display-1:  var(--fs-40);
+  --fs-headline-1: var(--fs-32);
+  --fs-headline-2: var(--fs-24);
+  --fs-headline-3: var(--fs-22);
+  --fs-headline-4: var(--fs-18);
+  --fs-headline-5: var(--fs-16);
+  --fs-body-1:     var(--fs-16);
+  --fs-body-2:     var(--fs-14);
+  --fs-caption:    var(--fs-12);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --fs-display-2:  var(--fs-56);
+    --fs-display-1:  var(--fs-48);
+    --fs-headline-1: var(--fs-40);
+    --fs-headline-2: var(--fs-32);
+    --fs-headline-3: var(--fs-22);
+    --fs-headline-4: var(--fs-20);
+    --fs-headline-5: var(--fs-18);
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --fs-display-2:  var(--fs-64);
+    --fs-display-1:  var(--fs-48);
+    --fs-headline-1: var(--fs-40);
+    --fs-headline-2: var(--fs-32);
+    --fs-headline-3: var(--fs-24);
+    --fs-headline-4: var(--fs-20);
+    --fs-headline-5: var(--fs-18);
+  }
+}

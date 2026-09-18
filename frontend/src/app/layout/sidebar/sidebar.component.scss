@@ -1,0 +1,336 @@
+// ── Root ──────────────────────────────────────────────────────
+.sm-root {
+  position: sticky;      // stays at top while page scrolls
+  top: 0;
+  align-self: flex-start; // don't stretch with flex row — uses own height
+  overflow: visible;     // toggle button sticks out to the right
+  width: 175px;
+  height: 100vh;         // always exactly viewport height
+  flex-shrink: 0;
+  background: var(--sidebar-surface);
+  border-right: 0.8px solid var(--border-high);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--transition-normal);
+  font-family: var(--ff-body);
+  z-index: 10;
+
+  // ── Collapsed state ─────────────────────────────────────────
+  &--collapsed {
+    width: 52px;
+
+    // Colapsado se oculta el TEXTO, pero el logo se queda: era la causa del
+    // hueco en blanco (se ocultaba también .sm-brand__img). Es el mismo recurso
+    // que en desplegado, centrado en los 52px disponibles.
+    .sm-brand { justify-content: center; padding: 16px 8px; gap: 0; }
+    .sm-brand__text { display: none; }
+
+    .sm-item__label,
+    .sm-item__chevron { display: none; }
+
+    .sm-children { display: none; }
+
+    .sm-powered { display: none; }
+
+    .sm-nav { padding: 10px 6px; }
+    .sm-footer { padding: 6px; }
+    .sm-item { justify-content: center; padding: 8px 6px; }
+  }
+}
+
+// ── Collapse toggle (sticks out to the right) ─────────────────
+.sm-toggle {
+  position: absolute;
+  left: calc(100% + 0px);
+  top: 10px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // Nodo Figma: 2684:4966 (_side-menu, dentro del Header 2497:30629).
+  // Lengüeta de 16×24 que sobresale del borde: sin borde ni radio a la
+  // izquierda porque ese lado queda pegado al sidebar.
+  width: var(--figma-sidemenu-collapse-btn-width);
+  height: var(--figma-sidemenu-collapse-btn-height);
+  gap: var(--figma-sidemenu-collapse-btn-gap);
+  padding: var(--figma-sidemenu-collapse-btn-padding-y) var(--figma-sidemenu-collapse-btn-padding-x);
+  overflow: hidden;
+  background: var(--figma-sidemenu-collapse-btn-bg);
+  border: none;
+  border-top: 1px solid var(--figma-sidemenu-collapse-btn-border);
+  border-right: 1px solid var(--figma-sidemenu-collapse-btn-border);
+  border-bottom: 1px solid var(--figma-sidemenu-collapse-btn-border);
+  border-top-right-radius: var(--figma-sidemenu-collapse-btn-radius);
+  border-bottom-right-radius: var(--figma-sidemenu-collapse-btn-radius);
+  box-shadow: var(--figma-sidemenu-collapse-btn-shadow);
+  cursor: pointer;
+  color: var(--figma-sidemenu-collapse-btn-icon);
+
+  // Figma no define estado hover para este componente: se deja sin cambio
+  // de fondo a propósito (antes había un rgba(255,255,255,0.08) inventado).
+
+  .material-icons { font-size: var(--figma-sidemenu-collapse-btn-icon-size); }
+}
+
+// ── Brand header ──────────────────────────────────────────────
+.sm-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  // min-height en vez de height: con altura fija el nombre a dos filas se
+  // recortaba. Así el bloque crece solo lo que necesite y, cuando el nombre
+  // cabe en una línea, se ve igual que antes (56px).
+  min-height: 56px;
+  border-bottom: 0.8px solid rgba(255,255,255,0.10);
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: padding var(--transition-normal), gap var(--transition-normal);
+}
+
+.sm-brand__icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: var(--p-neutral-100);
+  overflow: hidden;
+}
+
+.sm-brand__img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.sm-brand__placeholder {
+  font-size: 16px;
+  color: var(--p-neutral-700);
+}
+
+.sm-brand__text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.sm-brand__name {
+  color: var(--text-on-dark-primary);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-semibold);
+  line-height: 16.9px;
+  text-transform: uppercase;
+  // Un nombre largo se reparte en DOS filas en vez de cortarse con "…". El
+  // corte es por palabras (overflow-wrap), no por letras: partir "ALIMENTACIÓN"
+  // por la mitad se lee peor que ocupar dos líneas.
+  //
+  // El límite de 2 líneas evita que un nombre muy largo empuje la navegación
+  // hacia abajo; con 2 filas de 16.9px cabe dentro del alto del bloque.
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+// (.sm-brand__sub se retiró: el "WORKFORCE" bajo el logo ya no se muestra.)
+
+// ── Main nav ──────────────────────────────────────────────────
+.sm-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 10px 16px 10px 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: padding var(--transition-normal);
+}
+
+// ── Nav item (shared across nav and footer) ───────────────────
+.sm-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  color: rgba(255,255,255,0.70);
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-medium);
+  line-height: 20px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  text-align: left;
+  transition: background var(--transition-fast), color var(--transition-fast);
+
+  &:hover {
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.90);
+  }
+
+  &--active {
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+  }
+
+  &--group { justify-content: flex-start; }
+}
+
+.sm-item__icon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0;
+  opacity: 0.80;
+}
+
+.sm-item__label { flex: 1; }
+
+.sm-item__chevron {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0;
+  margin-left: auto;
+  color: rgba(255,255,255,0.40);
+  transition: transform var(--transition-fast);
+}
+
+// ── Group ─────────────────────────────────────────────────────
+.sm-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.sm-group--open .sm-item__chevron {
+  transform: rotate(180deg);
+}
+
+// ── Children ──────────────────────────────────────────────────
+.sm-children {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-left: 15px;
+}
+
+.sm-group--open .sm-children {
+  max-height: 400px;
+}
+
+.sm-child__icon {
+  font-size: 15px !important;
+  width: 15px !important;
+  height: 15px !important;
+  flex-shrink: 0;
+  margin-right: 6px;
+  opacity: 0.70;
+}
+
+.sm-child {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-regular);
+  line-height: 20px;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background var(--transition-fast), color var(--transition-fast);
+
+  &:hover {
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.85);
+  }
+
+  &--active {
+    color: #fff;
+    font-weight: var(--fw-medium);
+  }
+}
+
+// ── Footer ────────────────────────────────────────────────────
+.sm-footer {
+  flex-shrink: 0;
+  padding: 8px;
+  border-top: 0.8px solid rgba(255,255,255,0.10);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: padding var(--transition-normal);
+}
+
+// Space for "powered by zebra" SVG — user adds it manually
+.sm-powered {
+  padding: 8px;
+  margin-top: 4px;
+  border-top: 0.8px solid rgba(255,255,255,0.10);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+
+// ── Mobile overlay ────────────────────────────────────────────
+.sm-overlay { display: none; }
+
+// ── Responsive ────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .sm-root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 900;
+    width: 260px !important;
+    min-height: 100vh;
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+
+    &--mobile-open { transform: translateX(0); }
+
+    // restore text on mobile regardless of collapsed state
+    .sm-brand { justify-content: flex-start !important; padding: 12px 16px !important; gap: 8px !important; }
+    .sm-brand__text,
+    .sm-brand__img { display: flex !important; }
+    .sm-brand__placeholder { display: inline-block !important; }
+    .sm-item__label,
+    .sm-item__chevron { display: block !important; }
+    .sm-children { display: flex !important; }
+    .sm-powered { display: flex !important; }
+    .sm-nav { padding: 10px 16px 10px 8px !important; }
+    .sm-footer { padding: 8px !important; }
+    .sm-item { justify-content: flex-start !important; padding: 8px !important; }
+  }
+
+  .sm-toggle { display: none; }
+
+  .sm-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 899;
+  }
+}

@@ -1,0 +1,198 @@
+
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  h2 { margin: 0 0 4px; font-size: 1.4rem; font-weight: 600; }
+  .subtitle { margin: 0; color: #64748b; font-size: 0.9rem; }
+}
+.header-actions {
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap;
+}
+
+// ── Two-column layout ──────────────────────────────────────
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+// ── Left: entity list ──────────────────────────────────────
+.entity-list {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.entity-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border, #f1f5f9);
+  transition: background 0.12s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #f8fafc; }
+  &.selected { background: #eff6ff; border-left: 3px solid #3b82f6; }
+}
+
+.et-icon { font-size: 20px; width: 20px; height: 20px; color: #64748b; flex-shrink: 0; }
+.et-info { flex: 1; min-width: 0; }
+// El SemiBold del nombre lo aporta la base zb-data-table (1ª celda); tamaño 14 (celda).
+.et-name { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+// Texto secundario coherente con el resto de tablas: 12px (caption), Text/secondary, normal.
+.et-meta { font-weight: var(--fw-regular); font-size: var(--fs-12); color: var(--text-secondary); }
+
+.et-badges { display: flex; gap: 4px; align-items: center; }
+.badge-system { font-size: 0.65rem; background: #e2e8f0; color: #64748b; padding: 1px 5px; border-radius: 4px; font-weight: 600; }
+.badge-hidden { font-size: 16px; width: 16px; height: 16px; color: #94a3b8; }
+.badge-planning { font-size: 16px; width: 16px; height: 16px; color: #e65100; }
+.badge-schedule { font-size: 16px; width: 16px; height: 16px; color: #6a1b9a; }
+
+.et-action { width: 28px; height: 28px; line-height: 28px; mat-icon { font-size: 16px; } opacity: 0; transition: opacity 0.15s; }
+.entity-item:hover .et-action { opacity: 1; }
+
+.empty-hint { padding: 24px; text-align: center; color: #94a3b8; font-size: 0.88rem; margin: 0; }
+
+// ── Right: fields panel ────────────────────────────────────
+.fields-panel { min-width: 0; }
+
+.fields-header { margin-bottom: 16px; }
+.fields-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  mat-icon { color: #64748b; }
+  h3 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+}
+.field-count { font-size: 0.8rem; background: #f1f5f9; color: #64748b; padding: 2px 8px; border-radius: 10px; }
+
+
+.loading-container { display: flex; justify-content: center; padding: 48px; }
+.full-width { width: 100%; }
+
+.fields-table {
+  margin-bottom: 16px;
+}
+
+.field-label { font-weight: var(--fw-semibold); }
+// Clave técnica (<code> en celda) = superficie/borde/texto de tabla Figma.
+.field-key {
+  font-size: var(--figma-datatable-header-font-size);   // 12px caption
+  background: var(--figma-datatable-header-bg);          // Surface/base
+  padding: var(--figma-chip-padding-y) var(--figma-chip-padding-x-sm);
+  border-radius: var(--figma-input-radius);              // br-forms 4
+  color: var(--figma-datatable-header-text);             // Text/secondary
+}
+.text-green { color: var(--figma-alert-success-icon); }
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #94a3b8;
+  mat-icon { font-size: 48px; width: 48px; height: 48px; margin-bottom: 12px; }
+  p { margin: 0; }
+}
+
+.add-btn { margin-top: 8px; }
+
+.form-card {
+  margin-top: 16px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.edit-card { border-left: 4px solid #6366f1; }
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+  mat-form-field { flex: 1; min-width: 200px; }
+}
+
+.toggle-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+
+.full-width-field {
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.priority-toggle-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 12px 0;
+  padding: 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  .priority-hint {
+    font-size: 0.78rem;
+    color: #0369a1;
+    margin-left: 2px;
+  }
+}
+
+.options-section {
+  margin-top: 12px;
+}
+.options-label {
+  display: block;
+  font-weight: 500;
+  color: #475569;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+.options-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.option-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #f1f5f9;
+  border-radius: 16px;
+  padding: 2px 8px 2px 12px;
+  font-size: 0.85rem;
+  .chip-remove {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    mat-icon { font-size: 14px; width: 14px; height: 14px; }
+  }
+}
+.add-option-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  .option-input { flex: 1; max-width: 300px; }
+}
+
+// Badge "por prioridad" en celda = tokens Figma de alert info (como .pattern-badge).
+.priority-chip {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: var(--figma-chip-font-size-sm);   // 12px caption
+  background: var(--figma-alert-info-surface);
+  color: var(--figma-alert-info-text);
+  border-radius: var(--figma-chip-radius);     // 9999
+  padding: var(--figma-chip-padding-y) var(--figma-chip-padding-x-sm);
+  vertical-align: middle;
+  font-weight: var(--fw-semibold);
+}
