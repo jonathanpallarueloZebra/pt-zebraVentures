@@ -48,3 +48,8 @@ dist/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Credenciales de Docker para el registry. En el servidor viven en
+# /opt/docker/projects/ptzebra/.docker/, nunca en el repositorio.
+.docker/
+gcloud-service-account.json

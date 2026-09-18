@@ -15,7 +15,7 @@ name: ptzebra-qa
 
 services:
   backend:
-    image: ${REGISTRO:-europe-southwest1-docker.pkg.dev/admin-zebra/ptzebra-apps}/backend-qa:${VERSION:-latest}
+    image: ${REGISTRO:-ghcr.io/zebra-ventures/ptzebra}/backend-qa:${VERSION:-latest}
     # Nombre fijo, convención proyecto-pieza-entorno, para poder localizarlo
     # entre los muchos contenedores del servidor.
     container_name: ptzebra-backend-qa
@@ -57,12 +57,21 @@ services:
       - proxy
     labels:
       traefik.enable: "false"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:8000/api/ > /dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      # Las migraciones se aplican al arrancar y la primera vez tardan: sin un
+      # start_period holgado el contenedor se marcaria unhealthy antes de estar
+      # listo y desplegar.sh abortaria un despliegue que iba bien.
+      start_period: 60s
     # Las migraciones las aplica el entrypoint de la imagen antes de arrancar
     # uvicorn (docker-entrypoint.sh), con reintentos mientras la BD no acepte
     # conexiones. No hace falta un `command` propio.
 
   frontend:
-    image: ${REGISTRO:-europe-southwest1-docker.pkg.dev/admin-zebra/ptzebra-apps}/frontend-qa:${VERSION:-latest}
+    image: ${REGISTRO:-ghcr.io/zebra-ventures/ptzebra}/frontend-qa:${VERSION:-latest}
     container_name: ptzebra-frontend-qa
     restart: unless-stopped
     depends_on:

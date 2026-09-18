@@ -16,7 +16,7 @@ name: ptzebra-prod
 
 services:
   backend:
-    image: "${REGISTRO:-europe-southwest1-docker.pkg.dev/admin-zebra/ptzebra-apps}/backend:${VERSION:?define VERSION en .env.prod, en produccion no se despliega latest}"
+    image: "${REGISTRO:-ghcr.io/zebra-ventures/ptzebra}/backend:${VERSION:?define VERSION en .env.prod, en produccion no se despliega latest}"
     container_name: ptzebra-backend-prod
     restart: unless-stopped
     environment:
@@ -47,9 +47,18 @@ services:
       - proxy
     labels:
       traefik.enable: "false"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:8000/api/ > /dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      # Las migraciones se aplican al arrancar y la primera vez tardan: sin un
+      # start_period holgado el contenedor se marcaria unhealthy antes de estar
+      # listo y desplegar.sh abortaria un despliegue que iba bien.
+      start_period: 60s
 
   frontend:
-    image: "${REGISTRO:-europe-southwest1-docker.pkg.dev/admin-zebra/ptzebra-apps}/frontend:${VERSION:?define VERSION en .env.prod, en produccion no se despliega latest}"
+    image: "${REGISTRO:-ghcr.io/zebra-ventures/ptzebra}/frontend:${VERSION:?define VERSION en .env.prod, en produccion no se despliega latest}"
     container_name: ptzebra-frontend-prod
     restart: unless-stopped
     depends_on:

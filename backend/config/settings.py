@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -12,7 +13,18 @@ else:
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', '41a146df874324edd51b7d480e20bd69ef552c6b910c616e5edd0f043d16e75d')
+# Sin valor por defecto en los despliegues: una clave escrita aqui acaba en el
+# repositorio y sirve para firmar sesiones y tokens de cualquier despliegue que
+# se olvide de definirla. Los .env de QA y produccion llevan una propia,
+# distinta cada uno.
+#
+# En los tests se usa una fija: pytest no pasa por ningun .env y el valor no
+# sale de la maquina que los ejecuta.
+_EJECUTANDO_TESTS = 'PYTEST_CURRENT_TEST' in os.environ or 'pytest' in sys.argv[0]
+if _EJECUTANDO_TESTS:
+    SECRET_KEY = os.getenv('SECRET_KEY', 'clave-solo-para-tests-no-usar-en-despliegues')
+else:
+    SECRET_KEY = os.environ['SECRET_KEY']
 
 DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
@@ -109,7 +121,9 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME', ''),
         'USER': os.getenv('DB_USER', ''),
         'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', '82.223.29.91'),
+        # Sin valor por defecto a proposito: una IP aqui haria que un .env
+        # incompleto conectase en silencio contra el servidor de Arcis.
+        'HOST': os.getenv('DB_HOST', ''),
         'PORT': os.getenv('DB_PORT', '5432'),
     }
 }

@@ -1,0 +1,97 @@
+# Construye las imágenes, las publica en GitHub Container Registry (ghcr.io) y
+# lanza el despliegue en arcis.
+#
+# Se dispara al crear un tag con el formato X.Y.Z-qa o X.Y.Z-prod:
+#
+#     git tag 0.1.0-qa && git push origin 0.1.0-qa
+#
+# El sufijo del tag decide el entorno. No hay despliegue automático al hacer
+# merge: producción se despliega a propósito, con un tag ya probado en QA.
+#
+# El registry es ghcr.io, como bodjav (`ghcr.io/zebra-ventures/bodjav-backend`),
+# no el Artifact Registry de Google que usan adea y la mayoría. Así no hace
+# falta cuenta de servicio de GCP: para publicar basta el GITHUB_TOKEN que
+# Actions ya proporciona.
+#
+# Secretos que hay que dar de alta en el repositorio (Settings > Secrets):
+#   SSH_PRIVATE_KEY  Clave privada cuya pública está en el authorized_keys de
+#                    arcis, restringida con
+#                    command="/opt/docker/projects/ptzebra/desplegar.sh".
+#   SSH_HOST         IP o nombre de arcis.
+#   SSH_USER         Usuario con el que se entra (root).
+#
+# GITHUB_TOKEN no hay que crearlo: lo inyecta Actions en cada ejecución.
+
+name: Desplegar
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+-qa'
+      - '[0-9]+.[0-9]+.[0-9]+-prod'
+
+env:
+  REGISTRO: ghcr.io/zebra-ventures/ptzebra
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Necesario para que el GITHUB_TOKEN pueda publicar en ghcr.io.
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # El sufijo del tag es el entorno, y el compose de cada entorno tira de
+      # imágenes con nombre distinto (backend-qa vs backend).
+      - name: Deducir entorno del tag
+        id: entorno
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          ENTORNO="${TAG##*-}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "entorno=$ENTORNO" >> "$GITHUB_OUTPUT"
+          if [ "$ENTORNO" = "qa" ]; then
+            echo "imagen_backend=backend-qa"   >> "$GITHUB_OUTPUT"
+            echo "imagen_frontend=frontend-qa" >> "$GITHUB_OUTPUT"
+          else
+            echo "imagen_backend=backend"      >> "$GITHUB_OUTPUT"
+            echo "imagen_frontend=frontend"    >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Autenticar contra ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Construir y publicar el backend
+        run: |
+          IMAGEN="${{ env.REGISTRO }}/${{ steps.entorno.outputs.imagen_backend }}:${{ steps.entorno.outputs.tag }}"
+          docker build -t "$IMAGEN" ./backend
+          docker push "$IMAGEN"
+
+      # Dockerfile-compose es el único válido: compila con la configuración
+      # `docker` (apiUrl relativo '/api') y su nginx hace de proxy hacia
+      # BACKEND_HOST. Los composes lo necesitan porque el backend no está
+      # expuesto por Traefik.
+      - name: Construir y publicar el frontend
+        run: |
+          IMAGEN="${{ env.REGISTRO }}/${{ steps.entorno.outputs.imagen_frontend }}:${{ steps.entorno.outputs.tag }}"
+          docker build -f ./frontend/Dockerfile-compose -t "$IMAGEN" ./frontend
+          docker push "$IMAGEN"
+
+      # La clave está restringida con `command=` en el servidor: mande lo que
+      # mande esto, arcis solo ejecuta desplegar.sh. Los argumentos llegan por
+      # SSH_ORIGINAL_COMMAND.
+      - name: Desplegar en arcis
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_ed25519 \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "${{ steps.entorno.outputs.entorno }} ${{ steps.entorno.outputs.tag }} ${GITHUB_SHA::7}"
