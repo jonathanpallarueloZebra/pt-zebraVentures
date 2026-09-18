@@ -1,0 +1,93 @@
+# Despliegue de PRODUCCIÓN en el servidor de Arcis.
+#
+# Igual que el de QA salvo en lo que importa:
+#   - BASE DE DATOS DISTINTA (otra `DB_NAME`, y conviene otro usuario).
+#   - Dominio propio y HSTS activo.
+#   - Volumen de medios propio: los logos de producción no se mezclan con QA.
+#
+# Uso:
+#
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod pull
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+#
+# NUNCA desplegar aquí un tag que no se haya probado antes en QA.
+
+name: ptzebra-prod
+
+services:
+  backend:
+    image: "${REGISTRO:-europe-southwest1-docker.pkg.dev/admin-zebra/ptzebra-apps}/backend:${VERSION:?define VERSION en .env.prod, en produccion no se despliega latest}"
+    container_name: ptzebra-backend-prod
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-prod}
+      # En producción DEBUG=True filtra tracebacks con rutas y consultas al
+      # navegador del usuario. No se sobreescribe.
+      DEBUG: "False"
+      SECRET_KEY: ${SECRET_KEY:?define SECRET_KEY en el fichero .env.prod}
+      # BASE SEPARADA de la de QA: comprobar que DB_NAME NO es la de QA antes
+      # de levantar, o se machacan los datos reales con los de prueba.
+      DB_NAME: ${DB_NAME:?define DB_NAME en el fichero .env.prod}
+      DB_USER: ${DB_USER:?define DB_USER en el fichero .env.prod}
+      DB_PASSWORD: ${DB_PASSWORD:?define DB_PASSWORD en el fichero .env.prod}
+      DB_HOST: ${DB_HOST:?define DB_HOST en el fichero .env.prod}
+      DB_PORT: ${DB_PORT:-5432}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-ptzebra-backend-prod,localhost,127.0.0.1}
+      FRONTEND_URL: ${FRONTEND_URL:-https://ptzebra.zebraventures.eu}
+      AGENT_MODEL: ${AGENT_MODEL:-gpt-4o-mini}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      AGENT_PERSONALITY: ${AGENT_PERSONALITY:-}
+      VERSION: ${VERSION:-}
+      COMMIT: ${COMMIT:-}
+    volumes:
+      # Volumen PROPIO de producción (`medios-prod`), no el de QA: los logos y
+      # favicons reales no se mezclan con los de prueba.
+      - medios-prod:/app/media
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "false"
+
+  frontend:
+    image: "${REGISTRO:-europe-southwest1-docker.pkg.dev/admin-zebra/ptzebra-apps}/frontend:${VERSION:?define VERSION en .env.prod, en produccion no se despliega latest}"
+    container_name: ptzebra-frontend-prod
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      BACKEND_HOST: ptzebra-backend-prod
+    networks:
+      - proxy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:80/ > /dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: proxy
+
+      traefik.http.routers.ptzebra_frontend_prod-http.rule: Host(`ptzebra.zebraventures.eu`)
+      traefik.http.routers.ptzebra_frontend_prod-http.entrypoints: web
+      traefik.http.routers.ptzebra_frontend_prod-http.middlewares: ptzebra_frontend_prod-redirect
+      traefik.http.middlewares.ptzebra_frontend_prod-redirect.redirectscheme.scheme: https
+
+      traefik.http.routers.ptzebra_frontend_prod.rule: Host(`ptzebra.zebraventures.eu`)
+      traefik.http.routers.ptzebra_frontend_prod.entrypoints: websecure
+      traefik.http.routers.ptzebra_frontend_prod.tls.certresolver: myresolver
+      traefik.http.routers.ptzebra_frontend_prod.middlewares: secure-headers-ptzebra_frontend_prod
+      traefik.http.services.ptzebra_frontend_prod.loadbalancer.server.port: "80"
+
+      traefik.http.middlewares.secure-headers-ptzebra_frontend_prod.headers.browserXssFilter: "true"
+      traefik.http.middlewares.secure-headers-ptzebra_frontend_prod.headers.contentTypeNosniff: "true"
+      traefik.http.middlewares.secure-headers-ptzebra_frontend_prod.headers.forceSTSHeader: "true"
+      traefik.http.middlewares.secure-headers-ptzebra_frontend_prod.headers.referrerPolicy: strict-origin-when-cross-origin
+      traefik.http.middlewares.secure-headers-ptzebra_frontend_prod.headers.stsSeconds: "31536000"
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  medios-prod:
