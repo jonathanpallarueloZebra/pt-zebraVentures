@@ -27,8 +27,13 @@ name: Desplegar
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+-qa'
-      - '[0-9]+.[0-9]+.[0-9]+-prod'
+      # Patrones glob, NO expresiones regulares: en los filtros de Actions
+      # `[0-9]+` significa «un digito o un signo +», asi que un tag como
+      # 0.1.0-qa no casaba y el workflow no llegaba a dispararse. `*` aqui
+      # casa cualquier cosa menos `/`. El formato exacto lo valida de todas
+      # formas desplegar.sh en el servidor, que si usa regex.
+      - '*-qa'
+      - '*-prod'
 
 env:
   REGISTRO: ghcr.io/zebra-ventures/ptzebra
