@@ -459,7 +459,7 @@
   // ── Tamaño: "Modal" (px) — Sección 2134:15352 ─────────────────
   // 4 tipos: confirmation (2134:15349), destructive-confirmation
   // (2134:15350), save changes (2207:11324), upload-file (2134:15351).
-  --p-modal-overlay-blur: 8px; // backdrop-blur
+  --p-modal-overlay-blur: 16px; // Background blur/md
   --p-modal-card-radius: 8px; // br-containers
   --p-modal-card-padding: 24px;
   --p-modal-card-gap: 32px; // entre Content y _Modal actions

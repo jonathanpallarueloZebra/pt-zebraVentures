@@ -49,6 +49,14 @@
   --figma-btn-secondary-border:     var(--p-neutral-800);     // Border/highest
   --figma-btn-secondary-text:       var(--p-alpha-black-800); // Button/text/primary
 
+  // ── Botón: variante secondary-inverted (sobre fondo oscuro) ───
+  // Misma forma que secondary pero con borde y texto claros: es la que va
+  // sobre el menu lateral y las barras oscuras (frame 2091:136).
+  --figma-btn-secondary-inverted-border:    var(--p-alpha-white-50);   // Border/on-dark
+  --figma-btn-secondary-inverted-text:      var(--p-alpha-white-50);   // Button/text/on-dark
+  --figma-btn-secondary-inverted-bg-hover:  var(--p-accent-alpha-low);  // Button/surface/surface/secondary/hover
+  --figma-btn-secondary-inverted-bg-active: var(--p-accent-alpha-high); // Button/surface/surface/secondary/active
+
   // ── Botón: variante danger (filled) ───────────────────────────
   --figma-btn-danger-bg:            var(--p-red-700); // Button/surface/danger/filled/default
   --figma-btn-danger-bg-hover:      var(--p-red-800); // Button/surface/danger/filled/hover
@@ -1349,7 +1357,9 @@
   font-weight: var(--figma-btn-font-weight);
   font-size: var(--figma-btn-font-size-sm);
   line-height: var(--figma-btn-line-height);
-  letter-spacing: 0.4px;
+  // El literal 0.4px de antes es el de la talla medium; la base es small.
+  letter-spacing: var(--figma-btn-text-letter-spacing-sm);
+  // Todas las variantes del diseno rotulan en mayusculas (frame 2090:172).
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -1359,6 +1369,7 @@
 .figma-btn-outline__icon,
 .figma-btn-primary__icon,
 .figma-btn-secondary__icon,
+.figma-btn-secondary-inverted__icon,
 .figma-btn-danger__icon,
 .figma-btn-danger-outlined__icon {
   font-size: 16px;
@@ -1370,6 +1381,7 @@
 .figma-btn-outline,
 .figma-btn-primary,
 .figma-btn-secondary,
+.figma-btn-secondary-inverted,
 .figma-btn-danger,
 .figma-btn-danger-outlined {
   .btn-spinner {
@@ -1415,6 +1427,17 @@
   &:active { background: var(--figma-btn-secondary-bg-active); }
 }
 
+// Secondary invertido: para barras y menus oscuros, donde el secondary normal
+// (borde y texto oscuros) no se veria.
+.figma-btn-secondary-inverted {
+  @extend %figma-btn-base;
+  border-color: var(--figma-btn-secondary-inverted-border);
+  color: var(--figma-btn-secondary-inverted-text);
+
+  &:hover  { background: var(--figma-btn-secondary-inverted-bg-hover); }
+  &:active { background: var(--figma-btn-secondary-inverted-bg-active); }
+}
+
 // Danger filled
 .figma-btn-danger {
   @extend %figma-btn-base;
@@ -1439,6 +1462,7 @@
 .figma-btn-outline[disabled],
 .figma-btn-primary[disabled],
 .figma-btn-secondary[disabled],
+.figma-btn-secondary-inverted[disabled],
 .figma-btn-danger[disabled],
 .figma-btn-danger-outlined[disabled] {
   background: var(--figma-btn-disabled-bg);
