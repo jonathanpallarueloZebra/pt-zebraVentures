@@ -209,6 +209,27 @@
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 
+// Spinner del estado «procesando» de los botones (Figma: icon/loading-spinner,
+// nodo 2483:30612). Es un arco de 3/4 que gira; `currentColor` lo hereda del
+// boton, asi que sirve igual sobre el amarillo de marca y sobre un boton
+// secundario.
+.auth-btn__spinner {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  animation: auth-spin 800ms linear infinite;
+
+  // Sin movimiento para quien lo haya pedido en el sistema: el icono se queda
+  // quieto, pero el boton sigue indicando el estado por el texto y el disabled.
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes auth-spin {
+  to { transform: rotate(360deg); }
+}
+
 .auth-action { padding-bottom: 8px; }
 
 // ── Alerts ────────────────────────────────────────────────────

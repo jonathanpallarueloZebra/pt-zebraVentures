@@ -65,7 +65,10 @@
 
       <div class="auth-action">
         <button type="submit" class="auth-btn" [disabled]="loading()">
-          @if (loading()) { Entrando... } @else { Entrar }
+          @if (loading()) {
+            <svg class="auth-btn__spinner" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M11.8402 7C11.8402 7.92073 11.6018 8.82573 11.1484 9.627C10.6948 10.4283 10.0416 11.0985 9.2523 11.5725C8.4629 12.0464 7.5643 12.3079 6.6439 12.3316C5.7235 12.3552 4.81265 12.1402 4 11.7075" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span>Entrando...</span>
+          } @else { Entrar }
         </button>
       </div>
     </form>
