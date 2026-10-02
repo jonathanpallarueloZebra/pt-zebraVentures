@@ -57,6 +57,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
       },
       {
+        // Reseteo de la demo. Dentro del shell y con authGuard: lo usa quien
+        // esta ensenando el producto, asi que basta con tener sesion.
+        path: 'reseteo',
+        loadComponent: () => import('./pages/reseteo/reseteo.component').then(m => m.ReseteoComponent),
+      },
+      {
         path: 'absence-request',
         loadComponent: () => import('./pages/absence-request/absence-request.component').then(m => m.AbsenceRequestComponent),
       },

@@ -26,4 +26,5 @@ urlpatterns = [
     path('api/shifts/', include('apps.shifts.urls')),
     path('api/shift_days/', include('apps.shift_days.urls')),
     path('api/assignments/', include('apps.assignments.urls')),
+    path('api/core/', include('apps.core.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

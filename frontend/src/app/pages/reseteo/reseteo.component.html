@@ -1,0 +1,57 @@
+<div class="reseteo">
+  <div class="reseteo__card">
+
+    <h1 class="reseteo__titulo">Reseteo de la demo</h1>
+    <p class="reseteo__texto">
+      Devuelve la base de datos a su estado de partida: la empresa de ejemplo
+      con su plantilla, sus turnos y la planificación de esta semana y la
+      siguiente ya resuelta, sin huecos.
+    </p>
+    <p class="reseteo__texto reseteo__texto--aviso">
+      <mat-icon class="reseteo__aviso-icono">warning</mat-icon>
+      <span>
+        Se pierde todo lo que se haya tocado durante las demos: turnos movidos,
+        ausencias nuevas y planes regenerados. No afecta a las cuentas de
+        usuario.
+      </span>
+    </p>
+
+    @if (resultado(); as r) {
+      <div class="figma-alert" [class.figma-alert--success]="r.ok"
+           [class.figma-alert--error]="!r.ok" role="status">
+        <div class="figma-alert__content">
+          <mat-icon class="figma-alert__icon">{{ r.ok ? 'check_circle' : 'error' }}</mat-icon>
+          <div class="figma-alert__text">
+            <span class="figma-alert__title">{{ r.ok ? 'Hecho' : 'No se ha podido' }}</span>
+            <span class="figma-alert__description">{{ r.texto }}</span>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="reseteo__acciones">
+      @if (confirmando()) {
+        <p class="reseteo__confirmar">¿Seguro? Esto no se puede deshacer.</p>
+        <div class="reseteo__botones">
+          <button type="button" class="figma-btn-outline" (click)="cancelar()">
+            Cancelar
+          </button>
+          <button type="button" class="figma-btn-danger" (click)="resetear()">
+            Sí, resetear
+          </button>
+        </div>
+      } @else {
+        <button type="button" class="figma-btn-primary figma-btn--lg"
+                [disabled]="cargando()" (click)="pedirConfirmacion()">
+          @if (cargando()) {
+            <span class="btn-spinner"></span>
+            <span>Reseteando…</span>
+          } @else {
+            Resetear la demo
+          }
+        </button>
+      }
+    </div>
+
+  </div>
+</div>

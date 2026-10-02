@@ -208,6 +208,10 @@ class Command(BaseCommand):
         parser.add_argument("--admin-password", default="",
                             help="Contrasena del superusuario. Por defecto "
                                  "DEMO_ADMIN_PASSWORD del entorno.")
+        parser.add_argument("--base-limpia", action="store_true",
+                            help="Deja la planificacion sin huecos ni violaciones: "
+                                 "todos los dias cubiertos. Es lo que usa el boton "
+                                 "de reseteo de la aplicacion.")
 
     # ────────────────────────────────────────────────────────────────────
     def handle(self, *args, **opts):
@@ -229,7 +233,7 @@ class Command(BaseCommand):
         self._restricciones(tiendas, workers)
         self._dias_cierre(tiendas)
         self._ausencias(workers)
-        self._planes(tiendas, shifts, workers)
+        self._planes(tiendas, shifts, workers, base_limpia=opts["base_limpia"])
         self.stdout.write(self.style.SUCCESS(
             "\nDemo «VESTIA Moda» lista. Abre /schedule y elige una tienda "
             "(VGV tiene la semana generada y una violación plantada para la demo)."))
@@ -591,7 +595,7 @@ class Command(BaseCommand):
         self.stdout.write(f"ausencias: 4 tipos, {n} solicitudes nuevas "
                           "(aprobada/pendiente/rechazada, relativas a hoy)")
 
-    def _planes(self, tiendas, shifts, workers):
+    def _planes(self, tiendas, shifts, workers, base_limpia=False):
         from apps.dynamic_fields.models import EntityRecord
         from apps.planning.models import WeeklyPlan
         from apps.planning.schedule_generator import generate_schedule
@@ -618,6 +622,23 @@ class Command(BaseCommand):
                         if pill and not a.get("areas"):
                             a["areas"] = [pill]
 
+        def quitar_vacantes(plan):
+            """Deja el cuadrante sin huecos.
+
+            El generador marca como vacante lo que no ha podido cubrir
+            (`workerId` <= 0) y eso sale en pantalla como «SIN ASIGNAR». Para
+            la base de la demo se quitan: lo que se ensena es un cuadrante
+            resuelto, no uno a medias. Los turnos que se queden sin nadie
+            desaparecen del dia en vez de figurar vacios.
+            """
+            for day in plan:
+                for k in list(day.keys()):
+                    if k in ("date", "dayName", "rest") or not isinstance(day[k], list):
+                        continue
+                    day[k] = [a for a in day[k] if a.get("workerId", 0) > 0]
+                    if not day[k]:
+                        del day[k]
+
         for codigo in ("VGV", "VPN", "VOG"):
             scope = tiendas[codigo].id
             for start in (monday, next_monday):
@@ -630,7 +651,9 @@ class Command(BaseCommand):
                         maniana = day.get(str(shifts["Rebajas Mañana (partido)"].id), [])
                         day[tarde] = [dict(a, start="17:00", end="21:00")
                                       for a in maniana if a.get("workerId", 0) > 0]
-                if codigo == "VGV" and start == monday:
+                if base_limpia:
+                    quitar_vacantes(plan)
+                elif codigo == "VGV" and start == monday:
                     # violación plantada para la demo: alguien de Zaragoza en Gran Vía
                     intrusa = workers["Celia Fanlo"]
                     plan[0].setdefault(str(shifts["Apertura"].id), []).append({
@@ -640,6 +663,10 @@ class Command(BaseCommand):
                 WeeklyPlan.objects.update_or_create(
                     start_date=start, scope_entity_id=scope,
                     defaults={"plan_json": plan})
-        self.stdout.write("planes: semana actual y siguiente generadas para VGV, VPN y VOG "
-                          "(VGV lleva 1 violación plantada: Celia Fanlo, de Zaragoza, "
-                          "en la Apertura del lunes)")
+        if base_limpia:
+            self.stdout.write("planes: semana actual y siguiente para VGV, VPN y VOG, "
+                              "sin huecos ni violaciones (base limpia)")
+        else:
+            self.stdout.write("planes: semana actual y siguiente generadas para VGV, VPN y VOG "
+                              "(VGV lleva 1 violación plantada: Celia Fanlo, de Zaragoza, "
+                              "en la Apertura del lunes)")

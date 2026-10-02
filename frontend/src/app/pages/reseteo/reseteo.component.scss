@@ -1,0 +1,68 @@
+.reseteo {
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.reseteo__card {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  border-radius: var(--p-modal-card-radius, 8px);
+  background: var(--surface-raised, #fff);
+  box-shadow: var(--elevation-shadow);
+}
+
+.reseteo__titulo {
+  margin: 0;
+  font-size: 18px;      // Heading/4
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.reseteo__texto {
+  margin: 0;
+  font-size: 14px;      // Body/2
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+// El aviso de que se pierden datos: icono y texto alineados arriba, para que
+// el icono no baile cuando el texto ocupa varias lineas.
+.reseteo__texto--aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.reseteo__aviso-icono {
+  flex-shrink: 0;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--figma-alert-warning-icon);
+}
+
+.reseteo__acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.reseteo__confirmar {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.reseteo__botones {
+  display: flex;
+  gap: 8px;
+}
