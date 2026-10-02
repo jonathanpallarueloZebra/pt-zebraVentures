@@ -15,7 +15,7 @@ name: ptzebra-qa
 
 services:
   backend:
-    image: ${REGISTRO:-ghcr.io/zebra-ventures/ptzebra}/backend-qa:${VERSION:-latest}
+    image: ${REGISTRO:-ghcr.io/jonathanpallaruelozebra/ptzebra}/backend-qa:${VERSION:-latest}
     # Nombre fijo, convención proyecto-pieza-entorno, para poder localizarlo
     # entre los muchos contenedores del servidor.
     container_name: ptzebra-backend-qa
@@ -71,7 +71,7 @@ services:
     # conexiones. No hace falta un `command` propio.
 
   frontend:
-    image: ${REGISTRO:-ghcr.io/zebra-ventures/ptzebra}/frontend-qa:${VERSION:-latest}
+    image: ${REGISTRO:-ghcr.io/jonathanpallaruelozebra/ptzebra}/frontend-qa:${VERSION:-latest}
     container_name: ptzebra-frontend-qa
     restart: unless-stopped
     depends_on:

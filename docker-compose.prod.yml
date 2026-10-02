@@ -16,7 +16,7 @@ name: ptzebra-prod
 
 services:
   backend:
-    image: "${REGISTRO:-ghcr.io/zebra-ventures/ptzebra}/backend:${VERSION:?define VERSION en .env.prod, en produccion no se despliega latest}"
+    image: "${REGISTRO:-ghcr.io/jonathanpallaruelozebra/ptzebra}/backend:${VERSION:?define VERSION en .env.prod, en produccion no se despliega latest}"
     container_name: ptzebra-backend-prod
     restart: unless-stopped
     environment:
@@ -58,7 +58,7 @@ services:
       start_period: 60s
 
   frontend:
-    image: "${REGISTRO:-ghcr.io/zebra-ventures/ptzebra}/frontend:${VERSION:?define VERSION en .env.prod, en produccion no se despliega latest}"
+    image: "${REGISTRO:-ghcr.io/jonathanpallaruelozebra/ptzebra}/frontend:${VERSION:?define VERSION en .env.prod, en produccion no se despliega latest}"
     container_name: ptzebra-frontend-prod
     restart: unless-stopped
     depends_on:

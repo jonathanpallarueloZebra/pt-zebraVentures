@@ -8,10 +8,16 @@
 # El sufijo del tag decide el entorno. No hay despliegue automático al hacer
 # merge: producción se despliega a propósito, con un tag ya probado en QA.
 #
-# El registry es ghcr.io, como bodjav (`ghcr.io/zebra-ventures/bodjav-backend`),
-# no el Artifact Registry de Google que usan adea y la mayoría. Así no hace
-# falta cuenta de servicio de GCP: para publicar basta el GITHUB_TOKEN que
-# Actions ya proporciona.
+# El registry es ghcr.io, no el Artifact Registry de Google que usan adea y la
+# mayoría: así no hace falta cuenta de servicio de GCP, y para publicar basta
+# el GITHUB_TOKEN que Actions ya proporciona.
+#
+# El namespace es la CUENTA PERSONAL, no la organizacion `zebra-ventures`
+# (donde si publica bodjav). Publicar ahi devolvia
+# `denied: permission_denied: The requested installation does not exist`:
+# el GITHUB_TOKEN de este repo no tiene permiso sobre los paquetes de esa
+# organizacion. Si algun dia el proyecto pasa a ella, basta cambiar REGISTRO
+# aqui y en los dos composes.
 #
 # Secretos que hay que dar de alta en el repositorio (Settings > Secrets):
 #   SSH_PRIVATE_KEY  Clave privada cuya pública está en el authorized_keys de
@@ -27,16 +33,15 @@ name: Desplegar
 on:
   push:
     tags:
-      # Patrones glob, NO expresiones regulares: en los filtros de Actions
-      # `[0-9]+` significa «un digito o un signo +», asi que un tag como
-      # 0.1.0-qa no casaba y el workflow no llegaba a dispararse. `*` aqui
-      # casa cualquier cosa menos `/`. El formato exacto lo valida de todas
-      # formas desplegar.sh en el servidor, que si usa regex.
+      # Patrones glob, no expresiones regulares: aqui `*` casa cualquier cosa
+      # menos `/`, y no existe el `+` de las regex. El formato X.Y.Z lo valida
+      # desplegar.sh en el servidor, que si usa regex y aborta si el sufijo del
+      # tag no corresponde al entorno.
       - '*-qa'
       - '*-prod'
 
 env:
-  REGISTRO: ghcr.io/zebra-ventures/ptzebra
+  REGISTRO: ghcr.io/jonathanpallaruelozebra/ptzebra
 
 jobs:
   desplegar:
