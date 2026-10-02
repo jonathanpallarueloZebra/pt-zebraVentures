@@ -1,12 +1,14 @@
 # Construye las imágenes, las publica en GitHub Container Registry (ghcr.io) y
 # lanza el despliegue en arcis.
 #
-# Se dispara al crear un tag con el formato X.Y.Z-qa o X.Y.Z-prod:
+# QA:          cada push a la rama `staging` lo despliega solo.
+# PRODUCCIÓN:  solo al publicar un tag `X.Y.Z-prod`.
 #
-#     git tag 0.1.0-qa && git push origin 0.1.0-qa
+#     git switch staging && git merge mi-rama && git push    # -> QA
+#     git tag 1.0.0-prod && git push origin 1.0.0-prod       # -> producción
 #
-# El sufijo del tag decide el entorno. No hay despliegue automático al hacer
-# merge: producción se despliega a propósito, con un tag ya probado en QA.
+# Producción no se despliega al hacer merge a propósito: se publica cuando
+# alguien decide que una versión ya probada en QA debe salir.
 #
 # El registry es ghcr.io, no el Artifact Registry de Google que usan adea y la
 # mayoría: así no hace falta cuenta de servicio de GCP, y para publicar basta
@@ -31,13 +33,19 @@
 name: Desplegar
 
 on:
+  # QA se despliega sola en cada push a `staging`: es la rama de integracion y
+  # lo que hay ahi es lo que marketing y el equipo ven en QA.
   push:
+    branches:
+      - staging
+    # Produccion NO se despliega al hacer merge: se publica a proposito, con un
+    # tag `X.Y.Z-prod` de una version ya probada en QA.
+    #
+    # Son patrones glob, no expresiones regulares: `*` casa cualquier cosa
+    # menos `/`, y no existe el `+` de las regex. El formato X.Y.Z lo valida
+    # desplegar.sh en el servidor, que si usa regex y aborta si el sufijo del
+    # tag no corresponde al entorno.
     tags:
-      # Patrones glob, no expresiones regulares: aqui `*` casa cualquier cosa
-      # menos `/`, y no existe el `+` de las regex. El formato X.Y.Z lo valida
-      # desplegar.sh en el servidor, que si usa regex y aborta si el sufijo del
-      # tag no corresponde al entorno.
-      - '*-qa'
       - '*-prod'
 
 env:
@@ -53,22 +61,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # El sufijo del tag es el entorno, y el compose de cada entorno tira de
-      # imágenes con nombre distinto (backend-qa vs backend).
-      - name: Deducir entorno del tag
+      # Cada entorno tira de imagenes con nombre distinto (backend-qa vs
+      # backend), y desplegar.sh exige un tag X.Y.Z-<entorno>: aborta si el
+      # sufijo no corresponde al entorno que se le pasa.
+      - name: Deducir entorno y version
         id: entorno
         run: |
-          TAG="${GITHUB_REF_NAME}"
-          ENTORNO="${TAG##*-}"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "entorno=$ENTORNO" >> "$GITHUB_OUTPUT"
-          if [ "$ENTORNO" = "qa" ]; then
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            # Produccion: la version la pone quien publica el tag.
+            TAG="${GITHUB_REF_NAME}"
+            ENTORNO="${TAG##*-}"
+            echo "imagen_backend=backend"   >> "$GITHUB_OUTPUT"
+            echo "imagen_frontend=frontend" >> "$GITHUB_OUTPUT"
+          else
+            # QA desde `staging`: no hay version que leer, asi que se compone
+            # con el numero de ejecucion, que crece solo y nunca se repite. Sin
+            # esto el tag no cambiaria entre despliegues y el servidor no se
+            # traeria la imagen nueva.
+            ENTORNO="qa"
+            TAG="0.1.${GITHUB_RUN_NUMBER}-qa"
             echo "imagen_backend=backend-qa"   >> "$GITHUB_OUTPUT"
             echo "imagen_frontend=frontend-qa" >> "$GITHUB_OUTPUT"
-          else
-            echo "imagen_backend=backend"      >> "$GITHUB_OUTPUT"
-            echo "imagen_frontend=frontend"    >> "$GITHUB_OUTPUT"
           fi
+          echo "tag=$TAG"         >> "$GITHUB_OUTPUT"
+          echo "entorno=$ENTORNO" >> "$GITHUB_OUTPUT"
+          echo "Desplegando $TAG en $ENTORNO"
 
       - name: Autenticar contra ghcr.io
         uses: docker/login-action@v3
