@@ -1815,6 +1815,25 @@
     svg, img { width: var(--figma-alert-close-icon-size); height: var(--figma-alert-close-icon-size); }
   }
 
+  // Variante compacta: el mismo contenido en menos alto, para cuando la
+  // alerta va dentro de un formulario o una celda. Solo redefine las medidas;
+  // los colores los sigue poniendo el modificador de tipo.
+  &--compact {
+    gap: var(--p-alert-compact-gap-outer);
+    padding: var(--p-alert-compact-padding-outer);
+    border-radius: var(--p-alert-compact-radius);
+
+    .figma-alert__content {
+      gap: var(--p-alert-compact-gap-inner);
+      padding-right: var(--p-alert-compact-padding-inner);
+    }
+
+    .figma-alert__title {
+      font-size: var(--p-alert-compact-title-font-size);
+      line-height: var(--p-alert-compact-title-line-height);
+    }
+  }
+
   // ── Variantes de tipo (light theme, por defecto) ────────────────
   &--warning {
     background: var(--figma-alert-warning-surface);

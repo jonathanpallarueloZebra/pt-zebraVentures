@@ -119,6 +119,18 @@
   --p-alert-default-desc-font-size:    12px; // fontSize/caption
   --p-alert-default-desc-line-height:  1.2;
 
+  // Variante compact (symbols "spacing=compact" del mismo frame, p.ej.
+  // 2205:8421): mismo contenido en menos alto. Cambian los cuatro espaciados,
+  // el radio (radius/forms en vez de br-containers) y el tamano del titulo,
+  // que baja a caption.
+  --p-alert-compact-radius:        4px; // radius/forms
+  --p-alert-compact-padding-outer: 8px; // box/inner/padding/M
+  --p-alert-compact-padding-inner: 4px; // box/inner/padding/S
+  --p-alert-compact-gap-outer:     4px; // XS
+  --p-alert-compact-gap-inner:     4px; // box/inner/gap/S
+  --p-alert-compact-title-font-size:   12px; // fontSize/caption
+  --p-alert-compact-title-line-height: 1.2;
+
   --p-alert-icon-size:       16px; // warning/info/success/error icon
   --p-alert-close-size:      24px; // contenedor del botón "close"
   --p-alert-close-icon-size: 16px; // vector visible dentro (inset 22.53%)

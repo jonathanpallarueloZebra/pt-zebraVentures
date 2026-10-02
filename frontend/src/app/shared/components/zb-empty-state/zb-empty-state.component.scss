@@ -106,6 +106,32 @@
   transform: translateX(-50%);
 }
 
+// Los glifos cuya caja no arranca en el 22%/22% por defecto. Las posiciones
+// salen de las coordenadas del frame en Figma, divididas entre los 200px de
+// la caja.
+//
+// add-zone (2138:5095): x=50 -> 25%
+.zb-illus__glyph--place { left: 25%; }
+
+// no-results (2135:13371): caja de 120x120, no de 100, y arranca en y=44.
+.zb-illus__glyph--search {
+  top: 22%;
+  left: 22%;
+  width: 120px;
+  height: 120px;
+}
+
+// restriccion (2138:7978): caja de 63x63 centrada en x=74, y=69.
+.zb-illus__glyph--rule {
+  top: 34.5%;
+  left: 37%;
+  width: 63px;
+  height: 63px;
+}
+
+// work-break (2377:18245): x=50, y=50.
+.zb-illus__glyph--event_busy { top: 25%; left: 25%; }
+
 // Círculo blanco y plus, sobre el glifo (abajo-derecha). 43×43 = 21.5% de 200.
 .zb-illus__ring {
   top: 54%;
