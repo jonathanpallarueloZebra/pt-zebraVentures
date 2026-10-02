@@ -53,3 +53,6 @@ desktop.ini
 # /opt/docker/projects/ptzebra/.docker/, nunca en el repositorio.
 .docker/
 gcloud-service-account.json
+
+# Capturas y trazas que deja el MCP de Playwright al verificar pantallas.
+.playwright-mcp/

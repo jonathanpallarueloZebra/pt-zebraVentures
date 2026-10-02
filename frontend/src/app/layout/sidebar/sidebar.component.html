@@ -15,7 +15,9 @@
       @if (brandingService.branding().logo_url) {
         <img class="sm-brand__img" [src]="brandingService.branding().logo_url" alt="">
       } @else {
-        <span class="material-icons sm-brand__placeholder">pets</span>
+        <!-- Sin logo de cliente se usa el icono de Zebra, no el icono generico
+             'pets' de Material, que era un marcador de posicion. -->
+        <img class="sm-brand__img" src="zebra-icon.svg" alt="Zebra">
       }
     </div>
     <div class="sm-brand__text">

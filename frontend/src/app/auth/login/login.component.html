@@ -3,12 +3,14 @@
 
     <div class="auth-logo-section">
       <!-- Logo de branding (subido a /media desde el panel, igual que el del
-           navbar). Se espera a loaded() para no pintar el PNG estatico y
-           reemplazarlo al llegar la respuesta. -->
+           navbar). Se espera a loaded() para no pintar el logo por defecto y
+           reemplazarlo al llegar la respuesta.
+           Sin logo configurado cae al de Zebra, no al de ningun cliente: esta
+           misma imagen sirve a varios despliegues. -->
       @if (brandingService.loaded()) {
         <img class="auth-logo"
-             [src]="brandingService.branding().logo_url || 'logo-cabrero.png'"
-             [alt]="brandingService.branding().company_name" />
+             [src]="brandingService.branding().logo_url || 'zebra-logo.svg'"
+             [alt]="brandingService.branding().company_name || 'Zebra'" />
       }
     </div>
 
