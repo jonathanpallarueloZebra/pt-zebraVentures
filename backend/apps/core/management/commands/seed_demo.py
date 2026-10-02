@@ -202,12 +202,22 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--reset", action="store_true",
                             help="Borra los datos demo antes de recrearlos.")
+        parser.add_argument("--admin-email", default="",
+                            help="Crea (o reactiva) un superusuario con este correo. "
+                                 "Si se omite se usa DEMO_ADMIN_EMAIL del entorno.")
+        parser.add_argument("--admin-password", default="",
+                            help="Contrasena del superusuario. Por defecto "
+                                 "DEMO_ADMIN_PASSWORD del entorno.")
 
     # ────────────────────────────────────────────────────────────────────
     def handle(self, *args, **opts):
         if opts["reset"]:
             self._reset()
-        self._branding()
+        self._admin(opts["admin_email"], opts["admin_password"])
+        # El branding NO se toca: lo fija cada despliegue (logo y colores de
+        # Zebra) y un reseteo de la demo no debe cambiarle la marca a la
+        # instalacion. Los datos de abajo son de una empresa ficticia, pero la
+        # marca de la aplicacion es la del producto.
         self._catalogos()
         self._entidades()
         tiendas = self._tiendas()
@@ -223,6 +233,38 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             "\nDemo «VESTIA Moda» lista. Abre /schedule y elige una tienda "
             "(VGV tiene la semana generada y una violación plantada para la demo)."))
+
+    # ────────────────────────────────────────────────────────────────────
+    def _admin(self, email, password):
+        """Superusuario para entrar a la demo.
+
+        El `--reset` NO borra usuarios: si lo hiciera, cada reseteo dejaria la
+        demo sin nadie con quien entrar. Aqui solo se asegura de que la cuenta
+        existe y de que la contrasena es la esperada, porque quien ensena la
+        demo puede haberla cambiado por el camino.
+        """
+        import os
+        from apps.authentication.models import CustomUser
+
+        email = email or os.getenv("DEMO_ADMIN_EMAIL", "")
+        password = password or os.getenv("DEMO_ADMIN_PASSWORD", "")
+        if not email or not password:
+            self.stdout.write("= sin --admin-email/--admin-password: no se toca ningun usuario")
+            return
+
+        user = CustomUser.objects.filter(email=email).first()
+        if user is None:
+            CustomUser.objects.create_superuser(
+                email=email, username=email, password=password)
+            self.stdout.write(self.style.SUCCESS(f"creado: superusuario {email}"))
+            return
+
+        user.set_password(password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.is_active = True
+        user.save(update_fields=["password", "is_staff", "is_superuser", "is_active"])
+        self.stdout.write(f"= superusuario {email} ya existia: contrasena y permisos repuestos")
 
     # ────────────────────────────────────────────────────────────────────
     def _reset(self):
@@ -257,16 +299,6 @@ class Command(BaseCommand):
         Kind.objects.filter(code__in=["zona_movilidad", "tipo_contrato"]).delete()
         self.stdout.write(self.style.WARNING(
             f"reset: {n_w} workers, {n_r} registros, {n_s} turnos demo borrados"))
-
-    def _branding(self):
-        from apps.branding.models import Branding
-        b = Branding.get()
-        b.company_name = "VESTIA Moda"
-        b.tagline = "Planificación de tiendas de moda"
-        b.primary_color = "#0F766E"
-        b.primary_dark = "#115E59"
-        b.save()
-        self.stdout.write("branding: VESTIA Moda")
 
     def _catalogos(self):
         from apps.catalog.models import Kind, KindValue
