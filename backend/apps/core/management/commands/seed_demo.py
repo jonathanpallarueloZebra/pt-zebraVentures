@@ -139,6 +139,18 @@ PLANTILLA = [
      "fijo", "Cierre", None, {"turnos_max_semana": 4}),
     ("Vera Otal", "VPN", "madrid_norte", ["Probadores", "Planta Mujer"], "plantilla", 20,
      "fijo", "Cierre", None, {"jornada_reducida": True, "turnos_max_semana": 2}),
+    ("Diego Used", "VPN", "madrid_norte", ["Almacén", "Visual"], "plantilla", 40,
+     "fijo", "Apertura", None, {}),
+    ("Alba Sierra", "VPN", "madrid_norte", ["Visual", "Planta Mujer"], "plantilla", 40,
+     "semanal", "Cierre", "Apertura", {}),
+    ("Jon Alastuey", "VPN", "madrid_norte", ["Niño", "Probadores"], "plantilla", 40,
+     "fijo", "Cierre", None, {}),
+    ("Rocío Pardo", "VPN", "madrid_norte", ["Caja", "Almacén"], "plantilla", 40,
+     "semanal", "Apertura", "Cierre", {}),
+    ("Nacho Vera", "VPN", "madrid_norte", ["Planta Hombre", "Visual"], "plantilla", 40,
+     "fijo", "Apertura", None, {}),
+    ("Mar Clavería", "VPN", "madrid_norte", ["Caja", "Niño"], "ett", 20,
+     "fijo", "Cierre", None, {"turnos_max_semana": 3}),
     # ── VXA · Xanadú ─────────────────────────────────────────────────────
     ("Gema Puértolas", "VXA", "madrid_sur", ["Encargado", "Caja"], "plantilla", 40,
      "semanal", "Apertura", "Cierre", {"nivel": "encargado"}),
@@ -151,6 +163,20 @@ PLANTILLA = [
     ("Irene Salas", "VXA", "madrid_sur", ["Planta Mujer", "Visual"], "plantilla", 40,
      "fijo", "Apertura", None, {}),
     ("Bruno Yagüe", "VXA", "madrid_sur", ["Planta Hombre", "Niño"], "plantilla", 24,
+     "fijo", "Cierre", None, {"turnos_max_semana": 3}),
+    ("Lola Bergua", "VXA", "madrid_sur", ["Caja", "Planta Mujer"], "plantilla", 40,
+     "semanal", "Apertura", "Cierre", {}),
+    ("Unai Gracia", "VXA", "madrid_sur", ["Almacén", "Planta Hombre"], "plantilla", 40,
+     "fijo", "Apertura", None, {}),
+    ("Carla Oliván", "VXA", "madrid_sur", ["Probadores", "Caja"], "plantilla", 30,
+     "fijo", "Cierre", None, {"turnos_max_semana": 4}),
+    ("Nerea Used", "VXA", "madrid_sur", ["Visual", "Planta Mujer"], "plantilla", 40,
+     "semanal", "Cierre", "Apertura", {}),
+    ("Marcos Lahoz", "VXA", "madrid_sur", ["Niño", "Probadores"], "plantilla", 40,
+     "fijo", "Apertura", None, {}),
+    ("Sara Mainar", "VXA", "madrid_sur", ["Almacén", "Visual"], "volante", 40,
+     "semanal", "Cierre", "Apertura", {}),
+    ("Pau Lacasta", "VXA", "madrid_sur", ["Caja", "Niño"], "ett", 20,
      "fijo", "Cierre", None, {"turnos_max_semana": 3}),
     # ── VOG · Outlet Getafe (rebajas: turno partido) ─────────────────────
     ("Rosa Bescós", "VOG", "madrid_sur", ["Encargado", "Caja"], "plantilla", 40,
@@ -165,6 +191,18 @@ PLANTILLA = [
      "fijo", "Cierre", None, {}),
     ("Ada Monreal", "VOG", "madrid_sur", ["Probadores", "Niño"], "plantilla", 20,
      "fijo", "Apertura", None, {"jornada_reducida": True, "turnos_max_semana": 2}),
+    ("Hugo Prat", "VOG", "madrid_sur", ["Caja", "Almacén"], "plantilla", 40,
+     "semanal", "Apertura", "Cierre", {}),
+    ("Elsa Roy", "VOG", "madrid_sur", ["Planta Mujer", "Visual"], "plantilla", 40,
+     "fijo", "Cierre", None, {}),
+    ("Tomás Lerín", "VOG", "madrid_sur", ["Planta Hombre", "Niño"], "plantilla", 40,
+     "fijo", "Apertura", None, {}),
+    ("Vega Solano", "VOG", "madrid_sur", ["Visual", "Probadores"], "plantilla", 40,
+     "semanal", "Cierre", "Apertura", {}),
+    ("Adrián Mur", "VOG", "madrid_sur", ["Encargado", "Planta Hombre"], "plantilla", 40,
+     "semanal", "Cierre", "Apertura", {"nivel": "segundo"}),
+    ("Lucía Bada", "VOG", "madrid_sur", ["Caja", "Probadores"], "ett", 24,
+     "fijo", "Cierre", None, {"turnos_max_semana": 3}),
     # ── VZA · Puerto Venecia ─────────────────────────────────────────────
     ("Paula Aísa", "VZA", "zaragoza", ["Encargado", "Caja"], "plantilla", 40,
      "semanal", "Apertura", "Cierre", {"nivel": "encargado"}),
@@ -176,6 +214,18 @@ PLANTILLA = [
      "fijo", "Cierre", None, {}),
     ("Sara Buil", "VZA", "zaragoza", ["Planta Mujer", "Niño"], "plantilla", 30,
      "fijo", "Apertura", None, {"turnos_max_semana": 4}),
+    ("Pablo Sanz", "VZA", "zaragoza", ["Almacén", "Planta Hombre"], "plantilla", 40,
+     "fijo", "Cierre", None, {}),
+    ("Nuria Allué", "VZA", "zaragoza", ["Visual", "Planta Mujer"], "plantilla", 40,
+     "semanal", "Apertura", "Cierre", {}),
+    ("Beltrán Orús", "VZA", "zaragoza", ["Niño", "Probadores"], "plantilla", 40,
+     "fijo", "Apertura", None, {}),
+    ("Inés Lahoz", "VZA", "zaragoza", ["Caja", "Visual"], "plantilla", 40,
+     "semanal", "Cierre", "Apertura", {}),
+    ("Víctor Pano", "VZA", "zaragoza", ["Probadores", "Almacén"], "plantilla", 40,
+     "fijo", "Cierre", None, {}),
+    ("Clara Sin", "VZA", "zaragoza", ["Caja", "Niño"], "ett", 20,
+     "fijo", "Apertura", None, {"turnos_max_semana": 3}),
     # ── Volantes (sin tienda: cubren su zona) ────────────────────────────
     ("Marta Egea (volante)", None, "madrid_centro", ["Caja", "Planta Mujer", "Probadores"],
      "volante", 40, "fijo", "Apertura", None, {}),
@@ -378,12 +428,17 @@ class Command(BaseCommand):
         from apps.shifts.models import Shift
         out = {}
         for name, start, end, days in SHIFTS:
-            shift, created = Shift.objects.get_or_create(
+            shift, _ = Shift.objects.get_or_create(
                 name=name, defaults={"start_time": start, "end_time": end,
                                      "custom_data": dict(DEMO)})
-            if created:
-                for wd in days:
-                    ShiftDay.objects.get_or_create(shift=shift, weekday=wd)
+            # Los dias operativos se reponen SIEMPRE, no solo al crear el
+            # turno. Un turno sin filas en ShiftDay lo toma el generador como
+            # activo todos los dias (ver `_shift_weekdays`), y entonces el
+            # cuadrante pedia Domingo Comercial un lunes e Inventario Nocturno
+            # a diario: cientos de huecos imposibles de cubrir.
+            ShiftDay.objects.filter(shift=shift).exclude(weekday__in=days).delete()
+            for wd in days:
+                ShiftDay.objects.get_or_create(shift=shift, weekday=wd)
             out[name] = shift
         self.stdout.write(f"turnos: {len(out)} (domingo solo el flagship; "
                           "inventario nocturno cruza medianoche)")
