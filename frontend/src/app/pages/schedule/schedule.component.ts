@@ -964,6 +964,11 @@ export class ScheduleComponent implements OnInit, OnDestroy {
         // (no basta con que solape la semana; cada día debe estar en rango).
         validFrom: s.valid_from ?? null,
         validTo: s.valid_to ?? null,
+        // Días de la semana en los que opera (0=L … 6=D). Lista vacía o
+        // ausente = todos los días, igual que hace el generador del backend.
+        operatingDays: Array.isArray(s.operating_days) && s.operating_days.length
+          ? s.operating_days as number[]
+          : null,
         attributes: {
           start_time: s.start_time ?? '00:00',
           end_time: s.end_time ?? '00:00',
@@ -2468,6 +2473,16 @@ export class ScheduleComponent implements OnInit, OnDestroy {
       //    vigencia L-X se pintaba también J-D.)
       if (slot.validFrom && day.date < slot.validFrom) return false;
       if (slot.validTo && day.date > slot.validTo) return false;
+      // 3) Días operativos del turno (ShiftDay). Sin esto la tabla pintaba
+      //    TODOS los turnos TODOS los días: el «Domingo Comercial» aparecía
+      //    un lunes y el «Inventario Nocturno», que es solo los jueves, salía
+      //    a diario. El generador del backend ya los respeta, así que la
+      //    tabla pedía cubrir huecos que nunca se iban a asignar.
+      if (slot.operatingDays) {
+        const js = new Date(day.date + 'T00:00:00').getDay();
+        const weekday = js === 0 ? 6 : js - 1;  // JS domingo=0 → lunes=0
+        if (!slot.operatingDays.includes(weekday)) return false;
+      }
       return true;
     });
   }
