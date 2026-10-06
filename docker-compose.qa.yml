@@ -33,7 +33,7 @@ services:
       # settings.py añade siempre '.zebraventures.eu' (comodín de subdominio),
       # 'localhost' y '127.0.0.1'. Se listan aquí los hosts internos.
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-ptzebra-backend-qa,localhost,127.0.0.1}
-      FRONTEND_URL: ${FRONTEND_URL:-https://ptzebra-qa.zebraventures.eu}
+      FRONTEND_URL: ${FRONTEND_URL:-https://planificador-turnos.zebraventures.eu}
       # El agente de chat necesita AGENT_MODEL; sin ella responde 503 (ya no
       # tumba la API entera, pero el chat queda inoperativo).
       AGENT_MODEL: ${AGENT_MODEL:-gpt-4o-mini}
@@ -107,13 +107,13 @@ services:
       traefik.docker.network: proxy
 
       # HTTP: solo existe para mandar al visitante a https.
-      traefik.http.routers.ptzebra_frontend_qa-http.rule: Host(`ptzebra-qa.zebraventures.eu`)
+      traefik.http.routers.ptzebra_frontend_qa-http.rule: Host(`planificador-turnos.zebraventures.eu`)
       traefik.http.routers.ptzebra_frontend_qa-http.entrypoints: web
       traefik.http.routers.ptzebra_frontend_qa-http.middlewares: ptzebra_frontend_qa-redirect
       traefik.http.middlewares.ptzebra_frontend_qa-redirect.redirectscheme.scheme: https
 
       # HTTPS: el sitio, con el certificado que pide Let's Encrypt.
-      traefik.http.routers.ptzebra_frontend_qa.rule: Host(`ptzebra-qa.zebraventures.eu`)
+      traefik.http.routers.ptzebra_frontend_qa.rule: Host(`planificador-turnos.zebraventures.eu`)
       traefik.http.routers.ptzebra_frontend_qa.entrypoints: websecure
       traefik.http.routers.ptzebra_frontend_qa.tls.certresolver: myresolver
       traefik.http.routers.ptzebra_frontend_qa.middlewares: secure-headers-ptzebra_frontend_qa
