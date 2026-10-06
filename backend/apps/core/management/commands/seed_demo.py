@@ -3,11 +3,11 @@
 
 Monta una instalación completa para enseñar el producto con TODAS sus
 posibilidades: catálogos, tiendas (ámbito), secciones (pills), turnos con días
-operativos (domingo comercial, partido, nocturno que cruza medianoche),
+operativos (apertura, cierre y domingo comercial),
 ~35 empleados con polivalencia/contratos por horas/volantes/ETT, reglas de
 rotación, las restricciones de los 5 motores, días de cierre, ausencias en los
-tres estados y los planes de la semana actual y la siguiente ya generados
-(con una violación plantada a propósito para la demo del validador).
+tres estados y los planes de la semana actual y la siguiente de la primera
+tienda (VGV), ya hechos y sin avisos. El resto de tiendas arranca sin planificar.
 
 NO lo ejecuta `migrate`. Uso:
 
@@ -38,7 +38,7 @@ TIENDAS = [
     ("VGV", "VESTIA Gran Vía", "madrid_centro", "Calle (flagship, abre domingos)"),
     ("VPN", "VESTIA Plaza Norte", "madrid_norte", "CC Plaza Norte 2"),
     ("VXA", "VESTIA Xanadú", "madrid_sur", "CC Xanadú"),
-    ("VOG", "VESTIA Outlet Getafe", "madrid_sur", "Parque Nassica (rebajas: turno partido)"),
+    ("VOG", "VESTIA Outlet Getafe", "madrid_sur", "Parque Nassica"),
     ("VZA", "VESTIA Puerto Venecia", "zaragoza", "CC Puerto Venecia"),
 ]
 SECCIONES = ["Caja", "Probadores", "Planta Mujer", "Planta Hombre",
@@ -46,13 +46,13 @@ SECCIONES = ["Caja", "Probadores", "Planta Mujer", "Planta Hombre",
 
 SHIFTS = [
     # nombre, inicio, fin, weekdays (0=L .. 6=D)
+    # Solo los turnos que usa la tienda con planificación: la pantalla pinta
+    # TODOS los turnos en la parrilla de la tienda abierta y avisa de «falta
+    # plantilla» por cada uno que nadie cubre, así que un turno de otra tienda
+    # (partido, nocturno, horario especial) bastaba para que VGV no saliera limpia.
     ("Apertura", dt.time(9, 30), dt.time(16, 30), [0, 1, 2, 3, 4, 5]),
     ("Cierre", dt.time(15, 30), dt.time(22, 30), [0, 1, 2, 3, 4, 5]),
     ("Domingo Comercial", dt.time(11, 0), dt.time(21, 0), [6]),
-    ("Rebajas Mañana (partido)", dt.time(10, 0), dt.time(14, 0), [0, 1, 2, 3, 4]),
-    ("Rebajas Tarde (partido)", dt.time(17, 0), dt.time(21, 0), [0, 1, 2, 3, 4]),
-    ("Inventario Nocturno", dt.time(22, 0), dt.time(2, 0), [3]),
-    ("Especial Lucía Ferrero", dt.time(10, 0), dt.time(15, 0), [0, 1, 2, 3, 4]),
 ]
 
 WORKER_FIELDS = [
@@ -93,39 +93,49 @@ WORKER_FIELDS = [
 # nombre, tienda, zona, secciones, contrato, horas, rotacion, base, alt, extras
 PLANTILLA = [
     # ── VGV · Gran Vía (flagship) ────────────────────────────────────────
+    # Dos fijos por sección (uno de Apertura y otro de Cierre, 40h, de lunes a
+    # viernes): son los 16 que dejan las 80 celdas sección×turno×día cubiertas.
     ("Carmen Roca", "VGV", "madrid_centro", ["Encargado", "Caja"], "plantilla", 40,
-     "semanal", "Apertura", "Cierre", {"nivel": "encargado"}),
+     "fijo", "Apertura", None, {"nivel": "encargado"}),
     ("Iván Soler", "VGV", "madrid_centro", ["Encargado", "Planta Hombre"], "plantilla", 40,
-     "semanal", "Cierre", "Apertura", {"nivel": "segundo"}),
+     "fijo", "Cierre", None, {"nivel": "segundo"}),
     ("Nuria Bailo", "VGV", "madrid_centro", ["Caja", "Probadores"], "plantilla", 40,
-     "semanal", "Apertura", "Cierre", {}),
+     "fijo", "Apertura", None, {}),
     ("Alba Cortés", "VGV", "madrid_centro", ["Caja", "Niño"], "plantilla", 40,
      "fijo", "Cierre", None, {"pref": "Cierre"}),
-    ("Teo Lasheras", "VGV", "madrid_centro", ["Caja"], "plantilla", 24,
-     "fijo", "Apertura", None, {"jornada_reducida": True, "turnos_max_semana": 3}),
+    ("Lara Peiró", "VGV", "madrid_centro", ["Probadores", "Caja"], "plantilla", 40,
+     "fijo", "Apertura", None, {}),
+    ("Hugo Zalba", "VGV", "madrid_centro", ["Probadores", "Planta Hombre"], "plantilla", 40,
+     "fijo", "Cierre", None, {}),
     ("Sonia Vidal", "VGV", "madrid_centro", ["Planta Mujer", "Probadores"], "plantilla", 40,
-     "semanal", "Apertura", "Cierre", {}),
+     "fijo", "Apertura", None, {}),
     ("Elsa Marín", "VGV", "madrid_centro", ["Planta Mujer", "Caja"], "plantilla", 40,
      "fijo", "Cierre", None, {}),
     ("Óscar Pina", "VGV", "madrid_centro", ["Planta Hombre", "Almacén"], "plantilla", 40,
      "fijo", "Apertura", None, {"pref": "Apertura"}),
-    ("Julia Andreu", "VGV", "madrid_centro", ["Niño", "Probadores"], "plantilla", 30,
-     "fijo", "Apertura", None, {"turnos_max_semana": 4}),
+    ("Rafa Tello", "VGV", "madrid_centro", ["Planta Hombre", "Caja"], "plantilla", 40,
+     "fijo", "Cierre", None, {}),
+    ("Julia Andreu", "VGV", "madrid_centro", ["Niño", "Probadores"], "plantilla", 40,
+     "fijo", "Apertura", None, {}),
+    ("Lidia Mena", "VGV", "madrid_centro", ["Niño", "Caja"], "plantilla", 40,
+     "fijo", "Cierre", None, {}),
     ("Mario Gracia", "VGV", "madrid_centro", ["Almacén", "Planta Hombre"], "plantilla", 40,
      "fijo", "Apertura", None, {}),
+    ("Gabi Noval", "VGV", "madrid_centro", ["Almacén", "Planta Hombre"], "plantilla", 40,
+     "fijo", "Cierre", None, {}),
     ("Diego Antúnez", "VGV", "madrid_centro", ["Visual", "Planta Hombre"], "plantilla", 40,
-     "fijo", "Apertura", None, {"nivel": "visual", "turno_sabado": "Cierre",
-                                "nota": "los sábados refuerza el cierre (regla weekday)"}),
+     "fijo", "Apertura", None, {"nivel": "visual"}),
+    ("Inma Castán", "VGV", "madrid_centro", ["Visual", "Planta Mujer"], "plantilla", 40,
+     "fijo", "Cierre", None, {}),
+    # Refuerzos de fin de semana (la parrilla solo pinta lunes a viernes).
+    ("Teo Lasheras", "VGV", "madrid_centro", ["Caja"], "plantilla", 24,
+     "fijo", "Apertura", None, {"jornada_reducida": True, "turnos_max_semana": 3}),
     ("Aroa Pinilla (findes)", "VGV", "madrid_centro", ["Caja", "Probadores"], "plantilla", 20,
      "fijo", "Domingo Comercial", None,
      {"jornada_reducida": True, "nota": "equipo de domingos del flagship"}),
     ("Nico Bes (findes)", "VGV", "madrid_centro", ["Planta Hombre", "Caja"], "plantilla", 20,
      "fijo", "Domingo Comercial", None,
      {"jornada_reducida": True, "nota": "equipo de domingos del flagship"}),
-    ("Lucía Ferrero", "VGV", "madrid_centro", ["Caja", "Planta Mujer"], "plantilla", 20,
-     "fijo", "Especial Lucía Ferrero", None,
-     {"jornada_reducida": True, "turnos_max_semana": 2,
-      "nota": "horario especial propio 10:00-15:00 L-V"}),
     # ── VPN · Plaza Norte ────────────────────────────────────────────────
     ("Berta Lain", "VPN", "madrid_norte", ["Encargado", "Caja"], "plantilla", 40,
      "semanal", "Apertura", "Cierre", {"nivel": "encargado"}),
@@ -178,15 +188,13 @@ PLANTILLA = [
      "semanal", "Cierre", "Apertura", {}),
     ("Pau Lacasta", "VXA", "madrid_sur", ["Caja", "Niño"], "ett", 20,
      "fijo", "Cierre", None, {"turnos_max_semana": 3}),
-    # ── VOG · Outlet Getafe (rebajas: turno partido) ─────────────────────
+    # ── VOG · Outlet Getafe ──────────────────────────────────────────
     ("Rosa Bescós", "VOG", "madrid_sur", ["Encargado", "Caja"], "plantilla", 40,
      "fijo", "Apertura", None, {"nivel": "encargado"}),
     ("Samu Ordás", "VOG", "madrid_sur", ["Caja", "Planta Hombre"], "plantilla", 40,
-     "fijo", "Rebajas Mañana (partido)", None,
-     {"turnos_max_semana": 10, "nota": "turno partido: 10-14 + 17-21 (2 franjas × 5 días)"}),
+     "fijo", "Apertura", None, {}),
     ("Cloe Naval", "VOG", "madrid_sur", ["Planta Mujer", "Caja"], "plantilla", 40,
-     "fijo", "Rebajas Mañana (partido)", None,
-     {"turnos_max_semana": 10, "nota": "turno partido: 10-14 + 17-21 (2 franjas × 5 días)"}),
+     "fijo", "Cierre", None, {}),
     ("Íker Sesé", "VOG", "madrid_sur", ["Almacén", "Planta Hombre"], "plantilla", 40,
      "fijo", "Cierre", None, {}),
     ("Ada Monreal", "VOG", "madrid_sur", ["Probadores", "Niño"], "plantilla", 20,
@@ -259,9 +267,9 @@ class Command(BaseCommand):
                             help="Contrasena del superusuario. Por defecto "
                                  "DEMO_ADMIN_PASSWORD del entorno.")
         parser.add_argument("--base-limpia", action="store_true",
-                            help="Deja la planificacion sin huecos ni violaciones: "
-                                 "todos los dias cubiertos. Es lo que usa el boton "
-                                 "de reseteo de la aplicacion.")
+                            help="Se conserva por compatibilidad (la aplicacion lo "
+                                 "pasa): la planificacion de VGV ya sale siempre "
+                                 "sin huecos ni violaciones.")
 
     # ────────────────────────────────────────────────────────────────────
     def handle(self, *args, **opts):
@@ -283,10 +291,10 @@ class Command(BaseCommand):
         self._restricciones(tiendas, workers)
         self._dias_cierre(tiendas)
         self._ausencias(workers)
-        self._planes(tiendas, shifts, workers, base_limpia=opts["base_limpia"])
+        self._planes(tiendas, shifts, workers)
         self.stdout.write(self.style.SUCCESS(
-            "\nDemo «VESTIA Moda» lista. Abre /schedule y elige una tienda "
-            "(VGV tiene la semana generada y una violación plantada para la demo)."))
+            "\nDemo «VESTIA Moda» lista. Abre /schedule: VGV trae las dos semanas "
+            "planificadas y sin avisos; el resto de tiendas, sin planificar."))
 
     # ────────────────────────────────────────────────────────────────────
     def _admin(self, email, password):
@@ -434,7 +442,7 @@ class Command(BaseCommand):
             # Los dias operativos se reponen SIEMPRE, no solo al crear el
             # turno. Un turno sin filas en ShiftDay lo toma el generador como
             # activo todos los dias (ver `_shift_weekdays`), y entonces el
-            # cuadrante pedia Domingo Comercial un lunes e Inventario Nocturno
+            # cuadrante pedia Domingo Comercial un lunes
             # a diario: cientos de huecos imposibles de cubrir.
             ShiftDay.objects.filter(shift=shift).exclude(weekday__in=days).delete()
             for wd in days:
@@ -521,8 +529,6 @@ class Command(BaseCommand):
 
     def _restricciones(self, tiendas, workers):
         from apps.restrictions.models import Restriction
-        vog = tiendas["VOG"].id
-        resto = [t.id for c, t in tiendas.items() if c != "VOG"]
         noa, ciro = workers["Noa Ferrández"].id, workers["Ciro Laguna"].id
         reglas = [
             dict(name="Elegibilidad por tienda y zona", engine="condition", severity="error",
@@ -539,15 +545,7 @@ class Command(BaseCommand):
                  message="{worker}: {count} turnos el mismo día (máx {limit})",
                  config={"subject": "shifts", "groupBy": "day_worker",
                          "operator": "lte", "threshold": 1},
-                 scope_records=resto,
-                 description="[DEMO] En todas las tiendas salvo el Outlet (allí hay partido)."),
-            dict(name="Máximo 2 turnos por día (partido rebajas)", engine="count",
-                 severity="error",
-                 message="{worker}: {count} turnos el mismo día (máx {limit})",
-                 config={"subject": "shifts", "groupBy": "day_worker",
-                         "operator": "lte", "threshold": 2},
-                 scope_records=[vog],
-                 description="[DEMO] El Outlet trabaja en partido (2 franjas/día): umbral 2."),
+                 description="[DEMO] Nadie hace dos turnos el mismo día."),
             dict(name="Máximo 2 ETT por turno", engine="count", severity="warning",
                  message="{shift}: {count} trabajadores ETT (máx {limit})",
                  config={"subject": "workers", "groupBy": "shift", "operator": "lte",
@@ -631,9 +629,9 @@ class Command(BaseCommand):
         monday = today - dt.timedelta(days=today.weekday())
         solicitudes = [
             # (worker, tipo, inicio, fin, estado, motivo)
-            ("Sonia Vidal", "Vacaciones", monday + dt.timedelta(days=7),
+            ("Teo Lasheras", "Vacaciones", monday + dt.timedelta(days=7),
              monday + dt.timedelta(days=13), "approved",
-             "Semana de vacaciones — la cubre la volante de la zona"),
+             "Semana de vacaciones"),
             ("Vega Lanuza", "Baja médica", today - dt.timedelta(days=10),
              today + dt.timedelta(days=20), "approved", "Baja de larga duración"),
             ("Alba Cortés", "Asuntos propios", monday + dt.timedelta(days=9),
@@ -650,10 +648,9 @@ class Command(BaseCommand):
         self.stdout.write(f"ausencias: 4 tipos, {n} solicitudes nuevas "
                           "(aprobada/pendiente/rechazada, relativas a hoy)")
 
-    def _planes(self, tiendas, shifts, workers, base_limpia=False):
+    def _planes(self, tiendas, shifts, workers):
         from apps.dynamic_fields.models import EntityRecord
         from apps.planning.models import WeeklyPlan
-        from apps.planning.schedule_generator import generate_schedule
         today = dt.date.today()
         monday = today - dt.timedelta(days=today.weekday())
         next_monday = monday + dt.timedelta(days=7)
@@ -667,61 +664,63 @@ class Command(BaseCommand):
             if secs:
                 primary[w.id] = sec_names.get(secs[0]["value"])
 
-        def poner_pills(plan):
-            for day in plan:
-                for k, val in day.items():
-                    if k in ("date", "dayName", "rest") or not isinstance(val, list):
-                        continue
-                    for a in val:
-                        pill = primary.get(a.get("workerId", 0))
-                        if pill and not a.get("areas"):
-                            a["areas"] = [pill]
+        # Solo VGV: es la tienda que se enseña y la que tiene que salir perfecta.
+        # El resto queda sin planificar a propósito (la demo arranca de ahí).
+        scope = tiendas["VGV"].id
+        for start in (monday, next_monday):
+            plan = self._plan_vgv(start, shifts, workers, primary)
+            WeeklyPlan.objects.update_or_create(
+                start_date=start, scope_entity_id=scope,
+                defaults={"plan_json": plan})
+        self.stdout.write("planes: semana actual y siguiente solo para VGV, "
+                          "sin huecos ni violaciones (el resto de tiendas sin planificar)")
 
-        def quitar_vacantes(plan):
-            """Deja el cuadrante sin huecos.
+    def _plan_vgv(self, start, shifts, workers, primary):
+        """Cuadrante de Gran Vía montado a mano, sin pasar por el generador.
 
-            El generador marca como vacante lo que no ha podido cubrir
-            (`workerId` <= 0) y eso sale en pantalla como «SIN ASIGNAR». Para
-            la base de la demo se quitan: lo que se ensena es un cuadrante
-            resuelto, no uno a medias. Los turnos que se queden sin nadie
-            desaparecen del dia en vez de figurar vacios.
-            """
-            for day in plan:
-                for k in list(day.keys()):
-                    if k in ("date", "dayName", "rest") or not isinstance(day[k], list):
-                        continue
-                    day[k] = [a for a in day[k] if a.get("workerId", 0) > 0]
-                    if not day[k]:
-                        del day[k]
+        La pantalla da por vacante cualquier celda sección×turno×día sin nadie
+        cuando hay personal de esa sección en ese turno. Con un solo fijo por
+        pareja basta que descanse un día laborable para que salte el aviso, y el
+        generador reparte los descansos como le conviene. Aquí los 16 fijos
+        (dos por sección) trabajan su turno de lunes a viernes y descansan el
+        fin de semana, así que no queda hueco posible.
+        """
+        from apps.absences.models import AbsenceRequest
+        from apps.planning.schedule_generator import empty_week
 
-        for codigo in ("VGV", "VPN", "VOG"):
-            scope = tiendas[codigo].id
-            for start in (monday, next_monday):
-                plan = generate_schedule(start, scope)["plan"]
-                poner_pills(plan)
-                if codigo == "VOG":
-                    # el partido son 2 franjas el mismo día: añade la de tarde
-                    tarde = str(shifts["Rebajas Tarde (partido)"].id)
-                    for day in plan[:6]:
-                        maniana = day.get(str(shifts["Rebajas Mañana (partido)"].id), [])
-                        day[tarde] = [dict(a, start="17:00", end="21:00")
-                                      for a in maniana if a.get("workerId", 0) > 0]
-                if base_limpia:
-                    quitar_vacantes(plan)
-                elif codigo == "VGV" and start == monday:
-                    # violación plantada para la demo: alguien de Zaragoza en Gran Vía
-                    intrusa = workers["Celia Fanlo"]
-                    plan[0].setdefault(str(shifts["Apertura"].id), []).append({
-                        "workerId": intrusa.id, "workerName": intrusa.name,
-                        "start": "09:30", "end": "16:30", "areas": ["Caja"],
-                    })
-                WeeklyPlan.objects.update_or_create(
-                    start_date=start, scope_entity_id=scope,
-                    defaults={"plan_json": plan})
-        if base_limpia:
-            self.stdout.write("planes: semana actual y siguiente para VGV, VPN y VOG, "
-                              "sin huecos ni violaciones (base limpia)")
-        else:
-            self.stdout.write("planes: semana actual y siguiente generadas para VGV, VPN y VOG "
-                              "(VGV lleva 1 violación plantada: Celia Fanlo, de Zaragoza, "
-                              "en la Apertura del lunes)")
+        base = {name: (tc, secs, hs, b)
+                for name, tc, _z, secs, _c, hs, _r, b, _a, _x in PLANTILLA}
+        vgv = [n for n, (tc, *_r) in base.items() if tc == "VGV"]
+        fijos = [n for n in vgv if base[n][2] == 40]
+        horario = {s.name: s for s in shifts.values()}
+
+        def asignacion(name, turno):
+            w, sh = workers[name], horario[turno]
+            return {"workerId": w.id, "workerName": w.name,
+                    "start": sh.start_time.strftime("%H:%M"),
+                    "end": sh.end_time.strftime("%H:%M"),
+                    "areas": [primary[w.id]] if primary.get(w.id) else []}
+
+        ausentes = {}
+        for a in AbsenceRequest.objects.filter(status="approved", worker__in=[workers[n] for n in vgv]):
+            d = a.start_date
+            while d <= a.end_date:
+                ausentes.setdefault(d.isoformat(), set()).add(a.worker_id)
+                d += dt.timedelta(days=1)
+
+        plan = empty_week(start)
+        for i, day in enumerate(plan):
+            if i < 5:
+                trabajan = [(n, base[n][3]) for n in fijos]
+            elif i == 5:
+                trabajan = [("Teo Lasheras", "Apertura")]
+            else:
+                trabajan = [("Aroa Pinilla (findes)", "Domingo Comercial"),
+                            ("Nico Bes (findes)", "Domingo Comercial")]
+            trabajan = [(n, t) for n, t in trabajan
+                        if workers[n].id not in ausentes.get(day["date"], set())]
+            for n, t in trabajan:
+                day[str(horario[t].id)].append(asignacion(n, t))
+            hoy = {workers[n].id for n, _ in trabajan}
+            day["rest"] = sorted({workers[n].id for n in vgv} - hoy)
+        return plan
