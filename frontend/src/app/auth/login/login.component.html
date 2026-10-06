@@ -9,7 +9,7 @@
            misma imagen sirve a varios despliegues. -->
       @if (brandingService.loaded()) {
         <img class="auth-logo"
-             [src]="brandingService.branding().logo_url || 'zebra-logo.svg'"
+             [src]="brandingService.branding().logo_url || 'zebra_logo_over-light.svg'"
              [alt]="brandingService.branding().company_name || 'Zebra'" />
       }
     </div>
